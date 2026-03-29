@@ -144,7 +144,7 @@ FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 当前限制：
 - 签名校验仍刻意保持很小，不是生产级安全审计的替代品
 - outbound reply 仍是显式 opt-in，只覆盖最简单的文本回复路径
-- doc create 也还是 starter 级：block append 目前支持 heading1/2/3、bullet list、todo（含 checked 状态）和普通 paragraph，但行内 markdown 格式（粗体、斜体、代码）暂不处理，仍以纯文本保留
+- doc create 也还是 starter 级：block append 目前支持 heading1/2/3、bullet list、todo（含 checked 状态）和普通 paragraph，并且在 paragraph / bullet / todo 文本里保留基础行内 markdown 格式（粗体、斜体、代码）
 - token cache 目前只是一个很小的内存缓存，还没有 refresh daemon、持久化或并发去重
 - 当前只覆盖了较窄的一段消息 payload
 

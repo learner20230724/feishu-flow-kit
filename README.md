@@ -144,7 +144,7 @@ Current scope:
 Current limits:
 - signature verification is still intentionally small and not meant to replace a production-grade security review
 - outbound reply sending is intentionally opt-in and only covers the simplest text reply path right now
-- doc creation is still intentionally small; after the initial `docx/v1/documents` create call it can append starter heading / bullet / todo / paragraph blocks, but inline markdown formatting (bold, italic, code) is still kept as plain text
+- doc creation is still intentionally small; after the initial `docx/v1/documents` create call it can append starter heading / bullet / todo / paragraph blocks, and it now preserves basic inline markdown formatting for bold, italic, and inline code inside paragraph / bullet / todo text
 - token caching is currently only a tiny in-memory starter cache; there is still no refresh daemon, persistence layer, or concurrency dedupe
 - only a narrow message payload is covered right now
 

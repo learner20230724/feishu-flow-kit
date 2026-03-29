@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildDocBlockChildrenDraft } from '../src/adapters/build-doc-block-children-draft.ts';
+import {
+  buildDocBlockChildrenDraft,
+  parseInlineSpans,
+} from '../src/adapters/build-doc-block-children-draft.ts';
 import { buildDocCreateDraft } from '../src/adapters/build-doc-create-draft.ts';
 import { sendDocBlockChildrenRequest } from '../src/adapters/send-doc-block-children-request.ts';
 
@@ -50,6 +53,100 @@ test('buildDocBlockChildrenDraft converts markdown lines into richer docx blocks
       { type: 13, text: 'Confirm participants', done: true },
     ],
   );
+});
+
+test('parseInlineSpans converts bold, italic, and inline code into styled text runs', () => {
+  assert.deepEqual(parseInlineSpans('Plain **bold** and *italic* plus `code`.'), [
+    { text_run: { content: 'Plain ' } },
+    { text_run: { content: 'bold', text_element_style: { bold: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'italic', text_element_style: { italic: true } } },
+    { text_run: { content: ' plus ' } },
+    { text_run: { content: 'code', text_element_style: { inline_code: true } } },
+    { text_run: { content: '.' } },
+  ]);
+});
+
+test('buildDocBlockChildrenDraft keeps inline styles inside paragraph, bullet, and todo blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'inline styles demo',
+    [
+      'A **bold** move with *nuance* and `snippet`.',
+      '- bullet with **highlight**',
+      '- [ ] todo with `command`',
+    ].join('\n'),
+  );
+
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const [paragraph, bullet, todo] = draft.body.children;
+
+  assert.deepEqual(paragraph?.paragraph?.elements, [
+    { text_run: { content: 'A ' } },
+    { text_run: { content: 'bold', text_element_style: { bold: true } } },
+    { text_run: { content: ' move with ' } },
+    { text_run: { content: 'nuance', text_element_style: { italic: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'snippet', text_element_style: { inline_code: true } } },
+    { text_run: { content: '.' } },
+  ]);
+
+  assert.deepEqual(bullet?.bullet?.elements, [
+    { text_run: { content: 'bullet with ' } },
+    { text_run: { content: 'highlight', text_element_style: { bold: true } } },
+  ]);
+
+  assert.deepEqual(todo?.todo?.elements, [
+    { text_run: { content: 'todo with ' } },
+    { text_run: { content: 'command', text_element_style: { inline_code: true } } },
+  ]);
+  assert.equal(todo?.todo?.style.done, false);
+});
+
+test('parseInlineSpans handles strikethrough', () => {
+  assert.deepEqual(parseInlineSpans('Remove ~~deprecated~~ field'), [
+    { text_run: { content: 'Remove ' } },
+    { text_run: { content: 'deprecated', text_element_style: { strikethrough: true } } },
+    { text_run: { content: ' field' } },
+  ]);
+});
+
+test('parseInlineSpans handles links', () => {
+  assert.deepEqual(parseInlineSpans('See [docs](https://open.feishu.cn) for more'), [
+    { text_run: { content: 'See ' } },
+    { text_run: { content: 'docs', link: { url: 'https://open.feishu.cn' } } },
+    { text_run: { content: ' for more' } },
+  ]);
+});
+
+test('parseInlineSpans handles mixed: bold, strikethrough, link, italic, code', () => {
+  const spans = parseInlineSpans('**bold** and ~~strike~~ and [link](http://x.com) and *em* and `code`');
+  assert.deepEqual(spans, [
+    { text_run: { content: 'bold', text_element_style: { bold: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'strike', text_element_style: { strikethrough: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'link', link: { url: 'http://x.com' } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'em', text_element_style: { italic: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'code', text_element_style: { inline_code: true } } },
+  ]);
+});
+
+test('heading blocks support inline spans', () => {
+  const createDraft = buildDocCreateDraft(
+    'inline heading test',
+    '# Title with **bold** and [link](https://feishu.cn)',
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_h', createDraft);
+  const heading = draft.body.children[0];
+  assert.equal(heading?.block_type, 3);
+  assert.deepEqual(heading?.heading1?.elements, [
+    { text_run: { content: 'Title with ' } },
+    { text_run: { content: 'bold', text_element_style: { bold: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'link', link: { url: 'https://feishu.cn' } } },
+  ]);
 });
 
 test('sendDocBlockChildrenRequest posts blocks and returns block ids', async () => {

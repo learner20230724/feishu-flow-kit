@@ -13,9 +13,18 @@ const BLOCK_TYPE = {
 
 type BlockType = (typeof BLOCK_TYPE)[keyof typeof BLOCK_TYPE];
 
+interface TextElementStyle {
+  bold?: boolean;
+  italic?: boolean;
+  inline_code?: boolean;
+  strikethrough?: boolean;
+}
+
 interface TextElement {
   text_run: {
     content: string;
+    text_element_style?: TextElementStyle;
+    link?: { url: string };
   };
 }
 
@@ -40,8 +49,71 @@ export interface FeishuDocBlockChildrenDraft {
   notes: string[];
 }
 
-function makeTextElements(content: string): TextElement[] {
-  return [{ text_run: { content } }];
+/**
+ * Parse a line of text with inline markdown formatting into Feishu text_run elements.
+ *
+ * Supported patterns (non-overlapping, left-to-right, highest precedence first):
+ *   `code`          → inline_code: true
+ *   **bold**        → bold: true
+ *   ~~strikethrough~~ → strikethrough: true
+ *   [text](url)     → link: { url }
+ *   *italic*        → italic: true
+ *
+ * Bold is matched before italic so **text** doesn't collide with *text*.
+ * Nested / combined spans (e.g. ***bold+italic***) are not supported — each
+ * span is treated as one style only.
+ */
+export function parseInlineSpans(text: string): TextElement[] {
+  const elements: TextElement[] = [];
+
+  // Token regex priority: inline-code > bold > strikethrough > link > italic
+  const TOKEN =
+    /(`[^`]+`)|(?:\*\*([^*]+)\*\*)|(?:~~([^~]+)~~)|(?:\[([^\]]+)\]\(([^)]+)\))|(?:\*([^*]+)\*)/g;
+
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = TOKEN.exec(text)) !== null) {
+    const matchStart = match.index;
+    const matchEnd = TOKEN.lastIndex;
+
+    // Plain text before this token
+    if (matchStart > lastIndex) {
+      elements.push({ text_run: { content: text.slice(lastIndex, matchStart) } });
+    }
+
+    if (match[1] !== undefined) {
+      // Inline code: strip surrounding backticks
+      const content = match[1].slice(1, -1);
+      elements.push({ text_run: { content, text_element_style: { inline_code: true } } });
+    } else if (match[2] !== undefined) {
+      // Bold: strip surrounding **
+      elements.push({ text_run: { content: match[2], text_element_style: { bold: true } } });
+    } else if (match[3] !== undefined) {
+      // Strikethrough: strip surrounding ~~
+      elements.push({ text_run: { content: match[3], text_element_style: { strikethrough: true } } });
+    } else if (match[4] !== undefined && match[5] !== undefined) {
+      // Link: [text](url)
+      elements.push({ text_run: { content: match[4], link: { url: match[5] } } });
+    } else if (match[6] !== undefined) {
+      // Italic: strip surrounding *
+      elements.push({ text_run: { content: match[6], text_element_style: { italic: true } } });
+    }
+
+    lastIndex = matchEnd;
+  }
+
+  // Remaining plain text after the last token
+  if (lastIndex < text.length) {
+    elements.push({ text_run: { content: text.slice(lastIndex) } });
+  }
+
+  // If nothing was parsed (empty string), return a single empty text_run
+  if (elements.length === 0) {
+    elements.push({ text_run: { content: text } });
+  }
+
+  return elements;
 }
 
 function classifyLine(line: string): FeishuDocRichBlock | null {
@@ -54,7 +126,7 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     const content = h1[1]!.trim();
     return {
       block_type: BLOCK_TYPE.heading1,
-      heading1: { elements: makeTextElements(content) },
+      heading1: { elements: parseInlineSpans(content) },
     };
   }
 
@@ -63,7 +135,7 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     const content = h2[1]!.trim();
     return {
       block_type: BLOCK_TYPE.heading2,
-      heading2: { elements: makeTextElements(content) },
+      heading2: { elements: parseInlineSpans(content) },
     };
   }
 
@@ -72,7 +144,7 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     const content = h3[1]!.trim();
     return {
       block_type: BLOCK_TYPE.heading3,
-      heading3: { elements: makeTextElements(content) },
+      heading3: { elements: parseInlineSpans(content) },
     };
   }
 
@@ -82,7 +154,7 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     const content = checkedTodo[1]!.trim();
     return {
       block_type: BLOCK_TYPE.todo,
-      todo: { elements: makeTextElements(content), style: { done: true } },
+      todo: { elements: parseInlineSpans(content), style: { done: true } },
     };
   }
 
@@ -91,7 +163,7 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     const content = uncheckedTodo[1]!.trim();
     return {
       block_type: BLOCK_TYPE.todo,
-      todo: { elements: makeTextElements(content), style: { done: false } },
+      todo: { elements: parseInlineSpans(content), style: { done: false } },
     };
   }
 
@@ -101,14 +173,14 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     const content = bullet[1]!.trim();
     return {
       block_type: BLOCK_TYPE.bullet,
-      bullet: { elements: makeTextElements(content) },
+      bullet: { elements: parseInlineSpans(content) },
     };
   }
 
   // Plain paragraph
   return {
     block_type: BLOCK_TYPE.paragraph,
-    paragraph: { elements: makeTextElements(trimmed) },
+    paragraph: { elements: parseInlineSpans(trimmed) },
   };
 }
 
@@ -136,8 +208,11 @@ export function buildDocBlockChildrenDraft(
     sourceMarkdown: createDraft.initialContentMarkdown,
     notes: [
       'This adapter converts markdown lines into native Feishu docx block types.',
-      'Supported: paragraph, heading1/2/3, bullet list, todo (checked and unchecked).',
-      'Inline formatting (bold, italic, code) is not yet handled — content is preserved as plain text.',
+      'Supported block types: paragraph, heading1/2/3, bullet list, todo (checked and unchecked).',
+      'Supported inline formatting: bold (**text**), italic (*text*), inline code (`text`).',
+      'Each inline span becomes a separate text_run element with the appropriate text_element_style.',
+      'Link spans use the Feishu text_run.link.url field.',
+      'Heading text also supports inline spans.',
     ],
   };
 }
