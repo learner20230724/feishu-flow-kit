@@ -130,7 +130,7 @@ Current scope:
 - runs the existing demo workflow and returns draft reply data as JSON
 - can optionally send a real Feishu text reply when `FEISHU_ENABLE_OUTBOUND_REPLY=true` and app credentials are present
 - can optionally create a real Feishu doc from the `/doc` workflow when `FEISHU_ENABLE_DOC_CREATE=true` and app credentials are present
-- after doc creation, can also append a small starter body as plain paragraph blocks so the new doc is not left empty
+- after doc creation, can also append a small starter body with native heading / bullet / todo / paragraph blocks so the new doc is not left empty
 - rejects non-POST requests on `/webhook` with a clear `405` response
 - optionally verifies `x-lark-request-timestamp` + `x-lark-signature` when `FEISHU_WEBHOOK_SECRET` is configured
 - rejects signed requests outside a configurable replay window
@@ -138,7 +138,7 @@ Current scope:
 Current limits:
 - signature verification is still intentionally small and not meant to replace a production-grade security review
 - outbound reply sending is intentionally opt-in and only covers the simplest text reply path right now
-- doc creation is also intentionally small; after the initial `docx/v1/documents` create call it appends a starter body as plain paragraph blocks, but does not yet convert markdown into richer formatting (bold, headings, lists as native block types)
+- doc creation is still intentionally small; after the initial `docx/v1/documents` create call it can append starter heading / bullet / todo / paragraph blocks, but inline markdown formatting (bold, italic, code) is still kept as plain text
 - token caching is currently only a tiny in-memory starter cache; there is still no refresh daemon, persistence layer, or concurrency dedupe
 - only a narrow message payload is covered right now
 
@@ -158,14 +158,14 @@ The current test set covers:
 - webhook signature generation and validation
 - outbound reply request draft generation
 - minimal tenant token fetch + text reply sender flow
-- minimal Feishu doc create request and starter block-append path for webhook `/doc` flow
+- minimal Feishu doc create request and starter richer-block append path for webhook `/doc` flow
 - local HTTP behavior for `GET /healthz` and `POST /webhook`
 
 ## Example workflow ideas
 
 Already runnable in the repo:
 - `/todo ...` → turns a request into a small action-list draft
-- `/doc ...` → turns a topic into a markdown-style outline, then can create a Feishu doc and append a minimal plain-paragraph body
+- `/doc ...` → turns a topic into a markdown-style outline, then can create a Feishu doc and append a minimal native docx body (headings / bullets / todos / paragraphs)
 
 Still good next candidates:
 - sync selected Feishu content into a local markdown workspace
@@ -190,6 +190,7 @@ You can always add deployment pieces later.
 - [x] add Feishu adapter interfaces for real webhook / bot payloads
 - [x] add one more runnable workflow example
 - [x] write setup guide with real constraints
+- [x] upgrade `/doc` block append from plain paragraphs to starter richer docx blocks
 - [x] add screenshots or demo diagrams
 
 ## Notes on writing and scope

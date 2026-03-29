@@ -130,7 +130,7 @@ FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 - 运行现有 demo workflow，并返回 draft reply JSON
 - 当 `FEISHU_ENABLE_OUTBOUND_REPLY=true` 且 app 凭据齐全时，可选发送真实 Feishu 文本回复
 - 当 `FEISHU_ENABLE_DOC_CREATE=true` 且 app 凭据齐全时，可选从 `/doc` workflow 创建真实 Feishu 文档
-- 创建文档后，还可以继续追加一段最小 starter body，避免新文档是空的
+- 创建文档后，还可以继续追加一段最小 starter body，支持 heading / bullet / todo / paragraph 等原生 block，避免新文档是空的
 - `/webhook` 对非 POST 请求返回明确的 `405`
 - 当配置 `FEISHU_WEBHOOK_SECRET` 时，可选校验 `x-lark-request-timestamp` 与 `x-lark-signature`
 - 会拒绝超出可配置 replay window 的签名请求
@@ -138,7 +138,7 @@ FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 当前限制：
 - 签名校验仍刻意保持很小，不是生产级安全审计的替代品
 - outbound reply 仍是显式 opt-in，只覆盖最简单的文本回复路径
-- doc create 也还是 starter 级：在 `docx/v1/documents` 创建完成后，只会追加纯 paragraph block，不会把 markdown 转成更丰富的原生格式（例如粗体、标题、列表）
+- doc create 也还是 starter 级：block append 目前支持 heading1/2/3、bullet list、todo（含 checked 状态）和普通 paragraph，但行内 markdown 格式（粗体、斜体、代码）暂不处理，仍以纯文本保留
 - token cache 目前只是一个很小的内存缓存，还没有 refresh daemon、持久化或并发去重
 - 当前只覆盖了较窄的一段消息 payload
 
@@ -158,14 +158,14 @@ npm test
 - webhook 签名生成与校验
 - outbound reply request draft 生成
 - 最小 tenant token 获取 + 文本 reply sender 流程
-- webhook `/doc` 路径里的最小 Feishu doc create 与 starter block append 流程
+- webhook `/doc` 路径里的最小 Feishu doc create 与 starter richer-block append 流程
 - `GET /healthz` 与 `POST /webhook` 的本地 HTTP 行为
 
 ## 可继续扩展的 workflow 方向
 
 仓库里已经能直接跑的：
 - `/todo ...` → 把请求整理成一个简短 action-list draft
-- `/doc ...` → 把主题转成 markdown 风格 outline，并可进一步创建 Feishu 文档、追加最小正文
+- `/doc ...` → 把主题转成 markdown 风格 outline，并可进一步创建 Feishu 文档、追加最小原生 docx 正文（headings / bullets / todos / paragraphs）
 
 下一批比较合适的方向：
 - 将选定的飞书内容同步到本地 markdown 工作区
@@ -190,6 +190,7 @@ npm test
 - [x] 加入面向真实 webhook / bot payload 的 Feishu adapter interface
 - [x] 再补一个可运行 workflow 示例
 - [x] 写清 setup guide 与真实约束
+- [x] 把 `/doc` block append 从纯 paragraph 升级到 starter richer docx blocks
 - [x] 补截图或 demo 图
 
 ## 写法与范围说明

@@ -40,7 +40,7 @@ The current demo already covers a minimal but real pipeline:
 3. `src/core/parse-slash-command.ts` extracts the command surface
 4. `src/workflows/run-message-workflow.ts` generates a workflow result
 5. for `/doc`, a starter doc create draft can also be produced alongside the markdown outline
-6. if doc creation is enabled, a block-append step follows to populate the new doc with a minimal plain-paragraph body
+6. if doc creation is enabled, a block-append step follows to populate the new doc with a minimal native docx body (headings, bullets, todos, paragraphs)
 7. `src/index.ts` logs the result and prints a local draft reply
 
 That makes the repo more than a skeleton: it now has one end-to-end flow that can be inspected and extended.
@@ -72,7 +72,7 @@ The repo now has a minimal real webhook slice:
 5. the existing message workflow runs on that normalized event
 6. a draft reply plus a reply API request draft are returned as JSON for local inspection
 7. when outbound reply is enabled, the same slice can fetch a tenant token and call the simplest text reply endpoint
-8. when doc creation is enabled and the workflow is `/doc`, the same slice can call the Feishu doc create endpoint, append a minimal set of paragraph blocks, and return the created document metadata
+8. when doc creation is enabled and the workflow is `/doc`, the same slice can call the Feishu doc create endpoint, append a minimal set of heading / bullet / todo / paragraph blocks, and return the created document metadata
 
 This keeps the current implementation honest: it is useful enough to test the repo structure with real callback shapes, but still small enough to read in one sitting.
 
@@ -85,7 +85,7 @@ The current automated checks cover:
 - webhook signature generation and verification
 - outbound reply draft generation
 - minimal tenant token fetch and text reply sending helpers
-- minimal Feishu doc create request and starter block-append path for webhook `/doc` flow
+- minimal Feishu doc create request and starter richer-block append path for webhook `/doc` flow
 - local server behavior for `/healthz` and `/webhook`
 
 That gives the repo a meaningful starter-level safety net without turning it into a heavy framework.

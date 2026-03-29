@@ -5,15 +5,18 @@ import { buildDocBlockChildrenDraft } from '../src/adapters/build-doc-block-chil
 import { buildDocCreateDraft } from '../src/adapters/build-doc-create-draft.ts';
 import { sendDocBlockChildrenRequest } from '../src/adapters/send-doc-block-children-request.ts';
 
-test('buildDocBlockChildrenDraft converts markdown lines into paragraph blocks', () => {
+test('buildDocBlockChildrenDraft converts markdown lines into richer docx blocks', () => {
   const createDraft = buildDocCreateDraft(
     'weekly launch review',
     [
       'Doc outline draft: weekly launch review',
       '',
       '# Summary',
+      '## Notes',
+      '### Details',
       '- Topic: weekly launch review',
       '- [ ] Fill the missing details',
+      '- [x] Confirm participants',
     ].join('\n'),
   );
 
@@ -24,19 +27,33 @@ test('buildDocBlockChildrenDraft converts markdown lines into paragraph blocks',
     '/open-apis/docx/v1/documents/docxcn_demo/blocks/docxcn_demo/children',
   );
   assert.equal(draft.body.index, 0);
+
   assert.deepEqual(
-    draft.body.children.map((child) => child.paragraph.elements[0]?.text_run.content),
+    draft.body.children.map((child) => ({
+      type: child.block_type,
+      text:
+        child.paragraph?.elements[0]?.text_run.content ??
+        child.heading1?.elements[0]?.text_run.content ??
+        child.heading2?.elements[0]?.text_run.content ??
+        child.heading3?.elements[0]?.text_run.content ??
+        child.bullet?.elements[0]?.text_run.content ??
+        child.todo?.elements[0]?.text_run.content,
+      done: child.todo?.style?.done,
+    })),
     [
-      'Doc outline draft: weekly launch review',
-      'Summary',
-      '- Topic: weekly launch review',
-      'TODO: Fill the missing details',
+      { type: 2, text: 'Doc outline draft: weekly launch review', done: undefined },
+      { type: 3, text: 'Summary', done: undefined },
+      { type: 4, text: 'Notes', done: undefined },
+      { type: 5, text: 'Details', done: undefined },
+      { type: 12, text: 'Topic: weekly launch review', done: undefined },
+      { type: 13, text: 'Fill the missing details', done: false },
+      { type: 13, text: 'Confirm participants', done: true },
     ],
   );
 });
 
-test('sendDocBlockChildrenRequest posts paragraph blocks and returns block ids', async () => {
-  const createDraft = buildDocCreateDraft('weekly launch review', 'Line 1\nLine 2');
+test('sendDocBlockChildrenRequest posts blocks and returns block ids', async () => {
+  const createDraft = buildDocCreateDraft('weekly launch review', 'Line 1\n- Line 2');
   const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
   const requests: Array<{ url: string; method: string; body: string }> = [];
 
@@ -69,7 +86,11 @@ test('sendDocBlockChildrenRequest posts paragraph blocks and returns block ids',
 
   assert.equal(requests.length, 1);
   assert.equal(requests[0]?.method, 'POST');
-  assert.match(String(requests[0]?.url), /\/docx\/v1\/documents\/docxcn_demo\/blocks\/docxcn_demo\/children/);
+  assert.match(
+    String(requests[0]?.url),
+    /\/docx\/v1\/documents\/docxcn_demo\/blocks\/docxcn_demo\/children/,
+  );
   assert.match(String(requests[0]?.body), /Line 1/);
+  assert.match(String(requests[0]?.body), /Line 2/);
   assert.deepEqual(result.blockIds, ['blk_1', 'blk_2']);
 });
