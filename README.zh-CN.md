@@ -86,6 +86,12 @@ Feishu 消息事件
 
 以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true` 或 `FEISHU_ENABLE_DOC_CREATE=true` 即可从 draft 模式切换到真实 Feishu API 调用。
 
+## Demo 资产
+
+![本地 webhook → /doc 工作流演示](./docs/demo-webhook-doc-flow.svg)
+
+仓库里附带了一个静态展示资产，确保即使没有本地运行，第一页也有可见的结构说明。
+
 ## 本地 demo
 
 ```bash

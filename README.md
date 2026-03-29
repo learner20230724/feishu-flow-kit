@@ -86,6 +86,12 @@ Feishu message event
 
 Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true` or `FEISHU_ENABLE_DOC_CREATE=true` to switch from draft mode to real Feishu API calls.
 
+## Demo asset
+
+![Local webhook to /doc workflow demo](./docs/demo-webhook-doc-flow.svg)
+
+A small static asset is included so the repo has a visible first-screen explanation even before someone runs the local server.
+
 ## Local demo
 
 ```bash
