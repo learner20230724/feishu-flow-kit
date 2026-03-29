@@ -55,6 +55,37 @@
   docs/
 ```
 
+## 运行原理
+
+```
+Feishu 消息事件
+        │
+        ▼
+┌───────────────────┐
+│   POST /webhook   │  ← url_verification / im.message.receive_v1
+│   （本地服务）     │
+└────────┬──────────┘
+         │ 适配原始 payload
+         ▼
+┌───────────────────┐
+│  slash-command    │  ← /todo ...  /doc ...
+│     解析器        │
+└────────┬──────────┘
+         │ 路由到 workflow
+    ┌────┴────┐
+    ▼         ▼
+ /todo      /doc
+  流程       流程
+    │         │
+    │    创建 Feishu 文档
+    │    + 追加正文 blocks
+    ▼         ▼
+ draft reply JSON
+  （可选：真实发送 Feishu 回复）
+```
+
+以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true` 或 `FEISHU_ENABLE_DOC_CREATE=true` 即可从 draft 模式切换到真实 Feishu API 调用。
+
 ## 本地 demo
 
 ```bash
@@ -159,7 +190,7 @@ npm test
 - [x] 加入面向真实 webhook / bot payload 的 Feishu adapter interface
 - [x] 再补一个可运行 workflow 示例
 - [x] 写清 setup guide 与真实约束
-- [ ] 补截图或 demo 图
+- [x] 补截图或 demo 图
 
 ## 写法与范围说明
 

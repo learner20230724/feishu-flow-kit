@@ -55,6 +55,37 @@ This project is a cleaner starting point:
   docs/
 ```
 
+## How it works
+
+```
+Feishu message event
+        │
+        ▼
+┌───────────────────┐
+│   POST /webhook   │  ← url_verification / im.message.receive_v1
+│   (local server)  │
+└────────┬──────────┘
+         │ adapt raw payload
+         ▼
+┌───────────────────┐
+│  slash-command    │  ← /todo ...  /doc ...
+│     parser        │
+└────────┬──────────┘
+         │ route to workflow
+    ┌────┴────┐
+    ▼         ▼
+ /todo      /doc
+  flow       flow
+    │         │
+    │    create Feishu doc
+    │    + append body blocks
+    ▼         ▼
+ draft reply JSON
+  (+ optional outbound Feishu reply)
+```
+
+Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true` or `FEISHU_ENABLE_DOC_CREATE=true` to switch from draft mode to real Feishu API calls.
+
 ## Local demo
 
 ```bash
@@ -159,7 +190,7 @@ You can always add deployment pieces later.
 - [x] add Feishu adapter interfaces for real webhook / bot payloads
 - [x] add one more runnable workflow example
 - [x] write setup guide with real constraints
-- [ ] add screenshots or demo diagrams
+- [x] add screenshots or demo diagrams
 
 ## Notes on writing and scope
 
