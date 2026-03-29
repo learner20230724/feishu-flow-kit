@@ -6,39 +6,39 @@
 
 ## 为什么做这个
 
-很多飞书自动化示例要么过于零散，要么强绑定某个内部环境，要么一上来就把工程复杂度拉满，不适合快速验证想法。
+很多飞书自动化示例要么太窄，只覆盖一个小场景；要么强绑定某个内部环境；要么一上来就把工程复杂度拉满，不适合快速验证工作流。
 
-这个项目想解决的是更现实的问题：
-- 本地就能开始
+这个项目想提供一个更干净的起点：
+- 本地优先
 - 结构清楚
-- 不依赖一堆基础设施
-- 适合作为公开仓库持续打磨
+- 不依赖很多基础设施
+- 能自然长成真实工作流
 
 ## 它是什么
 
-`feishu-flow-kit` 是一个围绕飞书生态的起步仓库，适合用来做：
-- 消息触发的自动化
-- 机器人驱动的工作流
-- 飞书文档 / 多维表格辅助工具
+`feishu-flow-kit` 是一个围绕飞书生态的 starter repo，适合用来做：
+- 消息驱动的自动化
+- 机器人触发的工作流
+- 飞书文档 / 表格辅助工具
 - 轻量 AI 内部工具
-- 先本地验证、后续再部署的 demo
+- 先本地演示、后续再正式部署的 demo
 
 ## MVP 目标
 
-- 小而清晰的项目结构
+- 小而易懂的项目结构
 - 带类型的配置加载
 - 可复用的 Feishu 事件 / 消息适配层
 - 基础结构化日志
 - 1 到 2 个真实可跑的工作流示例
-- 不做多余的封装仪式感
+- 不引入多余的平台仪式感
 
 ## 不做什么
 
-- 不假装替代完整官方 SDK
-- 不把 Feishu 的实际复杂度藏到看不懂
+- 不假装替代完整平台 SDK
+- 不用过度抽象把 Feishu 的实际复杂度藏起来
 - 不为简单场景强行引入重服务器架构
 
-## 目录草案
+## 项目结构
 
 ```text
 .
@@ -49,36 +49,120 @@
     adapters/
     workflows/
     config/
+    server/
+    types/
   examples/
   docs/
 ```
 
-## 可先做的示例工作流
+## 本地 demo
 
-- 把一段共享消息线程整理成简短 action list
-- 用 bot 命令生成模板化文档草稿
+```bash
+npm install
+npm run dev
+```
+
+默认会以 mock 模式运行，并读取 `examples/mock-message-event.json`。你也可以用 `FEISHU_MOCK_EVENT_PATH` 切换示例输入，例如：
+
+```bash
+FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
+```
+
+当前 demo 路径是：
+
+1. 加载带类型的配置
+2. 读取一条 mock Feishu 消息事件
+3. 解析 `/todo ...` 或 `/doc ...` 这样的 slash command
+4. 运行最小 workflow
+5. 输出 reply draft
+
+目前仓库里已经可直接演示的命令：
+- `/todo ship webhook adapter`
+- `/doc weekly launch review`
+
+当前 mock 输入示例：
+- `examples/mock-message-event.json` → `/todo` 流程
+- `examples/mock-doc-message-event.json` → `/doc` 流程
+
+这个 demo 刻意保持很小，但已经足够证明仓库能把真实输入跑过一条清楚、可读的本地链路。
+
+## 当前 webhook slice
+
+仓库现在已经有一条最小可用的 Feishu 本地 webhook 路径。
+
+当前范围：
+- 提供 `GET /healthz` 方便做本地存活检查
+- 提供 `POST /webhook`
+- 支持处理 `url_verification`
+- 接收最小 `im.message.receive_v1` payload
+- 把原始 callback 适配成仓库内部统一的 `message.received` 事件
+- 运行现有 demo workflow，并返回 draft reply JSON
+- 当 `FEISHU_ENABLE_OUTBOUND_REPLY=true` 且 app 凭据齐全时，可选发送真实 Feishu 文本回复
+- 当 `FEISHU_ENABLE_DOC_CREATE=true` 且 app 凭据齐全时，可选从 `/doc` workflow 创建真实 Feishu 文档
+- 创建文档后，还可以继续追加一段最小 starter body，避免新文档是空的
+- `/webhook` 对非 POST 请求返回明确的 `405`
+- 当配置 `FEISHU_WEBHOOK_SECRET` 时，可选校验 `x-lark-request-timestamp` 与 `x-lark-signature`
+- 会拒绝超出可配置 replay window 的签名请求
+
+当前限制：
+- 签名校验仍刻意保持很小，不是生产级安全审计的替代品
+- outbound reply 仍是显式 opt-in，只覆盖最简单的文本回复路径
+- doc create 也还是 starter 级：在 `docx/v1/documents` 创建完成后，只会追加纯 paragraph block，不会把 markdown 转成更丰富的原生格式（例如粗体、标题、列表）
+- token cache 目前只是一个很小的内存缓存，还没有 refresh daemon、持久化或并发去重
+- 当前只覆盖了较窄的一段消息 payload
+
+这已经足够做本地联调与 repo 级结构验证，但仍然是一个 starter implementation。
+
+## 测试
+
+```bash
+npm run check
+npm test
+```
+
+当前测试覆盖：
+- slash command 解析
+- `/todo` 与 `/doc` 的 demo workflow 行为
+- webhook payload 适配
+- webhook 签名生成与校验
+- outbound reply request draft 生成
+- 最小 tenant token 获取 + 文本 reply sender 流程
+- webhook `/doc` 路径里的最小 Feishu doc create 与 starter block append 流程
+- `GET /healthz` 与 `POST /webhook` 的本地 HTTP 行为
+
+## 可继续扩展的 workflow 方向
+
+仓库里已经能直接跑的：
+- `/todo ...` → 把请求整理成一个简短 action-list draft
+- `/doc ...` → 把主题转成 markdown 风格 outline，并可进一步创建 Feishu 文档、追加最小正文
+
+下一批比较合适的方向：
 - 将选定的飞书内容同步到本地 markdown 工作区
 - 从结构化聊天命令触发一个小型审批辅助流程
 
 ## 为什么优先本地
 
-项目早期，本地优先通常更合适：
+对于早期工具，本地优先通常更适合：
 - 配置更少
 - 调试更快
-- 成本更低
-- 更适合做公共示例
+- 移动部件更少
+- 更适合做公开示例
 
-后面如果需要，再把部署层补上。
+后续如果需要，再补 deployment pieces 就可以。
 
 ## 路线图
 
-- [ ] 建最小 TypeScript 骨架
-- [ ] 定义配置 schema
-- [ ] 加入 Feishu adapter interface
-- [ ] 补一个可运行示例工作流
-- [ ] 写清楚 setup guide 和限制条件
+- [x] 建最小 TypeScript 项目骨架
+- [x] 定义配置 schema
+- [x] 加入基础 mock event runner
+- [x] 加入 slash-command parsing 示例
+- [x] 加入面向真实 webhook / bot payload 的 Feishu adapter interface
+- [x] 再补一个可运行 workflow 示例
+- [x] 写清 setup guide 与真实约束
 - [ ] 补截图或 demo 图
 
-## 写法原则
+## 写法与范围说明
 
-这个仓库应该保持克制、实用、像真人开发者写的。少一点“AI 魔法”，多一点真实边界和可执行性。
+这个仓库应该保持实用。不要夸张 AI 话术，不要伪造产品成熟度，也不要用空泛的“agent 魔法”掩盖真实边界。
+
+目标很简单：让 Feishu workflow 实验更容易开始，也更容易公开分享。
