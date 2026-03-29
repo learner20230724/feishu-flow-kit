@@ -1,0 +1,17 @@
+{
+  "name": "feishu-flow-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first starter kit for practical Feishu automations and AI workflows.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "check": "tsc --noEmit",
+    "test": "node --import tsx --test"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2"
+  }
+}

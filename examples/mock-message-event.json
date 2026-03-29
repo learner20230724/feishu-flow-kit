@@ -1,0 +1,16 @@
+{
+  "type": "message.received",
+  "timestamp": "2026-03-28T23:24:00Z",
+  "tenantKey": "local-dev-tenant",
+  "message": {
+    "messageId": "om_mock_001",
+    "chatId": "oc_mock_chat",
+    "chatType": "p2p",
+    "senderId": "ou_mock_user",
+    "text": "/todo Summarize today's progress and list next actions"
+  },
+  "context": {
+    "source": "local-mock",
+    "notes": "Use this file as a stable example input for parser and workflow tests."
+  }
+}
