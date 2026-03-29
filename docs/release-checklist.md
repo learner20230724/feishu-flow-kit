@@ -16,7 +16,7 @@ Use this before publishing `feishu-flow-kit` as a public repo or cutting a visib
 - [ ] `README.zh-CN.md` is aligned with the English README for current features
 - [ ] quickstart commands were re-run recently
 - [ ] roadmap items reflect what is actually done
-- [ ] at least one demo asset is ready if screenshots / diagrams are promised
+- [x] at least one demo asset is ready if screenshots / diagrams are promised (docs/demo-webhook-doc-flow.svg)
 
 ## 3. Setup and examples
 
