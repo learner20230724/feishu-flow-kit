@@ -166,3 +166,7 @@ You can always add deployment pieces later.
 This repo should stay practical. No inflated AI language, no fake product claims, no vague “agent” magic.
 
 The goal is to make Feishu workflow experiments easier to start and easier to share.
+
+## License
+
+MIT. See [LICENSE](./LICENSE).

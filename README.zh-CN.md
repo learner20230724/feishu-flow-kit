@@ -166,3 +166,7 @@ npm test
 这个仓库应该保持实用。不要夸张 AI 话术，不要伪造产品成熟度，也不要用空泛的“agent 魔法”掩盖真实边界。
 
 目标很简单：让 Feishu workflow 实验更容易开始，也更容易公开分享。
+
+## License
+
+MIT，见 [LICENSE](./LICENSE)。

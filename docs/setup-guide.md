@@ -195,8 +195,37 @@ This repo currently uses a very small write path:
 
 So if create works but content append fails, the missing permission is usually on the content-write side rather than token fetch.
 
+## Token refresh handling notes
+
+The current repo does **not** run a background refresh worker.
+
+What it does today:
+- fetch a tenant access token only when a real outbound path needs it
+- reuse that token from a tiny in-memory cache until it is close to expiry
+- fetch again on the next real request after the cached token expires
+
+What that means in practice:
+- local development stays simple because there is no extra refresh loop to manage
+- restarting the process clears the cache, which is fine for this starter repo
+- multiple processes do not share token state
+- this is good enough for a small local webhook or demo workflow, but it is not meant to be the final shape for a higher-volume deployment
+
+Current boundaries:
+- no persistent token store
+- no dedicated refresh daemon or cron worker
+- no cross-process cache sharing
+- no concurrency dedupe yet if many fresh requests all need a token at the same moment
+
+If you want to keep this repo small, the recommended upgrade order is:
+1. keep the current lazy fetch + in-memory reuse path for local work
+2. add retry / re-fetch behavior around explicit token-expired API errors
+3. add concurrency dedupe so one refresh can fan out to multiple waiting requests
+4. only add persistence if you really have a multi-process or long-running deployment that benefits from it
+
+A practical rule for this repo:
+- do not build token refresh infrastructure before you have a workflow worth protecting
+- once outbound reply or doc creation becomes stable and frequent, then it makes sense to harden token lifecycle behavior
+
 ## Next setup docs to add
 
-- callback/webhook local debugging notes
-- token refresh handling notes
 - troubleshooting by API error pattern
