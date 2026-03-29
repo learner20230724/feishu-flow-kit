@@ -40,7 +40,7 @@ The current demo already covers a minimal but real pipeline:
 3. `src/core/parse-slash-command.ts` extracts the command surface
 4. `src/workflows/run-message-workflow.ts` generates a workflow result
 5. for `/doc`, a starter doc create draft can also be produced alongside the markdown outline
-6. if doc creation is enabled, a block-append step follows to populate the new doc with a minimal native docx body (headings, bullets, todos, paragraphs) and preserve basic inline markdown styling (bold, italic, inline code) inside text runs
+6. if doc creation is enabled, a block-append step follows to populate the new doc with a minimal native docx body (headings, bullets, todos, paragraphs) and preserve inline markdown styling (bold, italic, inline code, strikethrough, links) inside text runs, including heading text
 7. `src/index.ts` logs the result and prints a local draft reply
 
 That makes the repo more than a skeleton: it now has one end-to-end flow that can be inspected and extended.
