@@ -89,11 +89,13 @@ Feishu message event
 
 Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, and `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`.
 
-## Demo asset
+## Demo assets
 
 ![Local webhook to /doc workflow demo](./docs/demo-webhook-doc-flow.svg)
 
-A small static asset is included so the repo has a visible first-screen explanation even before someone runs the local server.
+![Local webhook to /table workflow demo](./docs/demo-webhook-table-flow.svg)
+
+Two small static assets are included so the repo has a visible first-screen explanation even before someone runs the local server.
 
 ## Local demo
 
@@ -107,6 +109,7 @@ By default the project runs in mock mode and loads `examples/mock-message-event.
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number npm run dev
 ```
 
 The current demo path is:
@@ -127,7 +130,8 @@ Starter commands available right now:
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
 - `examples/mock-doc-message-event.json` → `/doc` flow
-- `examples/mock-table-message-event.json` → `/table` flow
+- `examples/mock-table-message-event.json` → `/table` text-first flow
+- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode flow (`single_select` + `user` + `number`)
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 

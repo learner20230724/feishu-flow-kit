@@ -22,6 +22,7 @@ Examples:
 /table add roadmap refine onboarding copy
 /table add backlog improve webhook errors / owner_open_id=ou_xxx
 /table add sprint fix flaky webhook tests / estimate=5
+/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5
 ```
 
 Current parsing behavior:

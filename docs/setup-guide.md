@@ -63,6 +63,7 @@ Or switch the input file directly:
 
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number npm run dev
 ```
 
 What happens in that flow:
@@ -83,6 +84,16 @@ Starter commands available right now:
 - `/table add backlog item: improve webhook errors / owner=alex`
 - `/table add backlog improve webhook errors / owner_open_id=ou_xxx`
 - `/table add sprint fix flaky webhook tests / estimate=5`
+
+For a richer `/table` local run, use:
+
+```bash
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json \
+FEISHU_BITABLE_LIST_FIELD_MODE=single_select \
+FEISHU_BITABLE_OWNER_FIELD_MODE=user \
+FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number \
+npm run dev
+```
 
 This is small on purpose. It gives you one end-to-end slice to extend before adding real Feishu transport code.
 

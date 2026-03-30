@@ -1,0 +1,16 @@
+{
+  "type": "message.received",
+  "timestamp": "2026-03-30T18:45:00Z",
+  "tenantKey": "tenant_demo",
+  "message": {
+    "messageId": "msg_table_rich_1",
+    "chatId": "chat_demo",
+    "chatType": "group",
+    "senderId": "user_demo",
+    "text": "/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5"
+  },
+  "context": {
+    "source": "mock-example",
+    "notes": "Richer /table example showing single-select list, user owner payload, and numeric estimate"
+  }
+}

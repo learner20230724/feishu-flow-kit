@@ -93,7 +93,9 @@ Feishu 消息事件
 
 ![本地 webhook → /doc 工作流演示](./docs/demo-webhook-doc-flow.svg)
 
-仓库里附带了一个静态展示资产，确保即使没有本地运行，第一页也有可见的结构说明。
+![本地 webhook → /table 工作流演示](./docs/demo-webhook-table-flow.svg)
+
+仓库里附带了两张静态展示资产，确保即使没有本地运行，第一页也有可见的结构说明。
 
 ## 本地 demo
 
@@ -107,6 +109,7 @@ npm run dev
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number npm run dev
 ```
 
 当前 demo 路径是：
@@ -127,7 +130,8 @@ FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程
 - `examples/mock-doc-message-event.json` → `/doc` 流程
-- `examples/mock-table-message-event.json` → `/table` 流程
+- `examples/mock-table-message-event.json` → `/table` text-first 流程
+- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode 流程（`single_select` + `user` + `number`）
 
 这个 demo 刻意保持很小，但已经足够证明仓库能把真实输入跑过一条清楚、可读的本地链路。
 
