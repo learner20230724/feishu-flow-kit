@@ -40,8 +40,9 @@ The current demo already covers a minimal but real pipeline:
 3. `src/core/parse-slash-command.ts` extracts the command surface
 4. `src/workflows/run-message-workflow.ts` generates a workflow result
 5. for `/doc`, a starter doc create draft can also be produced alongside the markdown outline
-6. if doc creation is enabled, a block-append step follows to populate the new doc with a minimal native docx body (headings, bullets, todos, paragraphs) and preserve inline markdown styling (bold, italic, inline code, strikethrough, links) inside text runs, including heading text
-7. `src/index.ts` logs the result and prints a local draft reply
+6. for `/table`, a starter Bitable create-record request draft can also be produced (local-first)
+7. if doc creation is enabled, a block-append step follows to populate the new doc with a minimal native docx body (headings, bullets, todos, paragraphs) and preserve inline markdown styling (bold, italic, inline code, strikethrough, links) inside text runs, including heading text
+8. `src/index.ts` logs the result and prints a local draft reply
 
 That makes the repo more than a skeleton: it now has one end-to-end flow that can be inspected and extended.
 
@@ -59,6 +60,7 @@ This repo should avoid that by keeping boundaries simple:
 - upgrade token caching beyond the current tiny in-memory starter cache
 - append richer block content after the initial doc create request, instead of stopping at document creation
 - add retry helpers once a real outbound API path exists
+- add a minimal `/table` outbound write path once a real app_token/table_id setup is available
 - widen payload support beyond the current narrow message event slice
 
 ## Current webhook path
@@ -80,7 +82,7 @@ This keeps the current implementation honest: it is useful enough to test the re
 
 The current automated checks cover:
 - slash command parsing
-- demo workflow behavior for `/todo` and `/doc`
+- demo workflow behavior for `/todo`, `/doc`, and `/table`
 - webhook payload adaptation
 - webhook signature generation and verification
 - outbound reply draft generation

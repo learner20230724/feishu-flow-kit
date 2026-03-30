@@ -70,19 +70,20 @@ Feishu 消息事件
          │ 适配原始 payload
          ▼
 ┌───────────────────┐
-│  slash-command    │  ← /todo ...  /doc ...
+│  slash-command    │  ← /todo ...  /doc ...  /table ...
 │     解析器        │
 └────────┬──────────┘
          │ 路由到 workflow
-    ┌────┴────┐
-    ▼         ▼
- /todo      /doc
-  流程       流程
-    │         │
-    │    创建 Feishu 文档
-    │    + 追加正文 blocks
-    ▼         ▼
- draft reply JSON
+    ┌────┴──────────┬────┐
+    ▼               ▼    ▼
+ /todo            /doc  /table
+  流程             流程   流程
+    │               │      │
+    │          创建 Feishu 文档
+    │          + 追加正文 blocks
+    │                      │
+    ▼               ▼      ▼
+ draft reply JSON   doc draft   bitable create-record draft
   （可选：真实发送 Feishu 回复）
 ```
 
@@ -105,23 +106,26 @@ npm run dev
 
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
 ```
 
 当前 demo 路径是：
 
 1. 加载带类型的配置
 2. 读取一条 mock Feishu 消息事件
-3. 解析 `/todo ...` 或 `/doc ...` 这样的 slash command
+3. 解析 `/todo ...`、`/doc ...` 或 `/table ...` 这样的 slash command
 4. 运行最小 workflow
 5. 输出 reply draft
 
 目前仓库里已经可直接演示的命令：
 - `/todo ship webhook adapter`
 - `/doc weekly launch review`
+- `/table add backlog item: improve webhook errors / owner=alex`
 
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程
 - `examples/mock-doc-message-event.json` → `/doc` 流程
+- `examples/mock-table-message-event.json` → `/table` 流程
 
 这个 demo 刻意保持很小，但已经足够证明仓库能把真实输入跑过一条清楚、可读的本地链路。
 
@@ -161,7 +165,7 @@ npm test
 
 当前测试覆盖：
 - slash command 解析
-- `/todo` 与 `/doc` 的 demo workflow 行为
+- `/todo`、`/doc` 与 `/table` 的 demo workflow 行为
 - webhook payload 适配
 - webhook 签名生成与校验
 - outbound reply request draft 生成
@@ -174,6 +178,7 @@ npm test
 仓库里已经能直接跑的：
 - `/todo ...` → 把请求整理成一个简短 action-list draft
 - `/doc ...` → 把主题转成 markdown 风格 outline，并可进一步创建 Feishu 文档、追加最小原生 docx 正文（headings / bullets / todos / paragraphs）
+- `/table ...` → 把一段短的 record 请求转成 Bitable create-record draft（本地优先，真实写入显式 opt-in）
 
 下一批比较合适的方向：
 - 将选定的飞书内容同步到本地 markdown 工作区

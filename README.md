@@ -70,19 +70,20 @@ Feishu message event
          │ adapt raw payload
          ▼
 ┌───────────────────┐
-│  slash-command    │  ← /todo ...  /doc ...
+│  slash-command    │  ← /todo ...  /doc ...  /table ...
 │     parser        │
 └────────┬──────────┘
          │ route to workflow
-    ┌────┴────┐
-    ▼         ▼
- /todo      /doc
-  flow       flow
-    │         │
-    │    create Feishu doc
-    │    + append body blocks
-    ▼         ▼
- draft reply JSON
+    ┌────┴──────────┬────┐
+    ▼               ▼    ▼
+ /todo            /doc  /table
+  flow             flow   flow
+    │               │      │
+    │          create Feishu doc
+    │          + append body blocks
+    │                      │
+    ▼               ▼      ▼
+ draft reply JSON   doc draft   bitable create-record draft
   (+ optional outbound Feishu reply)
 ```
 
@@ -105,23 +106,26 @@ By default the project runs in mock mode and loads `examples/mock-message-event.
 
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
 ```
 
 The current demo path is:
 
 1. load typed config
 2. read a mock Feishu message event
-3. parse a slash command like `/todo ...` or `/doc ...`
+3. parse a slash command like `/todo ...`, `/doc ...`, or `/table ...`
 4. run a minimal workflow
 5. print a draft reply
 
 Starter commands available right now:
 - `/todo ship webhook adapter`
 - `/doc weekly launch review`
+- `/table add backlog item: improve webhook errors / owner=alex`
 
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
 - `examples/mock-doc-message-event.json` → `/doc` flow
+- `examples/mock-table-message-event.json` → `/table` flow
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 
@@ -161,7 +165,7 @@ npm test
 
 The current test set covers:
 - slash command parsing
-- demo message workflow behavior for `/todo` and `/doc`
+- demo message workflow behavior for `/todo`, `/doc`, and `/table`
 - webhook payload adaptation
 - webhook signature generation and validation
 - outbound reply request draft generation
@@ -174,6 +178,7 @@ The current test set covers:
 Already runnable in the repo:
 - `/todo ...` → turns a request into a small action-list draft
 - `/doc ...` → turns a topic into a markdown-style outline, then can create a Feishu doc and append a minimal native docx body (headings / bullets / todos / paragraphs)
+- `/table ...` → turns a short record request into a Bitable create-record draft (local-first, opt-in outbound write)
 
 Still good next candidates:
 - sync selected Feishu content into a local markdown workspace

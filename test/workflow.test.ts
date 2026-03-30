@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { buildDocCreateDraft } from '../src/adapters/build-doc-create-draft.ts';
+import { buildTableRecordDraft } from '../src/adapters/build-table-record-draft.ts';
 import { loadConfig } from '../src/config/load-config.ts';
 import { parseSlashCommand } from '../src/core/parse-slash-command.ts';
 import { runMessageWorkflow } from '../src/workflows/run-message-workflow.ts';
@@ -90,6 +91,54 @@ test('runMessageWorkflow returns doc outline draft for /doc', () => {
   assert.equal(result.docMarkdown, result.replyText);
   assert.equal(result.hasDocCreateDraft, true);
   assert.deepEqual(result.tags, ['doc', 'demo']);
+});
+
+test('runMessageWorkflow returns table draft for /table add', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_1',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add backlog item: improve webhook errors / owner=alex',
+    },
+  };
+
+  const result = runMessageWorkflow(event);
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /Table workflow draft/);
+  assert.match(result.replyText, /list: backlog/);
+  assert.match(result.replyText, /title: improve webhook errors/);
+  assert.match(result.replyText, /details: item/);
+  assert.match(result.replyText, /owner: alex/);
+  assert.deepEqual(result.tags, ['table', 'demo']);
+  assert.equal(result.hasTableRecordDraft, true);
+  assert.equal(result.tableRecordTitle, 'improve webhook errors');
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'improve webhook errors',
+    List: 'backlog',
+    SourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    Details: 'item',
+    Owner: 'alex',
+  });
+});
+
+test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
+  const draft = buildTableRecordDraft({
+    listName: 'backlog',
+    title: 'improve webhook errors',
+    details: 'item',
+    owner: 'alex',
+    sourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+  });
+
+  assert.equal(draft.endpoint, '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records');
+  assert.equal(draft.method, 'POST');
+  assert.equal(draft.body.fields.Title, 'improve webhook errors');
+  assert.equal(draft.notes.length, 2);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {
