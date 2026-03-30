@@ -2,6 +2,7 @@ export type TableListFieldMode = 'text' | 'single_select';
 export type TableOwnerFieldMode = 'text' | 'user';
 export type TableEstimateFieldMode = 'text' | 'number';
 export type TableDueFieldMode = 'text' | 'date' | 'datetime';
+export type TableDoneFieldMode = 'text' | 'checkbox';
 
 export interface TableSingleSelectFieldValue {
   name: string;
@@ -13,7 +14,7 @@ export interface TableUserFieldMemberValue {
 
 export type TableUserFieldValue = TableUserFieldMemberValue[];
 
-export type TableRecordFieldValue = string | number | TableSingleSelectFieldValue | TableUserFieldValue;
+export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableUserFieldValue;
 
 export interface TableRecordDraft {
   endpoint: string;
@@ -32,6 +33,7 @@ export interface TableCommandDraftInput {
   ownerOpenId?: string;
   estimate?: string;
   due?: string;
+  done?: string;
   sourceCommand: string;
 }
 
@@ -40,6 +42,7 @@ export interface BuildTableRecordDraftOptions {
   ownerFieldMode?: TableOwnerFieldMode;
   estimateFieldMode?: TableEstimateFieldMode;
   dueFieldMode?: TableDueFieldMode;
+  doneFieldMode?: TableDoneFieldMode;
 }
 
 function buildListFieldValue(
@@ -131,6 +134,26 @@ function buildDueFieldValue(
   return input.due;
 }
 
+function parseDoneAsCheckbox(value: string) {
+  const normalized = value.trim().toLowerCase();
+  if (['true', '1', 'yes', 'y', 'done', 'checked'].includes(normalized)) return true;
+  if (['false', '0', 'no', 'n', 'todo', 'open', 'unchecked'].includes(normalized)) return false;
+  return undefined;
+}
+
+function buildDoneFieldValue(
+  input: TableCommandDraftInput,
+  mode: TableDoneFieldMode,
+): TableRecordFieldValue | undefined {
+  if (!input.done) return undefined;
+
+  if (mode === 'checkbox') {
+    return parseDoneAsCheckbox(input.done);
+  }
+
+  return input.done;
+}
+
 export function buildTableRecordDraft(
   input: TableCommandDraftInput,
   options: BuildTableRecordDraftOptions = {},
@@ -139,6 +162,7 @@ export function buildTableRecordDraft(
   const ownerFieldMode = options.ownerFieldMode ?? 'text';
   const estimateFieldMode = options.estimateFieldMode ?? 'text';
   const dueFieldMode = options.dueFieldMode ?? 'text';
+  const doneFieldMode = options.doneFieldMode ?? 'text';
   const fields: Record<string, TableRecordFieldValue> = {
     Title: input.title,
     List: buildListFieldValue(input.listName, listFieldMode),
@@ -164,6 +188,11 @@ export function buildTableRecordDraft(
     fields.Due = dueFieldValue;
   }
 
+  const doneFieldValue = buildDoneFieldValue(input, doneFieldMode);
+  if (doneFieldValue !== undefined) {
+    fields.Done = doneFieldValue;
+  }
+
   const notes = [
     'Local-first draft only. Replace {app_token} and {table_id} before wiring to a real Bitable write.',
   ];
@@ -184,6 +213,9 @@ export function buildTableRecordDraft(
   if (dueFieldMode === 'datetime') {
     widenedModes.push('Due is emitted as a datetime timestamp payload (milliseconds)');
   }
+  if (doneFieldMode === 'checkbox') {
+    widenedModes.push('Done is emitted as a checkbox payload (boolean)');
+  }
 
   if (widenedModes.length > 0) {
     notes.push(
@@ -191,7 +223,7 @@ export function buildTableRecordDraft(
     );
   } else {
     notes.push(
-      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, SourceCommand.',
+      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, Done, SourceCommand.',
     );
   }
 

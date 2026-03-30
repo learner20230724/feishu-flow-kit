@@ -80,6 +80,7 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
         bitableOwnerFieldMode: config.bitableOwnerFieldMode,
         bitableEstimateFieldMode: config.bitableEstimateFieldMode,
         bitableDueFieldMode: config.bitableDueFieldMode,
+        bitableDoneFieldMode: config.bitableDoneFieldMode,
       });
 
       logger.info('webhook request handled', {

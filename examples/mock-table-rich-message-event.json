@@ -7,10 +7,10 @@
     "chatId": "chat_demo",
     "chatType": "group",
     "senderId": "user_demo",
-    "text": "/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z"
+    "text": "/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true"
   },
   "context": {
     "source": "mock-example",
-    "notes": "Richer /table example showing single-select list, user owner payload, numeric estimate, and datetime due field"
+    "notes": "Richer /table example showing single-select list, user owner payload, numeric estimate, datetime due field, and checkbox done field"
   }
 }
