@@ -149,6 +149,8 @@ Current boundaries:
 - tenant token reuse currently relies on a tiny in-memory cache only; there is still no persistence, refresh worker, or concurrency dedupe strategy
 - only a narrow subset of message payload fields is normalized
 
+If you want a concrete request/response example before reading the code, see [`/table` webhook success / error demo](./table-webhook-success-error-demo.md).
+
 This is still a starter path, not a production webhook implementation.
 
 ## Development strategy

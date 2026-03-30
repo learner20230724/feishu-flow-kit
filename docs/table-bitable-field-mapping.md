@@ -14,6 +14,8 @@ Supported starter command:
 /table add <list> <title...> / owner=<name>
 ```
 
+If you want to see the current handler behavior end-to-end, including one valid webhook response and one invalid-payload failure, see [`/table` webhook success / error demo](./table-webhook-success-error-demo.md).
+
 Examples:
 
 ```text
