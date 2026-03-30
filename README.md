@@ -218,6 +218,10 @@ This repo should stay practical. No inflated AI language, no fake product claims
 
 The goal is to make Feishu workflow experiments easier to start and easier to share.
 
+## Star history
+
+[![Star History Chart](https://api.star-history.com/svg?repos=learner20230724/feishu-flow-kit&type=Date)](https://star-history.com/#learner20230724/feishu-flow-kit&Date)
+
 ## License
 
 MIT. See [LICENSE](./LICENSE).

@@ -218,6 +218,10 @@ npm test
 
 目标很简单：让 Feishu workflow 实验更容易开始，也更容易公开分享。
 
+## Star history
+
+[![Star History Chart](https://api.star-history.com/svg?repos=learner20230724/feishu-flow-kit&type=Date)](https://star-history.com/#learner20230724/feishu-flow-kit&Date)
+
 ## License
 
 MIT，见 [LICENSE](./LICENSE)。
