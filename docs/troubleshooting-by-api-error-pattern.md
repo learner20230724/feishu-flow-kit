@@ -180,8 +180,8 @@ What to check:
 - target fields match the current starter assumptions: `Title`, `List`, optional `Details`, optional `Owner`, `SourceCommand`
 
 Starter mapping caveat:
-- the current repo assumes text-compatible fields only
-- it does not yet coerce user / select / date / number / linked-record fields into richer Feishu payload shapes
+- the current repo can now widen `List`, `Owner`, `Estimate`, `Due`, `Done`, `Attachment`, and `LinkedRecords` into richer Feishu payload shapes via config
+- it is still intentionally schema-unaware, so field names, localized column titles, option existence, linked-table targets, and record-id validity are not prevalidated before the real create-record call
 
 If you need the exact current assumptions, see:
 - [`table-bitable-field-mapping.md`](./table-bitable-field-mapping.md)

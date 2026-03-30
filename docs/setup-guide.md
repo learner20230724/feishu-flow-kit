@@ -151,6 +151,8 @@ Current boundaries:
 
 If you want a concrete request/response example before reading the code, see [`/table` webhook success / error demo](./table-webhook-success-error-demo.md). The exact JSON samples are also checked into `examples/webhook-table-rich-event.json`, `examples/webhook-table-rich-response.json`, `examples/webhook-invalid-payload.json`, and `examples/webhook-invalid-response.json`.
 
+If you are already past the happy path and need representative Bitable write failures, see [`/table` API error fixture pack](./table-api-error-fixtures.md). The fixture files live in `examples/table-api-error-field-not-found.json`, `examples/table-api-error-type-mismatch.json`, and `examples/table-api-error-permission-denied.json`.
+
 This is still a starter path, not a production webhook implementation.
 
 ## Development strategy
@@ -299,4 +301,6 @@ A practical rule for this repo:
 
 - [Architecture overview](./overview.md)
 - [Table / Bitable field mapping notes](./table-bitable-field-mapping.md)
+- [`/table` webhook success / error demo](./table-webhook-success-error-demo.md)
+- [`/table` API error fixture pack](./table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./troubleshooting-by-api-error-pattern.md)

@@ -137,6 +137,11 @@ FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABL
 - `examples/mock-doc-message-event.json` → `/doc` 流程
 - `examples/mock-table-message-event.json` → `/table` text-first 流程
 - `examples/mock-table-rich-message-event.json` → `/table` richer field-mode 流程（`multi_select` + `user` + `number` + `datetime` + `checkbox` + `attachment` + `linked_record`）
+- `examples/webhook-table-rich-event.json` + `examples/webhook-table-rich-response.json` → fixture-backed `/table` webhook 成功示例
+- `examples/webhook-invalid-payload.json` + `examples/webhook-invalid-response.json` → fixture-backed invalid webhook 失败示例
+- `examples/table-api-error-field-not-found.json` → fixture-backed 字段不存在失败示例
+- `examples/table-api-error-type-mismatch.json` → fixture-backed 字段类型不匹配失败示例
+- `examples/table-api-error-permission-denied.json` → fixture-backed Bitable 写权限失败示例
 
 这个 demo 刻意保持很小，但已经足够证明仓库能把真实输入跑过一条清楚、可读的本地链路。
 
@@ -212,6 +217,7 @@ npm test
 - [Architecture overview](./docs/overview.md)
 - [`/table` 字段映射说明](./docs/table-bitable-field-mapping.md)
 - [`/table` webhook 成功 / 失败示例](./docs/table-webhook-success-error-demo.md)
+- [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)
 - [GitHub 仓库元数据](./docs/github-repo-meta.md)
 - [无浏览器环境下发布到 GitHub](./docs/publish-to-github.md)

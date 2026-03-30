@@ -139,6 +139,9 @@ Example mock inputs:
 - `examples/mock-table-rich-message-event.json` → `/table` richer field-mode flow (`multi_select` + `user` + `number` + `datetime` + `checkbox` + `attachment` + `linked_record`)
 - `examples/webhook-table-rich-event.json` + `examples/webhook-table-rich-response.json` → fixture-backed `/table` webhook success sample
 - `examples/webhook-invalid-payload.json` + `examples/webhook-invalid-response.json` → fixture-backed invalid webhook failure sample
+- `examples/table-api-error-field-not-found.json` → fixture-backed missing-column failure sample
+- `examples/table-api-error-type-mismatch.json` → fixture-backed field-type mismatch sample
+- `examples/table-api-error-permission-denied.json` → fixture-backed Bitable write-permission failure sample
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 
@@ -214,6 +217,7 @@ You can always add deployment pieces later.
 - [Architecture overview](./docs/overview.md)
 - [Table / Bitable field mapping notes](./docs/table-bitable-field-mapping.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
+- [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
 - [GitHub repo metadata](./docs/github-repo-meta.md)
 - [Publishing to GitHub (no-browser)](./docs/publish-to-github.md)
