@@ -51,6 +51,14 @@ test('loadConfig parses FEISHU_BITABLE_ESTIMATE_FIELD_MODE', () => {
   assert.equal(config.bitableEstimateFieldMode, 'number');
 });
 
+test('loadConfig parses FEISHU_BITABLE_DUE_FIELD_MODE', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_DUE_FIELD_MODE: 'datetime',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableDueFieldMode, 'datetime');
+});
+
 test('runMessageWorkflow returns noop for non-command messages', () => {
   const event: FeishuMessageEvent = {
     type: 'message.received',
@@ -248,6 +256,66 @@ test('runMessageWorkflow can emit Estimate as a numeric field payload', () => {
   });
 });
 
+test('runMessageWorkflow can emit Due as a date field payload', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_5',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add sprint fix flaky webhook tests / due=2026-04-01',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableDueFieldMode: 'date',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /due: 2026-04-01/);
+  assert.match(result.replyText, /due field mode: date/);
+  assert.match(result.replyText, /Due: 1775001600000/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'fix flaky webhook tests',
+    List: 'sprint',
+    SourceCommand: '/table add sprint fix flaky webhook tests / due=2026-04-01',
+    Due: 1775001600000,
+  });
+});
+
+test('runMessageWorkflow can emit Due as a datetime field payload', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_6',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add sprint fix flaky webhook tests / due=2026-04-01T09:30:00Z',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableDueFieldMode: 'datetime',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /due: 2026-04-01T09:30:00Z/);
+  assert.match(result.replyText, /due field mode: datetime/);
+  assert.match(result.replyText, /Due: 1775035800000/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'fix flaky webhook tests',
+    List: 'sprint',
+    SourceCommand: '/table add sprint fix flaky webhook tests / due=2026-04-01T09:30:00Z',
+    Due: 1775035800000,
+  });
+});
+
 test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
   const draft = buildTableRecordDraft({
     listName: 'backlog',
@@ -320,6 +388,40 @@ test('buildTableRecordDraft can emit Estimate as number payload', () => {
 
   assert.equal(draft.body.fields.Estimate, 8);
   assert.match(draft.notes[1] ?? '', /numeric payload/);
+});
+
+test('buildTableRecordDraft can emit Due as date payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'sprint',
+      title: 'fix flaky webhook tests',
+      due: '2026-04-01',
+      sourceCommand: '/table add sprint fix flaky webhook tests / due=2026-04-01',
+    },
+    {
+      dueFieldMode: 'date',
+    },
+  );
+
+  assert.equal(draft.body.fields.Due, 1775001600000);
+  assert.match(draft.notes[1] ?? '', /UTC date timestamp payload/);
+});
+
+test('buildTableRecordDraft can emit Due as datetime payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'sprint',
+      title: 'fix flaky webhook tests',
+      due: '2026-04-01T09:30:00Z',
+      sourceCommand: '/table add sprint fix flaky webhook tests / due=2026-04-01T09:30:00Z',
+    },
+    {
+      dueFieldMode: 'datetime',
+    },
+  );
+
+  assert.equal(draft.body.fields.Due, 1775035800000);
+  assert.match(draft.notes[1] ?? '', /datetime timestamp payload/);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {

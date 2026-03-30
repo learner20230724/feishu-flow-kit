@@ -465,6 +465,117 @@ test('handleWebhookPayload creates a Feishu table record with Owner user payload
   }
 });
 
+test('handleWebhookPayload creates a Feishu table record with Due datetime payload when configured', async () => {
+  const originalFetch = globalThis.fetch;
+  const requests: Array<{ url: string; body: string }> = [];
+
+  globalThis.fetch = (async (input, init) => {
+    const url = String(input);
+    const body = String(init?.body ?? '');
+    requests.push({ url, body });
+
+    if (url.includes('/auth/v3/tenant_access_token/internal')) {
+      return new Response(
+        JSON.stringify({
+          code: 0,
+          tenant_access_token: 'tenant_token_demo',
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    }
+
+    if (url.includes('/bitable/v1/apps/app_demo_token/tables/tbl_demo_id/records')) {
+      return new Response(
+        JSON.stringify({
+          code: 0,
+          data: {
+            record: {
+              record_id: 'rec_demo_due',
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        code: 0,
+        data: {
+          message_id: 'om_reply_demo',
+        },
+      }),
+      {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+        },
+      },
+    );
+  }) as typeof fetch;
+
+  try {
+    const result = await handleWebhookPayload(
+      {
+        header: {
+          event_type: 'im.message.receive_v1',
+          create_time: '2026-03-30T09:45:00Z',
+          tenant_key: 'tenant_demo',
+        },
+        event: {
+          sender: {
+            sender_id: {
+              open_id: 'ou_demo_sender',
+            },
+          },
+          message: {
+            message_id: 'om_table_due_demo',
+            chat_id: 'oc_demo_chat',
+            chat_type: 'p2p',
+            content: JSON.stringify({ text: '/table add sprint fix flaky webhook tests / due=2026-04-01T09:30:00Z' }),
+            create_time: '2026-03-30T09:45:00Z',
+          },
+        },
+      },
+      {
+        appId: 'cli_demo_app_id',
+        appSecret: 'demo_app_secret',
+        enableOutboundReply: false,
+        enableDocCreate: false,
+        enableTableCreate: true,
+        bitableAppToken: 'app_demo_token',
+        bitableTableId: 'tbl_demo_id',
+        bitableDueFieldMode: 'datetime',
+      },
+    );
+
+    assert.equal(result.statusCode, 200);
+    assert.ok(requests.length >= 1);
+    assert.match(requests[requests.length - 1]?.url ?? '', /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records/);
+    assert.match(requests[requests.length - 1]?.body ?? '', /"Due":1775035800000/);
+    assert.equal(result.body.tableCreate.attempted, true);
+    assert.equal(result.body.tableCreate.response.recordId, 'rec_demo_due');
+    assert.deepEqual(result.body.tableRecordDraft.body.fields, {
+      Title: 'fix flaky webhook tests',
+      List: 'sprint',
+      SourceCommand: '/table add sprint fix flaky webhook tests / due=2026-04-01T09:30:00Z',
+      Due: 1775035800000,
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('handleWebhookPayload reports outbound reply as skipped when sender is disabled', async () => {
   const result = await handleWebhookPayload(
     {

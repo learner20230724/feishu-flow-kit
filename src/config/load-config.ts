@@ -3,6 +3,7 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 export type TableListFieldMode = 'text' | 'single_select';
 export type TableOwnerFieldMode = 'text' | 'user';
 export type TableEstimateFieldMode = 'text' | 'number';
+export type TableDueFieldMode = 'text' | 'date' | 'datetime';
 
 export interface AppConfig {
   appId: string;
@@ -22,6 +23,7 @@ export interface AppConfig {
   bitableListFieldMode: TableListFieldMode;
   bitableOwnerFieldMode: TableOwnerFieldMode;
   bitableEstimateFieldMode: TableEstimateFieldMode;
+  bitableDueFieldMode: TableDueFieldMode;
 }
 
 const LOG_LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
@@ -77,6 +79,12 @@ function parseTableEstimateFieldMode(value: string | undefined): TableEstimateFi
   throw new Error(`Invalid FEISHU_BITABLE_ESTIMATE_FIELD_MODE: ${value}`);
 }
 
+function parseTableDueFieldMode(value: string | undefined): TableDueFieldMode {
+  if (!value) return 'text';
+  if (value === 'text' || value === 'date' || value === 'datetime') return value;
+  throw new Error(`Invalid FEISHU_BITABLE_DUE_FIELD_MODE: ${value}`);
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     appId: env.FEISHU_APP_ID ?? '',
@@ -100,5 +108,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     bitableListFieldMode: parseTableListFieldMode(env.FEISHU_BITABLE_LIST_FIELD_MODE),
     bitableOwnerFieldMode: parseTableOwnerFieldMode(env.FEISHU_BITABLE_OWNER_FIELD_MODE),
     bitableEstimateFieldMode: parseTableEstimateFieldMode(env.FEISHU_BITABLE_ESTIMATE_FIELD_MODE),
+    bitableDueFieldMode: parseTableDueFieldMode(env.FEISHU_BITABLE_DUE_FIELD_MODE),
   };
 }

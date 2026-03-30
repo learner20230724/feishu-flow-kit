@@ -1,6 +1,7 @@
 export type TableListFieldMode = 'text' | 'single_select';
 export type TableOwnerFieldMode = 'text' | 'user';
 export type TableEstimateFieldMode = 'text' | 'number';
+export type TableDueFieldMode = 'text' | 'date' | 'datetime';
 
 export interface TableSingleSelectFieldValue {
   name: string;
@@ -30,6 +31,7 @@ export interface TableCommandDraftInput {
   owner?: string;
   ownerOpenId?: string;
   estimate?: string;
+  due?: string;
   sourceCommand: string;
 }
 
@@ -37,6 +39,7 @@ export interface BuildTableRecordDraftOptions {
   listFieldMode?: TableListFieldMode;
   ownerFieldMode?: TableOwnerFieldMode;
   estimateFieldMode?: TableEstimateFieldMode;
+  dueFieldMode?: TableDueFieldMode;
 }
 
 function buildListFieldValue(
@@ -84,6 +87,50 @@ function buildEstimateFieldValue(
   return input.estimate;
 }
 
+function parseDueAsDateTimestamp(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+  if (!match) return undefined;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const timestamp = Date.UTC(year, month - 1, day, 0, 0, 0, 0);
+  const parsed = new Date(timestamp);
+
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    return undefined;
+  }
+
+  return timestamp;
+}
+
+function parseDueAsDatetimeTimestamp(value: string) {
+  const parsed = Date.parse(value.trim());
+  if (!Number.isFinite(parsed)) return undefined;
+  return parsed;
+}
+
+function buildDueFieldValue(
+  input: TableCommandDraftInput,
+  mode: TableDueFieldMode,
+): TableRecordFieldValue | undefined {
+  if (!input.due) return undefined;
+
+  if (mode === 'date') {
+    return parseDueAsDateTimestamp(input.due);
+  }
+
+  if (mode === 'datetime') {
+    return parseDueAsDatetimeTimestamp(input.due);
+  }
+
+  return input.due;
+}
+
 export function buildTableRecordDraft(
   input: TableCommandDraftInput,
   options: BuildTableRecordDraftOptions = {},
@@ -91,6 +138,7 @@ export function buildTableRecordDraft(
   const listFieldMode = options.listFieldMode ?? 'text';
   const ownerFieldMode = options.ownerFieldMode ?? 'text';
   const estimateFieldMode = options.estimateFieldMode ?? 'text';
+  const dueFieldMode = options.dueFieldMode ?? 'text';
   const fields: Record<string, TableRecordFieldValue> = {
     Title: input.title,
     List: buildListFieldValue(input.listName, listFieldMode),
@@ -111,6 +159,11 @@ export function buildTableRecordDraft(
     fields.Estimate = estimateFieldValue;
   }
 
+  const dueFieldValue = buildDueFieldValue(input, dueFieldMode);
+  if (dueFieldValue !== undefined) {
+    fields.Due = dueFieldValue;
+  }
+
   const notes = [
     'Local-first draft only. Replace {app_token} and {table_id} before wiring to a real Bitable write.',
   ];
@@ -125,6 +178,12 @@ export function buildTableRecordDraft(
   if (estimateFieldMode === 'number') {
     widenedModes.push('Estimate is emitted as a numeric payload');
   }
+  if (dueFieldMode === 'date') {
+    widenedModes.push('Due is emitted as a UTC date timestamp payload (milliseconds)');
+  }
+  if (dueFieldMode === 'datetime') {
+    widenedModes.push('Due is emitted as a datetime timestamp payload (milliseconds)');
+  }
 
   if (widenedModes.length > 0) {
     notes.push(
@@ -132,7 +191,7 @@ export function buildTableRecordDraft(
     );
   } else {
     notes.push(
-      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, SourceCommand.',
+      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, SourceCommand.',
     );
   }
 

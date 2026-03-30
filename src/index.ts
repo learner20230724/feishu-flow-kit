@@ -26,6 +26,7 @@ async function main() {
     bitableListFieldMode: config.bitableListFieldMode,
     bitableOwnerFieldMode: config.bitableOwnerFieldMode,
     bitableEstimateFieldMode: config.bitableEstimateFieldMode,
+    bitableDueFieldMode: config.bitableDueFieldMode,
   });
 
   if (config.mockMode) {
@@ -35,6 +36,7 @@ async function main() {
       bitableListFieldMode: config.bitableListFieldMode,
       bitableOwnerFieldMode: config.bitableOwnerFieldMode,
       bitableEstimateFieldMode: config.bitableEstimateFieldMode,
+      bitableDueFieldMode: config.bitableDueFieldMode,
     });
 
     logger.info('mock event loaded', {

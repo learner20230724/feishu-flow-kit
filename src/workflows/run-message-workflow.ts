@@ -3,6 +3,7 @@ import { parseSlashCommand } from '../core/parse-slash-command.js';
 import {
   buildTableRecordDraft,
   type TableCommandDraftInput,
+  type TableDueFieldMode,
   type TableEstimateFieldMode,
   type TableListFieldMode,
   type TableOwnerFieldMode,
@@ -27,6 +28,7 @@ export interface WorkflowOptions {
   bitableListFieldMode?: TableListFieldMode;
   bitableOwnerFieldMode?: TableOwnerFieldMode;
   bitableEstimateFieldMode?: TableEstimateFieldMode;
+  bitableDueFieldMode?: TableDueFieldMode;
 }
 
 function summarizeTodoRequest(argsText: string) {
@@ -100,6 +102,7 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
   let owner: string | undefined;
   let ownerOpenId: string | undefined;
   let estimate: string | undefined;
+  let due: string | undefined;
 
   for (const opt of options) {
     const kv = parseKeyValueOption(opt);
@@ -107,6 +110,7 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
     if (kv.key === 'owner') owner = kv.value;
     if (kv.key === 'owner_open_id') ownerOpenId = kv.value;
     if (kv.key === 'estimate') estimate = kv.value;
+    if (kv.key === 'due') due = kv.value;
   }
 
   let title = first;
@@ -131,6 +135,7 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
     owner,
     ownerOpenId,
     estimate,
+    due,
     sourceCommand: `/table ${argsText}`.trim(),
   };
 }
@@ -146,6 +151,7 @@ function formatTableDraftReply(
   listFieldMode: TableListFieldMode,
   ownerFieldMode: TableOwnerFieldMode,
   estimateFieldMode: TableEstimateFieldMode,
+  dueFieldMode: TableDueFieldMode,
 ) {
   const lines: string[] = ['Table workflow draft'];
 
@@ -155,9 +161,12 @@ function formatTableDraftReply(
   if (input.owner) lines.push(`- owner: ${input.owner}`);
   if (input.ownerOpenId) lines.push(`- owner_open_id: ${input.ownerOpenId}`);
   if (input.estimate) lines.push(`- estimate: ${input.estimate}`);
+  if (input.due) lines.push(`- due: ${input.due}`);
   if (listFieldMode === 'single_select') lines.push('- list field mode: single_select');
   if (ownerFieldMode === 'user') lines.push('- owner field mode: user');
   if (estimateFieldMode === 'number') lines.push('- estimate field mode: number');
+  if (dueFieldMode === 'date') lines.push('- due field mode: date');
+  if (dueFieldMode === 'datetime') lines.push('- due field mode: datetime');
 
   lines.push('');
   lines.push('Draft fields:');
@@ -220,10 +229,12 @@ export function runMessageWorkflow(
           '- /table add <list> <title...> / owner=<name>',
           '- /table add <list> <title...> / owner_open_id=<open_id>',
           '- /table add <list> <title...> / estimate=<number-or-text>',
+          '- /table add <list> <title...> / due=<YYYY-MM-DD-or-ISO8601>',
           '',
           'Example:',
           '- /table add backlog item: improve webhook errors / owner=alex / estimate=3',
           '- /table add backlog improve webhook errors / owner_open_id=ou_xxx',
+          '- /table add sprint fix flaky webhook tests / due=2026-04-01',
         ].join('\n'),
         tags: ['table', 'demo', 'usage'],
       };
@@ -232,10 +243,12 @@ export function runMessageWorkflow(
     const listFieldMode = options.bitableListFieldMode ?? 'text';
     const ownerFieldMode = options.bitableOwnerFieldMode ?? 'text';
     const estimateFieldMode = options.bitableEstimateFieldMode ?? 'text';
+    const dueFieldMode = options.bitableDueFieldMode ?? 'text';
     const draft = buildTableRecordDraft(input, {
       listFieldMode,
       ownerFieldMode,
       estimateFieldMode,
+      dueFieldMode,
     });
 
     return {
@@ -246,6 +259,7 @@ export function runMessageWorkflow(
         listFieldMode,
         ownerFieldMode,
         estimateFieldMode,
+        dueFieldMode,
       ),
       tags: ['table', 'demo'],
       hasTableRecordDraft: true,
