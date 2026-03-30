@@ -226,6 +226,7 @@ A practical rule for this repo:
 - do not build token refresh infrastructure before you have a workflow worth protecting
 - once outbound reply or doc creation becomes stable and frequent, then it makes sense to harden token lifecycle behavior
 
-## Next setup docs to add
+## Related docs
 
-- troubleshooting by API error pattern
+- [Architecture overview](./overview.md)
+- [Troubleshooting by API error pattern](./troubleshooting-by-api-error-pattern.md)

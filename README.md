@@ -187,6 +187,13 @@ For early-stage tools, local-first keeps iteration fast:
 
 You can always add deployment pieces later.
 
+## Docs
+
+- [Setup guide](./docs/setup-guide.md)
+- [Architecture overview](./docs/overview.md)
+- [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
+- [GitHub repo metadata](./docs/github-repo-meta.md)
+
 ## Roadmap
 
 - [x] create minimal TypeScript project skeleton

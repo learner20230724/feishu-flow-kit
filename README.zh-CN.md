@@ -187,6 +187,13 @@ npm test
 
 后续如果需要，再补 deployment pieces 就可以。
 
+## 文档
+
+- [Setup guide](./docs/setup-guide.md)
+- [Architecture overview](./docs/overview.md)
+- [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)
+- [GitHub 仓库元数据](./docs/github-repo-meta.md)
+
 ## 路线图
 
 - [x] 建最小 TypeScript 项目骨架
