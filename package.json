@@ -1,9 +1,27 @@
 {
   "name": "feishu-flow-kit",
   "version": "0.1.0",
-  "private": true,
   "description": "Local-first starter kit for practical Feishu automations and AI workflows.",
   "type": "module",
+  "keywords": [
+    "feishu",
+    "lark",
+    "automation",
+    "typescript",
+    "workflow",
+    "webhook",
+    "ai-workflow",
+    "starter-kit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/learner20230724/feishu-flow-kit.git"
+  },
+  "homepage": "https://github.com/learner20230724/feishu-flow-kit#readme",
+  "bugs": {
+    "url": "https://github.com/learner20230724/feishu-flow-kit/issues"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "tsx src/index.ts",
     "check": "tsc --noEmit",
