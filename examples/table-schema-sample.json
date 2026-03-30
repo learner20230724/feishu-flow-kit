@@ -1,0 +1,17 @@
+{
+  "tableName": "Sprint Tasks",
+  "appToken": "app_demo123",
+  "tableId": "tbl_demo456",
+  "fields": [
+    { "name": "Task", "type": "text" },
+    { "name": "Stage", "type": "single_select" },
+    { "name": "Context", "type": "text" },
+    { "name": "Assignee", "type": "user" },
+    { "name": "Points", "type": "number" },
+    { "name": "TargetDate", "type": "date" },
+    { "name": "Completed", "type": "checkbox" },
+    { "name": "Files", "type": "attachment" },
+    { "name": "Dependencies", "type": "linked_record" },
+    { "name": "ChatCommand", "type": "text" }
+  ]
+}

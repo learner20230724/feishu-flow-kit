@@ -4,6 +4,12 @@ This page is a small helper for the moment right before you turn on real Bitable
 
 It does **not** fetch schema for you. It gives you a fast way to inspect a real table, map the repo's starter fields onto it, and produce a clean `.env` snippet without guessing.
 
+If you already have a JSON field list, you can also generate a first-pass env draft with:
+
+```bash
+npm run table:mapping-draft -- examples/table-schema-sample.json
+```
+
 Use it together with:
 - [Setup guide](./setup-guide.md)
 - [Table / Bitable field mapping notes](./table-bitable-field-mapping.md)
