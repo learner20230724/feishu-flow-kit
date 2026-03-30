@@ -23,12 +23,15 @@ async function main() {
     enableTableCreate: config.enableTableCreate,
     hasBitableAppToken: Boolean(config.bitableAppToken),
     hasBitableTableId: Boolean(config.bitableTableId),
+    bitableListFieldMode: config.bitableListFieldMode,
   });
 
   if (config.mockMode) {
     const mockEventPath = resolve(process.cwd(), config.mockEventPath);
     const event = await loadMockMessageEvent(mockEventPath);
-    const result = runMessageWorkflow(event);
+    const result = runMessageWorkflow(event, {
+      bitableListFieldMode: config.bitableListFieldMode,
+    });
 
     logger.info('mock event loaded', {
       type: event.type,

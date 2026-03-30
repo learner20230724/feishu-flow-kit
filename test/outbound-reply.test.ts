@@ -421,6 +421,56 @@ test('sendTableRecordRequest posts a bitable create-record request to the Feishu
   assert.equal(result.recordId, 'rec_demo_1');
 });
 
+test('sendTableRecordRequest can send List as a single-select payload', async () => {
+  const requests: Array<{ url: string; method: string; body: string }> = [];
+
+  const result = await sendTableRecordRequest({
+    tenantAccessToken: 'tenant_token_demo',
+    appToken: 'app_demo_token',
+    tableId: 'tbl_demo_id',
+    draft: buildTableRecordDraft(
+      {
+        listName: 'backlog',
+        title: 'improve webhook errors',
+        details: 'item',
+        owner: 'alex',
+        sourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+      },
+      {
+        listFieldMode: 'single_select',
+      },
+    ),
+    fetchImpl: (async (input, init) => {
+      requests.push({
+        url: String(input),
+        method: String(init?.method ?? ''),
+        body: String(init?.body ?? ''),
+      });
+
+      return new Response(
+        JSON.stringify({
+          code: 0,
+          data: {
+            record: {
+              record_id: 'rec_demo_2',
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    }) as typeof fetch,
+  });
+
+  assert.equal(requests.length, 1);
+  assert.match(requests[0]?.body ?? '', /"List":\{"name":"backlog"\}/);
+  assert.equal(result.recordId, 'rec_demo_2');
+});
+
 test('maybeCreateTableRecord skips table record creation when disabled', async () => {
   const result = await maybeCreateTableRecord(
     {

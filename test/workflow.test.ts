@@ -27,6 +27,14 @@ test('loadConfig accepts FEISHU_MOCK_EVENT_PATH override', () => {
   assert.equal(config.mockEventPath, 'examples/mock-doc-message-event.json');
 });
 
+test('loadConfig parses FEISHU_BITABLE_LIST_FIELD_MODE', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_LIST_FIELD_MODE: 'single_select',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableListFieldMode, 'single_select');
+});
+
 test('runMessageWorkflow returns noop for non-command messages', () => {
   const event: FeishuMessageEvent = {
     type: 'message.received',
@@ -126,6 +134,38 @@ test('runMessageWorkflow returns table draft for /table add', () => {
   });
 });
 
+test('runMessageWorkflow can emit a single-select List field for /table add', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_2',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add backlog item: improve webhook errors / owner=alex',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableListFieldMode: 'single_select',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /list field mode: single_select/);
+  assert.match(result.replyText, /List: \{"name":"backlog"\}/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'improve webhook errors',
+    List: {
+      name: 'backlog',
+    },
+    SourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    Details: 'item',
+    Owner: 'alex',
+  });
+});
+
 test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
   const draft = buildTableRecordDraft({
     listName: 'backlog',
@@ -139,6 +179,26 @@ test('buildTableRecordDraft uses the expected bitable create-record endpoint', (
   assert.equal(draft.method, 'POST');
   assert.equal(draft.body.fields.Title, 'improve webhook errors');
   assert.equal(draft.notes.length, 2);
+});
+
+test('buildTableRecordDraft can emit List as single-select payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'backlog',
+      title: 'improve webhook errors',
+      details: 'item',
+      owner: 'alex',
+      sourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    },
+    {
+      listFieldMode: 'single_select',
+    },
+  );
+
+  assert.deepEqual(draft.body.fields.List, {
+    name: 'backlog',
+  });
+  assert.match(draft.notes[1] ?? '', /single-select payload/);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {

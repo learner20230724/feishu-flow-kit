@@ -1,8 +1,16 @@
+export type TableListFieldMode = 'text' | 'single_select';
+
+export interface TableSingleSelectFieldValue {
+  name: string;
+}
+
+export type TableRecordFieldValue = string | TableSingleSelectFieldValue;
+
 export interface TableRecordDraft {
   endpoint: string;
   method: 'POST';
   body: {
-    fields: Record<string, string>;
+    fields: Record<string, TableRecordFieldValue>;
   };
   notes: string[];
 }
@@ -15,10 +23,31 @@ export interface TableCommandDraftInput {
   sourceCommand: string;
 }
 
-export function buildTableRecordDraft(input: TableCommandDraftInput): TableRecordDraft {
-  const fields: Record<string, string> = {
+export interface BuildTableRecordDraftOptions {
+  listFieldMode?: TableListFieldMode;
+}
+
+function buildListFieldValue(
+  listName: string,
+  mode: TableListFieldMode,
+): TableRecordFieldValue {
+  if (mode === 'single_select') {
+    return {
+      name: listName,
+    };
+  }
+
+  return listName;
+}
+
+export function buildTableRecordDraft(
+  input: TableCommandDraftInput,
+  options: BuildTableRecordDraftOptions = {},
+): TableRecordDraft {
+  const listFieldMode = options.listFieldMode ?? 'text';
+  const fields: Record<string, TableRecordFieldValue> = {
     Title: input.title,
-    List: input.listName,
+    List: buildListFieldValue(input.listName, listFieldMode),
     SourceCommand: input.sourceCommand,
   };
 
@@ -38,7 +67,9 @@ export function buildTableRecordDraft(input: TableCommandDraftInput): TableRecor
     },
     notes: [
       'Local-first draft only. Replace {app_token} and {table_id} before wiring to a real Bitable write.',
-      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, SourceCommand.',
+      listFieldMode === 'single_select'
+        ? 'List is emitted as a single-select payload ({ name: value }). Title, Details, Owner, and SourceCommand still assume text-compatible fields.'
+        : 'The starter field mapping assumes simple text fields: Title, List, Details, Owner, SourceCommand.',
     ],
   };
 }

@@ -35,6 +35,7 @@ export async function handleWebhookPayload(
     | 'enableTableCreate'
     | 'bitableAppToken'
     | 'bitableTableId'
+    | 'bitableListFieldMode'
   >,
 ): Promise<WebhookHandlerResult> {
   if (isUrlVerificationPayload(payload)) {
@@ -57,7 +58,9 @@ export async function handleWebhookPayload(
     };
   }
 
-  const workflow = runMessageWorkflow(event);
+  const workflow = runMessageWorkflow(event, {
+    bitableListFieldMode: config?.bitableListFieldMode,
+  });
   const replyDraft = buildReplyMessageDraft(event.message.messageId, workflow.replyText);
   const docCreateDraft =
     workflow.docTopic && workflow.docMarkdown

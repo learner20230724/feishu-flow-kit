@@ -3,7 +3,9 @@ import { parseSlashCommand } from '../core/parse-slash-command.js';
 import {
   buildTableRecordDraft,
   type TableCommandDraftInput,
+  type TableListFieldMode,
   type TableRecordDraft,
+  type TableRecordFieldValue,
 } from '../adapters/build-table-record-draft.js';
 
 export interface WorkflowResult {
@@ -16,7 +18,11 @@ export interface WorkflowResult {
   hasTableRecordDraft?: boolean;
   tableRecordTitle?: string;
   tableRecordDraft?: TableRecordDraft;
-  tableRecordDraftFields?: Record<string, string>;
+  tableRecordDraftFields?: Record<string, TableRecordFieldValue>;
+}
+
+export interface WorkflowOptions {
+  bitableListFieldMode?: TableListFieldMode;
 }
 
 function summarizeTodoRequest(argsText: string) {
@@ -68,9 +74,6 @@ function parseKeyValueOption(segment: string): { key: string; value: string } | 
 }
 
 function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
-  // Supported minimal command:
-  //   /table add <list> <title...> / owner=<name>
-  // Title supports an optional "label: title" prefix (label will be treated as details).
   const normalized = argsText.trim();
   if (!normalized) return null;
 
@@ -86,7 +89,6 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
   const rest = parts.slice(2).join(' ').trim();
   if (!rest) return null;
 
-  // Split by "/" into [titleAndDetails, option1, option2, ...]
   const segments = rest.split(/\s*\/\s*/g).map((seg) => seg.trim()).filter(Boolean);
   const first = segments[0] || '';
 
@@ -123,18 +125,30 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
   };
 }
 
-function formatTableDraftReply(input: TableCommandDraftInput, fields: Record<string, string>) {
+function stringifyTableFieldValue(value: TableRecordFieldValue) {
+  if (typeof value === 'string') return value;
+  return JSON.stringify(value);
+}
+
+function formatTableDraftReply(
+  input: TableCommandDraftInput,
+  fields: Record<string, TableRecordFieldValue>,
+  listFieldMode: TableListFieldMode,
+) {
   const lines: string[] = ['Table workflow draft'];
 
   lines.push(`- list: ${input.listName}`);
   lines.push(`- title: ${input.title}`);
   if (input.details) lines.push(`- details: ${input.details}`);
   if (input.owner) lines.push(`- owner: ${input.owner}`);
+  if (listFieldMode === 'single_select') {
+    lines.push('- list field mode: single_select');
+  }
 
   lines.push('');
-  lines.push('Draft fields (Bitable text fields):');
+  lines.push('Draft fields:');
   for (const [key, value] of Object.entries(fields)) {
-    lines.push(`- ${key}: ${value}`);
+    lines.push(`- ${key}: ${stringifyTableFieldValue(value)}`);
   }
 
   lines.push('');
@@ -143,7 +157,10 @@ function formatTableDraftReply(input: TableCommandDraftInput, fields: Record<str
   return lines.join('\n');
 }
 
-export function runMessageWorkflow(event: FeishuMessageEvent): WorkflowResult {
+export function runMessageWorkflow(
+  event: FeishuMessageEvent,
+  options: WorkflowOptions = {},
+): WorkflowResult {
   const command = parseSlashCommand(event.message.text);
 
   if (!command) {
@@ -195,11 +212,12 @@ export function runMessageWorkflow(event: FeishuMessageEvent): WorkflowResult {
       };
     }
 
-    const draft = buildTableRecordDraft(input);
+    const listFieldMode = options.bitableListFieldMode ?? 'text';
+    const draft = buildTableRecordDraft(input, { listFieldMode });
 
     return {
       ok: true,
-      replyText: formatTableDraftReply(input, draft.body.fields),
+      replyText: formatTableDraftReply(input, draft.body.fields, listFieldMode),
       tags: ['table', 'demo'],
       hasTableRecordDraft: true,
       tableRecordTitle: input.title,

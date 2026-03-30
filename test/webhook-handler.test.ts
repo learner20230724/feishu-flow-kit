@@ -324,6 +324,7 @@ test('handleWebhookPayload creates a Feishu table record when table create is en
         enableTableCreate: true,
         bitableAppToken: 'app_demo_token',
         bitableTableId: 'tbl_demo_id',
+        bitableListFieldMode: 'single_select',
       },
     );
 
@@ -331,11 +332,14 @@ test('handleWebhookPayload creates a Feishu table record when table create is en
     assert.equal(requests.length, 2);
     assert.match(requests[0].url, /tenant_access_token/);
     assert.match(requests[1].url, /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records/);
+    assert.match(requests[1].body, /"List":\{"name":"backlog"\}/);
     assert.equal(result.body.tableCreate.attempted, true);
     assert.equal(result.body.tableCreate.response.recordId, 'rec_demo_1');
     assert.deepEqual(result.body.tableRecordDraft.body.fields, {
       Title: 'improve webhook errors',
-      List: 'backlog',
+      List: {
+        name: 'backlog',
+      },
       SourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
       Details: 'item',
       Owner: 'alex',

@@ -1,5 +1,7 @@
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
+export type TableListFieldMode = 'text' | 'single_select';
+
 export interface AppConfig {
   appId: string;
   appSecret: string;
@@ -15,6 +17,7 @@ export interface AppConfig {
   enableTableCreate: boolean;
   bitableAppToken: string;
   bitableTableId: string;
+  bitableListFieldMode: TableListFieldMode;
 }
 
 const LOG_LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
@@ -52,6 +55,12 @@ function parsePositiveInteger(
   return parsed;
 }
 
+function parseTableListFieldMode(value: string | undefined): TableListFieldMode {
+  if (!value) return 'text';
+  if (value === 'text' || value === 'single_select') return value;
+  throw new Error(`Invalid FEISHU_BITABLE_LIST_FIELD_MODE: ${value}`);
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     appId: env.FEISHU_APP_ID ?? '',
@@ -72,5 +81,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     enableTableCreate: parseBoolean(env.FEISHU_ENABLE_TABLE_CREATE, false),
     bitableAppToken: env.FEISHU_BITABLE_APP_TOKEN ?? '',
     bitableTableId: env.FEISHU_BITABLE_TABLE_ID ?? '',
+    bitableListFieldMode: parseTableListFieldMode(env.FEISHU_BITABLE_LIST_FIELD_MODE),
   };
 }
