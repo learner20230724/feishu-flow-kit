@@ -137,6 +137,8 @@ Example mock inputs:
 - `examples/mock-doc-message-event.json` → `/doc` flow
 - `examples/mock-table-message-event.json` → `/table` text-first flow
 - `examples/mock-table-rich-message-event.json` → `/table` richer field-mode flow (`multi_select` + `user` + `number` + `datetime` + `checkbox` + `attachment` + `linked_record`)
+- `examples/webhook-table-rich-event.json` + `examples/webhook-table-rich-response.json` → fixture-backed `/table` webhook success sample
+- `examples/webhook-invalid-payload.json` + `examples/webhook-invalid-response.json` → fixture-backed invalid webhook failure sample
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 

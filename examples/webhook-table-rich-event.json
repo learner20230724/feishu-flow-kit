@@ -1,0 +1,21 @@
+{
+  "header": {
+    "event_type": "im.message.receive_v1",
+    "create_time": "2026-03-30T21:16:00Z",
+    "tenant_key": "tenant_demo"
+  },
+  "event": {
+    "sender": {
+      "sender_id": {
+        "open_id": "ou_demo_sender"
+      }
+    },
+    "message": {
+      "message_id": "om_table_rich_demo",
+      "chat_id": "oc_demo_chat",
+      "chat_type": "group",
+      "content": "{\"text\":\"/table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true / attachment_token=file_v2_demo123,file_v2_demo456 / link_record_id=rec_demo_task_1,rec_demo_task_2\"}",
+      "create_time": "2026-03-30T21:16:00Z"
+    }
+  }
+}

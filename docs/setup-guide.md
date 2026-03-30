@@ -149,7 +149,7 @@ Current boundaries:
 - tenant token reuse currently relies on a tiny in-memory cache only; there is still no persistence, refresh worker, or concurrency dedupe strategy
 - only a narrow subset of message payload fields is normalized
 
-If you want a concrete request/response example before reading the code, see [`/table` webhook success / error demo](./table-webhook-success-error-demo.md).
+If you want a concrete request/response example before reading the code, see [`/table` webhook success / error demo](./table-webhook-success-error-demo.md). The exact JSON samples are also checked into `examples/webhook-table-rich-event.json`, `examples/webhook-table-rich-response.json`, `examples/webhook-invalid-payload.json`, and `examples/webhook-invalid-response.json`.
 
 This is still a starter path, not a production webhook implementation.
 

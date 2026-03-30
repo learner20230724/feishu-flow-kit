@@ -1,7 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 
 import { handleWebhookPayload } from '../src/server/handle-webhook-payload.ts';
+
+async function readJsonFixture(path: string): Promise<unknown> {
+  return JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
+}
 
 test('handleWebhookPayload returns challenge for url verification requests', async () => {
   const result = await handleWebhookPayload({
@@ -58,6 +63,28 @@ test('handleWebhookPayload runs workflow for webhook message payloads', async ()
     attempted: false,
     skippedReason: 'No outbound reply config provided.',
   });
+});
+
+test('handleWebhookPayload matches the richer /table webhook success fixture', async () => {
+  const payload = await readJsonFixture('../examples/webhook-table-rich-event.json');
+  const expected = await readJsonFixture('../examples/webhook-table-rich-response.json');
+
+  const result = await handleWebhookPayload(payload, {
+    appId: 'cli_demo_app_id',
+    appSecret: 'demo_app_secret',
+    enableOutboundReply: false,
+    enableDocCreate: false,
+    enableTableCreate: false,
+    bitableListFieldMode: 'multi_select',
+    bitableOwnerFieldMode: 'user',
+    bitableEstimateFieldMode: 'number',
+    bitableDueFieldMode: 'datetime',
+    bitableDoneFieldMode: 'checkbox',
+    bitableAttachmentFieldMode: 'attachment',
+    bitableLinkFieldMode: 'linked_record',
+  });
+
+  assert.deepEqual(result, expected);
 });
 
 test('handleWebhookPayload returns doc create draft for /doc requests without create config', async () => {
@@ -1162,4 +1189,13 @@ test('handleWebhookPayload rejects unsupported payloads', async () => {
 
   assert.equal(result.statusCode, 400);
   assert.equal(result.body.ok, false);
+});
+
+test('handleWebhookPayload matches the invalid webhook payload fixture', async () => {
+  const payload = await readJsonFixture('../examples/webhook-invalid-payload.json');
+  const expected = await readJsonFixture('../examples/webhook-invalid-response.json');
+
+  const result = await handleWebhookPayload(payload);
+
+  assert.deepEqual(result, expected);
 });

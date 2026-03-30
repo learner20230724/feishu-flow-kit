@@ -4,6 +4,8 @@ This page shows one small `/table` webhook path that succeeds, plus one invalid-
 
 The point is not to fake production readiness. It is to make the current starter behavior visible before you wire real Feishu credentials.
 
+The JSON payloads and handler responses shown here are also checked into `examples/` and asserted in `test/webhook-handler.test.ts`, so this page now points at fixture-backed assets instead of one-off hand-written samples.
+
 ---
 
 ## Success case: valid webhook payload → `/table` draft response
@@ -134,6 +136,10 @@ Example webhook handler response shape with real webhook-style input but outboun
 }
 ```
 
+Fixture files for this success path:
+- `examples/webhook-table-rich-event.json`
+- `examples/webhook-table-rich-response.json`
+
 What this proves:
 - webhook payload adaptation works
 - `/table` parsing works for the current starter command shape
@@ -163,6 +169,10 @@ Current response:
   }
 }
 ```
+
+Fixture files for this failure path:
+- `examples/webhook-invalid-payload.json`
+- `examples/webhook-invalid-response.json`
 
 This is the current early-fail behavior when the payload is neither:
 - `url_verification`

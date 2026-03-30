@@ -1,0 +1,7 @@
+{
+  "statusCode": 400,
+  "body": {
+    "ok": false,
+    "error": "Unsupported or invalid webhook payload."
+  }
+}

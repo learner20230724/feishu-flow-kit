@@ -1,0 +1,78 @@
+{
+  "statusCode": 200,
+  "body": {
+    "ok": true,
+    "eventType": "message.received",
+    "messageId": "om_table_rich_demo",
+    "tags": [
+      "table",
+      "demo"
+    ],
+    "replyText": "Table workflow draft\n- list: sprint,urgent\n- title: flaky webhook tests\n- owner_open_id: ou_demo_alex\n- estimate: 5\n- due: 2026-04-01T09:30:00Z\n- done: true\n- attachment_token: file_v2_demo123,file_v2_demo456\n- link_record_id: rec_demo_task_1,rec_demo_task_2\n- list field mode: multi_select\n- owner field mode: user\n- estimate field mode: number\n- due field mode: datetime\n- done field mode: checkbox\n- attachment field mode: attachment\n- link field mode: linked_record\n\nDraft fields:\n- Title: flaky webhook tests\n- List: [{\"name\":\"sprint\"},{\"name\":\"urgent\"}]\n- SourceCommand: /table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true / attachment_token=file_v2_demo123,file_v2_demo456 / link_record_id=rec_demo_task_1,rec_demo_task_2\n- Owner: [{\"id\":\"ou_demo_alex\"}]\n- Estimate: 5\n- Due: 1775035800000\n- Done: true\n- Attachment: [{\"file_token\":\"file_v2_demo123\"},{\"file_token\":\"file_v2_demo456\"}]\n- LinkedRecords: {\"link_record_ids\":[\"rec_demo_task_1\",\"rec_demo_task_2\"]}\n\nNext: wire the draft into a real Bitable create-record call (opt-in).",
+    "replyDraft": {
+      "endpoint": "/open-apis/im/v1/messages/om_table_rich_demo/reply",
+      "method": "POST",
+      "pathParams": {
+        "message_id": "om_table_rich_demo"
+      },
+      "body": {
+        "msg_type": "text",
+        "content": "{\"text\":\"Table workflow draft\\n- list: sprint,urgent\\n- title: flaky webhook tests\\n- owner_open_id: ou_demo_alex\\n- estimate: 5\\n- due: 2026-04-01T09:30:00Z\\n- done: true\\n- attachment_token: file_v2_demo123,file_v2_demo456\\n- link_record_id: rec_demo_task_1,rec_demo_task_2\\n- list field mode: multi_select\\n- owner field mode: user\\n- estimate field mode: number\\n- due field mode: datetime\\n- done field mode: checkbox\\n- attachment field mode: attachment\\n- link field mode: linked_record\\n\\nDraft fields:\\n- Title: flaky webhook tests\\n- List: [{\\\"name\\\":\\\"sprint\\\"},{\\\"name\\\":\\\"urgent\\\"}]\\n- SourceCommand: /table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true / attachment_token=file_v2_demo123,file_v2_demo456 / link_record_id=rec_demo_task_1,rec_demo_task_2\\n- Owner: [{\\\"id\\\":\\\"ou_demo_alex\\\"}]\\n- Estimate: 5\\n- Due: 1775035800000\\n- Done: true\\n- Attachment: [{\\\"file_token\\\":\\\"file_v2_demo123\\\"},{\\\"file_token\\\":\\\"file_v2_demo456\\\"}]\\n- LinkedRecords: {\\\"link_record_ids\\\":[\\\"rec_demo_task_1\\\",\\\"rec_demo_task_2\\\"]}\\n\\nNext: wire the draft into a real Bitable create-record call (opt-in).\"}"
+      }
+    },
+    "docCreateDraft": null,
+    "tableRecordDraft": {
+      "endpoint": "/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records",
+      "method": "POST",
+      "body": {
+        "fields": {
+          "Title": "flaky webhook tests",
+          "List": [
+            {
+              "name": "sprint"
+            },
+            {
+              "name": "urgent"
+            }
+          ],
+          "SourceCommand": "/table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true / attachment_token=file_v2_demo123,file_v2_demo456 / link_record_id=rec_demo_task_1,rec_demo_task_2",
+          "Owner": [
+            {
+              "id": "ou_demo_alex"
+            }
+          ],
+          "Estimate": 5,
+          "Due": 1775035800000,
+          "Done": true,
+          "Attachment": [
+            {
+              "file_token": "file_v2_demo123"
+            },
+            {
+              "file_token": "file_v2_demo456"
+            }
+          ],
+          "LinkedRecords": {
+            "link_record_ids": [
+              "rec_demo_task_1",
+              "rec_demo_task_2"
+            ]
+          }
+        }
+      },
+      "notes": [
+        "Local-first draft only. Replace {app_token} and {table_id} before wiring to a real Bitable write.",
+        "List is emitted as a multi-select payload ([{ name }]) using comma-separated list values. Owner is emitted as a Bitable user field payload ([{ id }]). Estimate is emitted as a numeric payload. Due is emitted as a datetime timestamp payload (milliseconds). Done is emitted as a checkbox payload (boolean). Attachment is emitted as a Bitable attachment payload ([{ file_token }]) using comma-separated file tokens. LinkedRecords is emitted as a Bitable linked-record payload ({ link_record_ids }) using comma-separated record IDs. Title, Details, and SourceCommand still assume text-compatible fields."
+      ]
+    },
+    "docCreate": null,
+    "tableCreate": {
+      "attempted": false,
+      "skippedReason": "FEISHU_ENABLE_TABLE_CREATE is disabled."
+    },
+    "outboundReply": {
+      "attempted": false,
+      "skippedReason": "FEISHU_ENABLE_OUTBOUND_REPLY is disabled."
+    }
+  }
+}
