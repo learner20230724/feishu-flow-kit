@@ -117,8 +117,14 @@ If your Bitable uses these exact names and text-like field types, the starter pa
 
 ## What the current repo does **not** handle yet
 
-The current `/table` write path does **not** yet map richer field types such as:
+The current `/table` write path is already wider than the original text-only starter, but it still does **not** yet handle things like:
 
+- automatic schema discovery from the target Bitable table
+- preflight validation that compares your configured field-name overrides against the real schema before `create-record`
+- automatic coercion for arbitrary field types beyond the current starter modes
+- option discovery or auto-create for select fields
+- localized field-name lookup without explicit env var remapping
+- richer formula / lookup / rollup / relation-aware behavior
 
 It also does not currently:
 

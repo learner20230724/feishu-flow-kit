@@ -263,8 +263,12 @@ If your real table uses different column names, you can now remap them without t
 FEISHU_BITABLE_TITLE_FIELD_NAME=Task
 FEISHU_BITABLE_LIST_FIELD_NAME=Stage
 FEISHU_BITABLE_DETAILS_FIELD_NAME=Context
+FEISHU_BITABLE_OWNER_FIELD_NAME=Assignee
+FEISHU_BITABLE_ESTIMATE_FIELD_NAME=Points
 FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand
 ```
+
+This is still manual mapping, not schema discovery. The repo will use the names you configure, but it does not fetch the real table schema first.
 
 The current repo keeps this write path intentionally small:
 1. parse `/table add ...`
