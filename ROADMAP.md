@@ -24,7 +24,7 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 ### M2 — Minimal runtime
 - [x] config loader
 - [x] logger
-- [x] retry helper
+- [ ] retry helper
 - [x] event type definitions
 - [x] example handler
 
