@@ -1,5 +1,6 @@
 export type TableListFieldMode = 'text' | 'single_select';
 export type TableOwnerFieldMode = 'text' | 'user';
+export type TableEstimateFieldMode = 'text' | 'number';
 
 export interface TableSingleSelectFieldValue {
   name: string;
@@ -11,7 +12,7 @@ export interface TableUserFieldMemberValue {
 
 export type TableUserFieldValue = TableUserFieldMemberValue[];
 
-export type TableRecordFieldValue = string | TableSingleSelectFieldValue | TableUserFieldValue;
+export type TableRecordFieldValue = string | number | TableSingleSelectFieldValue | TableUserFieldValue;
 
 export interface TableRecordDraft {
   endpoint: string;
@@ -28,12 +29,14 @@ export interface TableCommandDraftInput {
   details?: string;
   owner?: string;
   ownerOpenId?: string;
+  estimate?: string;
   sourceCommand: string;
 }
 
 export interface BuildTableRecordDraftOptions {
   listFieldMode?: TableListFieldMode;
   ownerFieldMode?: TableOwnerFieldMode;
+  estimateFieldMode?: TableEstimateFieldMode;
 }
 
 function buildListFieldValue(
@@ -66,12 +69,28 @@ function buildOwnerFieldValue(
   return input.owner;
 }
 
+function buildEstimateFieldValue(
+  input: TableCommandDraftInput,
+  mode: TableEstimateFieldMode,
+): TableRecordFieldValue | undefined {
+  if (!input.estimate) return undefined;
+
+  if (mode === 'number') {
+    const parsed = Number(input.estimate);
+    if (!Number.isFinite(parsed)) return undefined;
+    return parsed;
+  }
+
+  return input.estimate;
+}
+
 export function buildTableRecordDraft(
   input: TableCommandDraftInput,
   options: BuildTableRecordDraftOptions = {},
 ): TableRecordDraft {
   const listFieldMode = options.listFieldMode ?? 'text';
   const ownerFieldMode = options.ownerFieldMode ?? 'text';
+  const estimateFieldMode = options.estimateFieldMode ?? 'text';
   const fields: Record<string, TableRecordFieldValue> = {
     Title: input.title,
     List: buildListFieldValue(input.listName, listFieldMode),
@@ -87,25 +106,33 @@ export function buildTableRecordDraft(
     fields.Owner = ownerFieldValue;
   }
 
+  const estimateFieldValue = buildEstimateFieldValue(input, estimateFieldMode);
+  if (estimateFieldValue !== undefined) {
+    fields.Estimate = estimateFieldValue;
+  }
+
   const notes = [
     'Local-first draft only. Replace {app_token} and {table_id} before wiring to a real Bitable write.',
   ];
 
-  if (listFieldMode === 'single_select' && ownerFieldMode === 'user') {
+  const widenedModes: string[] = [];
+  if (listFieldMode === 'single_select') {
+    widenedModes.push('List is emitted as a single-select payload ({ name: value })');
+  }
+  if (ownerFieldMode === 'user') {
+    widenedModes.push('Owner is emitted as a Bitable user field payload ([{ id }])');
+  }
+  if (estimateFieldMode === 'number') {
+    widenedModes.push('Estimate is emitted as a numeric payload');
+  }
+
+  if (widenedModes.length > 0) {
     notes.push(
-      'List is emitted as a single-select payload ({ name: value }). Owner is emitted as a Bitable user field payload ([{ id }]). Title, Details, and SourceCommand still assume text-compatible fields.',
-    );
-  } else if (listFieldMode === 'single_select') {
-    notes.push(
-      'List is emitted as a single-select payload ({ name: value }). Title, Details, Owner, and SourceCommand still assume text-compatible fields.',
-    );
-  } else if (ownerFieldMode === 'user') {
-    notes.push(
-      'Owner is emitted as a Bitable user field payload ([{ id }]). Title, List, Details, and SourceCommand still assume text-compatible fields.',
+      `${widenedModes.join('. ')}. Title, Details, and SourceCommand still assume text-compatible fields.`,
     );
   } else {
     notes.push(
-      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, SourceCommand.',
+      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, SourceCommand.',
     );
   }
 

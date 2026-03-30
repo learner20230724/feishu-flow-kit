@@ -3,6 +3,7 @@ import { parseSlashCommand } from '../core/parse-slash-command.js';
 import {
   buildTableRecordDraft,
   type TableCommandDraftInput,
+  type TableEstimateFieldMode,
   type TableListFieldMode,
   type TableOwnerFieldMode,
   type TableRecordDraft,
@@ -25,6 +26,7 @@ export interface WorkflowResult {
 export interface WorkflowOptions {
   bitableListFieldMode?: TableListFieldMode;
   bitableOwnerFieldMode?: TableOwnerFieldMode;
+  bitableEstimateFieldMode?: TableEstimateFieldMode;
 }
 
 function summarizeTodoRequest(argsText: string) {
@@ -97,12 +99,14 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
   const options = segments.slice(1);
   let owner: string | undefined;
   let ownerOpenId: string | undefined;
+  let estimate: string | undefined;
 
   for (const opt of options) {
     const kv = parseKeyValueOption(opt);
     if (!kv) continue;
     if (kv.key === 'owner') owner = kv.value;
     if (kv.key === 'owner_open_id') ownerOpenId = kv.value;
+    if (kv.key === 'estimate') estimate = kv.value;
   }
 
   let title = first;
@@ -126,12 +130,13 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
     details,
     owner,
     ownerOpenId,
+    estimate,
     sourceCommand: `/table ${argsText}`.trim(),
   };
 }
 
 function stringifyTableFieldValue(value: TableRecordFieldValue) {
-  if (typeof value === 'string') return value;
+  if (typeof value === 'string' || typeof value === 'number') return String(value);
   return JSON.stringify(value);
 }
 
@@ -140,6 +145,7 @@ function formatTableDraftReply(
   fields: Record<string, TableRecordFieldValue>,
   listFieldMode: TableListFieldMode,
   ownerFieldMode: TableOwnerFieldMode,
+  estimateFieldMode: TableEstimateFieldMode,
 ) {
   const lines: string[] = ['Table workflow draft'];
 
@@ -148,12 +154,10 @@ function formatTableDraftReply(
   if (input.details) lines.push(`- details: ${input.details}`);
   if (input.owner) lines.push(`- owner: ${input.owner}`);
   if (input.ownerOpenId) lines.push(`- owner_open_id: ${input.ownerOpenId}`);
-  if (listFieldMode === 'single_select') {
-    lines.push('- list field mode: single_select');
-  }
-  if (ownerFieldMode === 'user') {
-    lines.push('- owner field mode: user');
-  }
+  if (input.estimate) lines.push(`- estimate: ${input.estimate}`);
+  if (listFieldMode === 'single_select') lines.push('- list field mode: single_select');
+  if (ownerFieldMode === 'user') lines.push('- owner field mode: user');
+  if (estimateFieldMode === 'number') lines.push('- estimate field mode: number');
 
   lines.push('');
   lines.push('Draft fields:');
@@ -215,9 +219,10 @@ export function runMessageWorkflow(
           'Usage:',
           '- /table add <list> <title...> / owner=<name>',
           '- /table add <list> <title...> / owner_open_id=<open_id>',
+          '- /table add <list> <title...> / estimate=<number-or-text>',
           '',
           'Example:',
-          '- /table add backlog item: improve webhook errors / owner=alex',
+          '- /table add backlog item: improve webhook errors / owner=alex / estimate=3',
           '- /table add backlog improve webhook errors / owner_open_id=ou_xxx',
         ].join('\n'),
         tags: ['table', 'demo', 'usage'],
@@ -226,14 +231,22 @@ export function runMessageWorkflow(
 
     const listFieldMode = options.bitableListFieldMode ?? 'text';
     const ownerFieldMode = options.bitableOwnerFieldMode ?? 'text';
+    const estimateFieldMode = options.bitableEstimateFieldMode ?? 'text';
     const draft = buildTableRecordDraft(input, {
       listFieldMode,
       ownerFieldMode,
+      estimateFieldMode,
     });
 
     return {
       ok: true,
-      replyText: formatTableDraftReply(input, draft.body.fields, listFieldMode, ownerFieldMode),
+      replyText: formatTableDraftReply(
+        input,
+        draft.body.fields,
+        listFieldMode,
+        ownerFieldMode,
+        estimateFieldMode,
+      ),
       tags: ['table', 'demo'],
       hasTableRecordDraft: true,
       tableRecordTitle: input.title,

@@ -37,6 +37,7 @@ export async function handleWebhookPayload(
     | 'bitableTableId'
     | 'bitableListFieldMode'
     | 'bitableOwnerFieldMode'
+    | 'bitableEstimateFieldMode'
   >,
 ): Promise<WebhookHandlerResult> {
   if (isUrlVerificationPayload(payload)) {
@@ -62,6 +63,7 @@ export async function handleWebhookPayload(
   const workflow = runMessageWorkflow(event, {
     bitableListFieldMode: config?.bitableListFieldMode,
     bitableOwnerFieldMode: config?.bitableOwnerFieldMode,
+    bitableEstimateFieldMode: config?.bitableEstimateFieldMode,
   });
   const replyDraft = buildReplyMessageDraft(event.message.messageId, workflow.replyText);
   const docCreateDraft =

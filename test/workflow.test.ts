@@ -43,6 +43,14 @@ test('loadConfig parses FEISHU_BITABLE_OWNER_FIELD_MODE', () => {
   assert.equal(config.bitableOwnerFieldMode, 'user');
 });
 
+test('loadConfig parses FEISHU_BITABLE_ESTIMATE_FIELD_MODE', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_ESTIMATE_FIELD_MODE: 'number',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableEstimateFieldMode, 'number');
+});
+
 test('runMessageWorkflow returns noop for non-command messages', () => {
   const event: FeishuMessageEvent = {
     type: 'message.received',
@@ -119,7 +127,7 @@ test('runMessageWorkflow returns table draft for /table add', () => {
       chatId: 'chat_1',
       chatType: 'group',
       senderId: 'user_1',
-      text: '/table add backlog item: improve webhook errors / owner=alex',
+      text: '/table add backlog item: improve webhook errors / owner=alex / estimate=3',
     },
   };
 
@@ -130,15 +138,17 @@ test('runMessageWorkflow returns table draft for /table add', () => {
   assert.match(result.replyText, /title: improve webhook errors/);
   assert.match(result.replyText, /details: item/);
   assert.match(result.replyText, /owner: alex/);
+  assert.match(result.replyText, /estimate: 3/);
   assert.deepEqual(result.tags, ['table', 'demo']);
   assert.equal(result.hasTableRecordDraft, true);
   assert.equal(result.tableRecordTitle, 'improve webhook errors');
   assert.deepEqual(result.tableRecordDraftFields, {
     Title: 'improve webhook errors',
     List: 'backlog',
-    SourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    SourceCommand: '/table add backlog item: improve webhook errors / owner=alex / estimate=3',
     Details: 'item',
     Owner: 'alex',
+    Estimate: '3',
   });
 });
 
@@ -208,13 +218,44 @@ test('runMessageWorkflow can emit a user field payload for Owner', () => {
   });
 });
 
+test('runMessageWorkflow can emit Estimate as a numeric field payload', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_4',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add backlog improve webhook errors / estimate=5',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableEstimateFieldMode: 'number',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /estimate: 5/);
+  assert.match(result.replyText, /estimate field mode: number/);
+  assert.match(result.replyText, /Estimate: 5/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'improve webhook errors',
+    List: 'backlog',
+    SourceCommand: '/table add backlog improve webhook errors / estimate=5',
+    Estimate: 5,
+  });
+});
+
 test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
   const draft = buildTableRecordDraft({
     listName: 'backlog',
     title: 'improve webhook errors',
     details: 'item',
     owner: 'alex',
-    sourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    estimate: '3',
+    sourceCommand: '/table add backlog item: improve webhook errors / owner=alex / estimate=3',
   });
 
   assert.equal(draft.endpoint, '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records');
@@ -262,6 +303,23 @@ test('buildTableRecordDraft can emit Owner as a user field payload', () => {
     },
   ]);
   assert.match(draft.notes[1] ?? '', /user field payload/);
+});
+
+test('buildTableRecordDraft can emit Estimate as number payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'backlog',
+      title: 'improve webhook errors',
+      estimate: '8',
+      sourceCommand: '/table add backlog improve webhook errors / estimate=8',
+    },
+    {
+      estimateFieldMode: 'number',
+    },
+  );
+
+  assert.equal(draft.body.fields.Estimate, 8);
+  assert.match(draft.notes[1] ?? '', /numeric payload/);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {
