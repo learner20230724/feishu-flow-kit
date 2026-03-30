@@ -1,5 +1,7 @@
 # feishu-flow-kit
 
+[![CI](https://github.com/learner20230724/feishu-flow-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/learner20230724/feishu-flow-kit/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 A local-first starter kit for building practical Feishu automations and AI workflows.
 
 > English | [简体中文](./README.zh-CN.md)
