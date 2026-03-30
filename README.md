@@ -216,6 +216,7 @@ You can always add deployment pieces later.
 - [Setup guide](./docs/setup-guide.md)
 - [Architecture overview](./docs/overview.md)
 - [Table / Bitable field mapping notes](./docs/table-bitable-field-mapping.md)
+- [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)

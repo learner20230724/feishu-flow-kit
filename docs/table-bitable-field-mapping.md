@@ -4,6 +4,8 @@ This repo now includes a minimal `/table` workflow, but the real write path is s
 
 This page documents what the current starter mapping assumes, where it breaks, and how to adapt it without pretending the problem is already solved.
 
+If you want a copy-paste helper for mapping a real table into `.env` variables, use [`/table` schema mapping worksheet](./table-schema-mapping-worksheet.md).
+
 ---
 
 ## Current command shape

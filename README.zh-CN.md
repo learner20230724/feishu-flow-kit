@@ -216,6 +216,7 @@ npm test
 - [Setup guide](./docs/setup-guide.md)
 - [Architecture overview](./docs/overview.md)
 - [`/table` 字段映射说明](./docs/table-bitable-field-mapping.md)
+- [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` webhook 成功 / 失败示例](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)

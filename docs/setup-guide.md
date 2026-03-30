@@ -324,6 +324,7 @@ A practical rule for this repo:
 
 - [Architecture overview](./overview.md)
 - [Table / Bitable field mapping notes](./table-bitable-field-mapping.md)
+- [`/table` schema mapping worksheet](./table-schema-mapping-worksheet.md)
 - [`/table` webhook success / error demo](./table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./troubleshooting-by-api-error-pattern.md)
