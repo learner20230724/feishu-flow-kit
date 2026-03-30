@@ -2,7 +2,7 @@
 
 Use this before publishing `feishu-flow-kit` as a public repo or cutting a visible snapshot tag.
 
-Last verified locally: 2026-03-29 22:06 UTC.
+Last verified locally: 2026-03-30 05:06 UTC.
 
 ## 1. Repo hygiene
 
@@ -33,6 +33,7 @@ Last verified locally: 2026-03-29 22:06 UTC.
 - [x] `npm run check`
 - [x] `npm test`
 - [x] no knowingly broken demo path remains in docs
+- [x] `npm run verify:release` provides a one-command local pre-publish sanity check
 
 ## 5. Public-facing sanity check
 
@@ -45,7 +46,7 @@ Last verified locally: 2026-03-29 22:06 UTC.
 
 - [x] add a screenshot, terminal capture, or small diagram for the webhook / workflow path
 - [x] prepare one short GitHub post / changelog sentence explaining what is already runnable
-- [ ] decide whether the next visible milestone is richer inline doc formatting, table automation, or DX polish
+- [x] decide the next visible milestone (chosen: table / bitable workflow; plan: `docs/m5-table-workflow-plan.md`)
 
 ## Current release blockers to watch
 

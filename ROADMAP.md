@@ -42,10 +42,14 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 - [x] release checklist
 - [x] GitHub repo metadata (description, keywords, repository URL)
 
-### M5 — Next increment (pick one)
-- [ ] table / bitable slash-command workflow
+### M5 — Next increment (locked)
+- [x] decide the next visible milestone
+- [ ] table / bitable slash-command workflow (**chosen**)
 - [ ] richer inline doc formatting (nested styles, auto-link)
 - [ ] DX polish (CLI dry-run flag, better error messages)
 
+Notes:
+- M5 plan doc: `docs/m5-table-workflow-plan.md`
+
 ## Current next step
-Push standalone repo to GitHub (`learner20230724/feishu-flow-kit`) and open M5 milestone.
+Push standalone repo to GitHub (`learner20230724/feishu-flow-kit`) and start M5.

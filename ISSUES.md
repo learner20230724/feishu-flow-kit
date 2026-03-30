@@ -53,6 +53,19 @@ Use one diagram or compact doc to show how config, adapters, workflows, and exam
 ### 15. Add a workflow gallery section
 Collect a few practical Feishu workflow ideas users can understand at a glance.
 
+## Milestone decision
+
+### 19. Lock the first post-publish milestone
+Decided: `table / bitable slash-command workflow`.
+
+Why:
+- expands the repo into another Feishu-native workflow surface
+- gives the public repo a clearer next-story than `/doc` micro-polish
+- stays aligned with common internal-tool automation use cases
+
+Plan doc:
+- `docs/m5-table-workflow-plan.md`
+
 ## Packaging
 
 ### 16. Prepare release checklist
