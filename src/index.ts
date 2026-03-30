@@ -24,6 +24,7 @@ async function main() {
     hasBitableAppToken: Boolean(config.bitableAppToken),
     hasBitableTableId: Boolean(config.bitableTableId),
     bitableListFieldMode: config.bitableListFieldMode,
+    bitableOwnerFieldMode: config.bitableOwnerFieldMode,
   });
 
   if (config.mockMode) {
@@ -31,6 +32,7 @@ async function main() {
     const event = await loadMockMessageEvent(mockEventPath);
     const result = runMessageWorkflow(event, {
       bitableListFieldMode: config.bitableListFieldMode,
+      bitableOwnerFieldMode: config.bitableOwnerFieldMode,
     });
 
     logger.info('mock event loaded', {

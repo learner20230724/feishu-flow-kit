@@ -20,6 +20,7 @@ Examples:
 /table add backlog item: improve webhook errors / owner=alex
 /table add leads ACME follow-up / owner=sam
 /table add roadmap refine onboarding copy
+/table add backlog improve webhook errors / owner_open_id=ou_xxx
 ```
 
 Current parsing behavior:
@@ -29,6 +30,7 @@ Current parsing behavior:
 - remaining text: treated as the title
 - optional `label: title` prefix: the part before `:` becomes `Details`
 - optional `/ owner=<name>`: becomes `Owner`
+- optional `/ owner_open_id=<open_id>`: becomes `Owner` input for user-field mode
 - original chat command is kept as `SourceCommand`
 
 Example:
@@ -61,7 +63,11 @@ The current adapter builds a `create-record` request with this field set:
 - `Owner` (optional)
 - `SourceCommand`
 
-Right now the repo assumes these are plain text-compatible fields.
+Default starter mode still assumes text-compatible fields.
+
+Optional widening now available:
+- `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` → emits `List` as `{ "name": "..." }`
+- `FEISHU_BITABLE_OWNER_FIELD_MODE=user` + `/ owner_open_id=ou_xxx` → emits `Owner` as `[{ "id": "ou_xxx" }]`
 
 That means the safest matching table schema is:
 
@@ -132,10 +138,12 @@ Do not make the first field fancy. Keep one stable anchor field so failed writes
 ### 2. Upgrade `Owner` second
 If you need richer ownership handling, `Owner` is a reasonable next field to evolve.
 
-Likely future options:
-- keep it as text for public starter simplicity
-- add a second adapter for user-type fields
-- allow `owner_open_id=` or `owner_email=` style command variants later
+Current starter options:
+- keep it as text with `/ owner=<name>`
+- set `FEISHU_BITABLE_OWNER_FIELD_MODE=user`
+- send `/ owner_open_id=<open_id>` so the outbound payload becomes `[{ id: open_id }]`
+
+That keeps the command shape small while making one real person-picker schema usable.
 
 ### 3. Upgrade `List` into select only after text mode works
 A select field is useful, but it adds one more failure class:
@@ -213,6 +221,8 @@ Check:
 FEISHU_ENABLE_TABLE_CREATE=false
 FEISHU_BITABLE_APP_TOKEN=
 FEISHU_BITABLE_TABLE_ID=
+FEISHU_BITABLE_LIST_FIELD_MODE=text
+FEISHU_BITABLE_OWNER_FIELD_MODE=text
 ```
 
 The current outbound write path is opt-in.

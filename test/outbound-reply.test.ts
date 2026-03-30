@@ -471,6 +471,55 @@ test('sendTableRecordRequest can send List as a single-select payload', async ()
   assert.equal(result.recordId, 'rec_demo_2');
 });
 
+test('sendTableRecordRequest can send Owner as a user field payload', async () => {
+  const requests: Array<{ url: string; method: string; body: string }> = [];
+
+  const result = await sendTableRecordRequest({
+    tenantAccessToken: 'tenant_token_demo',
+    appToken: 'app_demo_token',
+    tableId: 'tbl_demo_id',
+    draft: buildTableRecordDraft(
+      {
+        listName: 'backlog',
+        title: 'improve webhook errors',
+        ownerOpenId: 'ou_alex',
+        sourceCommand: '/table add backlog improve webhook errors / owner_open_id=ou_alex',
+      },
+      {
+        ownerFieldMode: 'user',
+      },
+    ),
+    fetchImpl: (async (input, init) => {
+      requests.push({
+        url: String(input),
+        method: String(init?.method ?? ''),
+        body: String(init?.body ?? ''),
+      });
+
+      return new Response(
+        JSON.stringify({
+          code: 0,
+          data: {
+            record: {
+              record_id: 'rec_demo_3',
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    }) as typeof fetch,
+  });
+
+  assert.equal(requests.length, 1);
+  assert.match(requests[0]?.body ?? '', /"Owner":\[\{"id":"ou_alex"\}\]/);
+  assert.equal(result.recordId, 'rec_demo_3');
+});
+
 test('maybeCreateTableRecord skips table record creation when disabled', async () => {
   const result = await maybeCreateTableRecord(
     {

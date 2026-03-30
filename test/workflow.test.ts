@@ -35,6 +35,14 @@ test('loadConfig parses FEISHU_BITABLE_LIST_FIELD_MODE', () => {
   assert.equal(config.bitableListFieldMode, 'single_select');
 });
 
+test('loadConfig parses FEISHU_BITABLE_OWNER_FIELD_MODE', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_OWNER_FIELD_MODE: 'user',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableOwnerFieldMode, 'user');
+});
+
 test('runMessageWorkflow returns noop for non-command messages', () => {
   const event: FeishuMessageEvent = {
     type: 'message.received',
@@ -166,6 +174,40 @@ test('runMessageWorkflow can emit a single-select List field for /table add', ()
   });
 });
 
+test('runMessageWorkflow can emit a user field payload for Owner', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_3',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add backlog improve webhook errors / owner_open_id=ou_alex',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableOwnerFieldMode: 'user',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /owner_open_id: ou_alex/);
+  assert.match(result.replyText, /owner field mode: user/);
+  assert.match(result.replyText, /Owner: \[\{"id":"ou_alex"\}\]/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'improve webhook errors',
+    List: 'backlog',
+    SourceCommand: '/table add backlog improve webhook errors / owner_open_id=ou_alex',
+    Owner: [
+      {
+        id: 'ou_alex',
+      },
+    ],
+  });
+});
+
 test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
   const draft = buildTableRecordDraft({
     listName: 'backlog',
@@ -199,6 +241,27 @@ test('buildTableRecordDraft can emit List as single-select payload', () => {
     name: 'backlog',
   });
   assert.match(draft.notes[1] ?? '', /single-select payload/);
+});
+
+test('buildTableRecordDraft can emit Owner as a user field payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'backlog',
+      title: 'improve webhook errors',
+      ownerOpenId: 'ou_alex',
+      sourceCommand: '/table add backlog improve webhook errors / owner_open_id=ou_alex',
+    },
+    {
+      ownerFieldMode: 'user',
+    },
+  );
+
+  assert.deepEqual(draft.body.fields.Owner, [
+    {
+      id: 'ou_alex',
+    },
+  ]);
+  assert.match(draft.notes[1] ?? '', /user field payload/);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {

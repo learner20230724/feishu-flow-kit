@@ -1,6 +1,7 @@
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export type TableListFieldMode = 'text' | 'single_select';
+export type TableOwnerFieldMode = 'text' | 'user';
 
 export interface AppConfig {
   appId: string;
@@ -18,6 +19,7 @@ export interface AppConfig {
   bitableAppToken: string;
   bitableTableId: string;
   bitableListFieldMode: TableListFieldMode;
+  bitableOwnerFieldMode: TableOwnerFieldMode;
 }
 
 const LOG_LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
@@ -61,6 +63,12 @@ function parseTableListFieldMode(value: string | undefined): TableListFieldMode 
   throw new Error(`Invalid FEISHU_BITABLE_LIST_FIELD_MODE: ${value}`);
 }
 
+function parseTableOwnerFieldMode(value: string | undefined): TableOwnerFieldMode {
+  if (!value) return 'text';
+  if (value === 'text' || value === 'user') return value;
+  throw new Error(`Invalid FEISHU_BITABLE_OWNER_FIELD_MODE: ${value}`);
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     appId: env.FEISHU_APP_ID ?? '',
@@ -82,5 +90,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     bitableAppToken: env.FEISHU_BITABLE_APP_TOKEN ?? '',
     bitableTableId: env.FEISHU_BITABLE_TABLE_ID ?? '',
     bitableListFieldMode: parseTableListFieldMode(env.FEISHU_BITABLE_LIST_FIELD_MODE),
+    bitableOwnerFieldMode: parseTableOwnerFieldMode(env.FEISHU_BITABLE_OWNER_FIELD_MODE),
   };
 }

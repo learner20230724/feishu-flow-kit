@@ -43,6 +43,8 @@ FEISHU_ENABLE_DOC_CREATE=false
 FEISHU_ENABLE_TABLE_CREATE=false
 FEISHU_BITABLE_APP_TOKEN=
 FEISHU_BITABLE_TABLE_ID=
+FEISHU_BITABLE_LIST_FIELD_MODE=text
+FEISHU_BITABLE_OWNER_FIELD_MODE=text
 LOG_LEVEL=debug
 ```
 
@@ -78,6 +80,7 @@ Starter commands available right now:
 - `/todo ship webhook adapter`
 - `/doc weekly launch review`
 - `/table add backlog item: improve webhook errors / owner=alex`
+- `/table add backlog improve webhook errors / owner_open_id=ou_xxx`
 
 This is small on purpose. It gives you one end-to-end slice to extend before adding real Feishu transport code.
 

@@ -4,6 +4,7 @@ import {
   buildTableRecordDraft,
   type TableCommandDraftInput,
   type TableListFieldMode,
+  type TableOwnerFieldMode,
   type TableRecordDraft,
   type TableRecordFieldValue,
 } from '../adapters/build-table-record-draft.js';
@@ -23,6 +24,7 @@ export interface WorkflowResult {
 
 export interface WorkflowOptions {
   bitableListFieldMode?: TableListFieldMode;
+  bitableOwnerFieldMode?: TableOwnerFieldMode;
 }
 
 function summarizeTodoRequest(argsText: string) {
@@ -94,11 +96,13 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
 
   const options = segments.slice(1);
   let owner: string | undefined;
+  let ownerOpenId: string | undefined;
 
   for (const opt of options) {
     const kv = parseKeyValueOption(opt);
     if (!kv) continue;
     if (kv.key === 'owner') owner = kv.value;
+    if (kv.key === 'owner_open_id') ownerOpenId = kv.value;
   }
 
   let title = first;
@@ -121,6 +125,7 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
     title: cleanTitle || 'Untitled record',
     details,
     owner,
+    ownerOpenId,
     sourceCommand: `/table ${argsText}`.trim(),
   };
 }
@@ -134,6 +139,7 @@ function formatTableDraftReply(
   input: TableCommandDraftInput,
   fields: Record<string, TableRecordFieldValue>,
   listFieldMode: TableListFieldMode,
+  ownerFieldMode: TableOwnerFieldMode,
 ) {
   const lines: string[] = ['Table workflow draft'];
 
@@ -141,8 +147,12 @@ function formatTableDraftReply(
   lines.push(`- title: ${input.title}`);
   if (input.details) lines.push(`- details: ${input.details}`);
   if (input.owner) lines.push(`- owner: ${input.owner}`);
+  if (input.ownerOpenId) lines.push(`- owner_open_id: ${input.ownerOpenId}`);
   if (listFieldMode === 'single_select') {
     lines.push('- list field mode: single_select');
+  }
+  if (ownerFieldMode === 'user') {
+    lines.push('- owner field mode: user');
   }
 
   lines.push('');
@@ -204,20 +214,26 @@ export function runMessageWorkflow(
           '',
           'Usage:',
           '- /table add <list> <title...> / owner=<name>',
+          '- /table add <list> <title...> / owner_open_id=<open_id>',
           '',
           'Example:',
           '- /table add backlog item: improve webhook errors / owner=alex',
+          '- /table add backlog improve webhook errors / owner_open_id=ou_xxx',
         ].join('\n'),
         tags: ['table', 'demo', 'usage'],
       };
     }
 
     const listFieldMode = options.bitableListFieldMode ?? 'text';
-    const draft = buildTableRecordDraft(input, { listFieldMode });
+    const ownerFieldMode = options.bitableOwnerFieldMode ?? 'text';
+    const draft = buildTableRecordDraft(input, {
+      listFieldMode,
+      ownerFieldMode,
+    });
 
     return {
       ok: true,
-      replyText: formatTableDraftReply(input, draft.body.fields, listFieldMode),
+      replyText: formatTableDraftReply(input, draft.body.fields, listFieldMode, ownerFieldMode),
       tags: ['table', 'demo'],
       hasTableRecordDraft: true,
       tableRecordTitle: input.title,
