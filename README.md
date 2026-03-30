@@ -87,7 +87,7 @@ Feishu message event
   (+ optional outbound Feishu reply)
 ```
 
-Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` or `multi_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`, `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`, and `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`, or `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`.
+Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` or `multi_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`, `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`, and `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`, or `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`. If your Bitable does not use the starter field names, you can now remap them directly with env vars such as `FEISHU_BITABLE_TITLE_FIELD_NAME=Task`, `FEISHU_BITABLE_LIST_FIELD_NAME=Stage`, or `FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand`.
 
 ## Demo assets
 
@@ -195,7 +195,7 @@ The current test set covers:
 Already runnable in the repo:
 - `/todo ...` → turns a request into a small action-list draft
 - `/doc ...` → turns a topic into a markdown-style outline, then can create a Feishu doc and append a minimal native docx body (headings / bullets / todos / paragraphs)
-- `/table ...` → turns a short record request into a Bitable create-record draft (local-first, opt-in outbound write; starter support for `List` single-select or multi-select payloads, `Owner` user payloads, `Estimate` numeric payloads, `Due` date/datetime timestamp payloads, `Done` checkbox payloads, `Attachment` file-token payloads, and `LinkedRecords` linked-record payloads is now available via config)
+- `/table ...` → turns a short record request into a Bitable create-record draft (local-first, opt-in outbound write; starter support for `List` single-select or multi-select payloads, `Owner` user payloads, `Estimate` numeric payloads, `Due` date/datetime timestamp payloads, `Done` checkbox payloads, `Attachment` file-token payloads, and `LinkedRecords` linked-record payloads is now available via config, and the starter field names can now be remapped to a real table schema without editing code)
 
 Still good next candidates:
 - sync selected Feishu content into a local markdown workspace

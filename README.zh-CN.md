@@ -87,7 +87,7 @@ Feishu 消息事件
   （可选：真实发送 Feishu 回复）
 ```
 
-以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` 或 `multi_select`、`FEISHU_BITABLE_OWNER_FIELD_MODE=user`、`FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`、`FEISHU_BITABLE_DUE_FIELD_MODE=date` 或 `datetime`、`FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`，以及 `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`、`FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`，逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。
+以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` 或 `multi_select`、`FEISHU_BITABLE_OWNER_FIELD_MODE=user`、`FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`、`FEISHU_BITABLE_DUE_FIELD_MODE=date` 或 `datetime`、`FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`，以及 `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`、`FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`，逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。如果你的 Bitable 字段名不是 starter 默认的 `Title / List / Details / ...`，现在也可以直接用 `FEISHU_BITABLE_TITLE_FIELD_NAME=Task`、`FEISHU_BITABLE_LIST_FIELD_NAME=Stage`、`FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand` 这类环境变量做字段名重映射，不用先改代码。
 
 ## Demo 资产
 
@@ -195,7 +195,7 @@ npm test
 仓库里已经能直接跑的：
 - `/todo ...` → 把请求整理成一个简短 action-list draft
 - `/doc ...` → 把主题转成 markdown 风格 outline，并可进一步创建 Feishu 文档、追加最小原生 docx 正文（headings / bullets / todos / paragraphs）
-- `/table ...` → 把一段短的 record 请求转成 Bitable create-record draft（本地优先，真实写入显式 opt-in；当前已可通过配置把 `List` 扩到 single-select 或 multi-select、把 `Owner` 扩到 user payload、把 `Estimate` 扩到 number payload、把 `Due` 扩到 date/datetime 时间戳 payload、把 `Done` 扩到 checkbox payload、把 `Attachment` 扩到 file-token attachment payload，并把 `LinkedRecords` 扩到 linked-record payload）
+- `/table ...` → 把一段短的 record 请求转成 Bitable create-record draft（本地优先，真实写入显式 opt-in；当前已可通过配置把 `List` 扩到 single-select 或 multi-select、把 `Owner` 扩到 user payload、把 `Estimate` 扩到 number payload、把 `Due` 扩到 date/datetime 时间戳 payload、把 `Done` 扩到 checkbox payload、把 `Attachment` 扩到 file-token attachment payload，并把 `LinkedRecords` 扩到 linked-record payload；同时也支持用环境变量把 starter 字段名重映射到真实表结构）
 
 下一批比较合适的方向：
 - 将选定的飞书内容同步到本地 markdown 工作区

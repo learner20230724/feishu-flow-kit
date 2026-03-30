@@ -3,11 +3,12 @@ import { parseSlashCommand } from '../core/parse-slash-command.js';
 import {
   buildTableRecordDraft,
   type TableAttachmentFieldMode,
-  type TableLinkFieldMode,
   type TableCommandDraftInput,
   type TableDoneFieldMode,
   type TableDueFieldMode,
   type TableEstimateFieldMode,
+  type TableFieldNames,
+  type TableLinkFieldMode,
   type TableListFieldMode,
   type TableOwnerFieldMode,
   type TableRecordDraft,
@@ -35,6 +36,7 @@ export interface WorkflowOptions {
   bitableDoneFieldMode?: TableDoneFieldMode;
   bitableAttachmentFieldMode?: TableAttachmentFieldMode;
   bitableLinkFieldMode?: TableLinkFieldMode;
+  bitableFieldNames?: Partial<TableFieldNames>;
 }
 
 function summarizeTodoRequest(argsText: string) {
@@ -156,7 +158,9 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
 }
 
 function stringifyTableFieldValue(value: TableRecordFieldValue) {
-  if (typeof value === 'string' || typeof value === 'number') return String(value);
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
   return JSON.stringify(value);
 }
 
@@ -287,6 +291,7 @@ export function runMessageWorkflow(
       doneFieldMode,
       attachmentFieldMode,
       linkFieldMode,
+      fieldNames: options.bitableFieldNames,
     });
 
     return {

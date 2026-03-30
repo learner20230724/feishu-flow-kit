@@ -28,7 +28,15 @@ export interface TableLinkedRecordFieldValue {
   link_record_ids: string[];
 }
 
-export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableMultiSelectFieldValue | TableUserFieldValue | TableAttachmentFieldValue | TableLinkedRecordFieldValue;
+export type TableRecordFieldValue =
+  | string
+  | number
+  | boolean
+  | TableSingleSelectFieldValue
+  | TableMultiSelectFieldValue
+  | TableUserFieldValue
+  | TableAttachmentFieldValue
+  | TableLinkedRecordFieldValue;
 
 export interface TableRecordDraft {
   endpoint: string;
@@ -53,6 +61,19 @@ export interface TableCommandDraftInput {
   sourceCommand: string;
 }
 
+export interface TableFieldNames {
+  title: string;
+  list: string;
+  details: string;
+  owner: string;
+  estimate: string;
+  due: string;
+  done: string;
+  attachment: string;
+  linkedRecords: string;
+  sourceCommand: string;
+}
+
 export interface BuildTableRecordDraftOptions {
   listFieldMode?: TableListFieldMode;
   ownerFieldMode?: TableOwnerFieldMode;
@@ -61,12 +82,42 @@ export interface BuildTableRecordDraftOptions {
   doneFieldMode?: TableDoneFieldMode;
   attachmentFieldMode?: TableAttachmentFieldMode;
   linkFieldMode?: TableLinkFieldMode;
+  fieldNames?: Partial<TableFieldNames>;
 }
 
-function buildListFieldValue(
-  listName: string,
-  mode: TableListFieldMode,
-): TableRecordFieldValue {
+export function getDefaultTableFieldNames(): TableFieldNames {
+  return {
+    title: 'Title',
+    list: 'List',
+    details: 'Details',
+    owner: 'Owner',
+    estimate: 'Estimate',
+    due: 'Due',
+    done: 'Done',
+    attachment: 'Attachment',
+    linkedRecords: 'LinkedRecords',
+    sourceCommand: 'SourceCommand',
+  };
+}
+
+function resolveTableFieldNames(overrides: Partial<TableFieldNames> = {}): TableFieldNames {
+  const defaults = getDefaultTableFieldNames();
+
+  return {
+    title: overrides.title?.trim() || defaults.title,
+    list: overrides.list?.trim() || defaults.list,
+    details: overrides.details?.trim() || defaults.details,
+    owner: overrides.owner?.trim() || defaults.owner,
+    estimate: overrides.estimate?.trim() || defaults.estimate,
+    due: overrides.due?.trim() || defaults.due,
+    done: overrides.done?.trim() || defaults.done,
+    attachment: overrides.attachment?.trim() || defaults.attachment,
+    linkedRecords: overrides.linkedRecords?.trim() || defaults.linkedRecords,
+    sourceCommand: overrides.sourceCommand?.trim() || defaults.sourceCommand,
+  };
+}
+
+function buildListFieldValue(listName: string, mode: TableListFieldMode): TableRecordFieldValue {
   if (mode === 'single_select') {
     return {
       name: listName,
@@ -242,44 +293,47 @@ export function buildTableRecordDraft(
   const doneFieldMode = options.doneFieldMode ?? 'text';
   const attachmentFieldMode = options.attachmentFieldMode ?? 'text';
   const linkFieldMode = options.linkFieldMode ?? 'text';
+  const fieldNames = resolveTableFieldNames(options.fieldNames);
+  const defaultFieldNames = getDefaultTableFieldNames();
+
   const fields: Record<string, TableRecordFieldValue> = {
-    Title: input.title,
-    List: buildListFieldValue(input.listName, listFieldMode),
-    SourceCommand: input.sourceCommand,
+    [fieldNames.title]: input.title,
+    [fieldNames.list]: buildListFieldValue(input.listName, listFieldMode),
+    [fieldNames.sourceCommand]: input.sourceCommand,
   };
 
   if (input.details) {
-    fields.Details = input.details;
+    fields[fieldNames.details] = input.details;
   }
 
   const ownerFieldValue = buildOwnerFieldValue(input, ownerFieldMode);
-  if (ownerFieldValue) {
-    fields.Owner = ownerFieldValue;
+  if (ownerFieldValue !== undefined) {
+    fields[fieldNames.owner] = ownerFieldValue;
   }
 
   const estimateFieldValue = buildEstimateFieldValue(input, estimateFieldMode);
   if (estimateFieldValue !== undefined) {
-    fields.Estimate = estimateFieldValue;
+    fields[fieldNames.estimate] = estimateFieldValue;
   }
 
   const dueFieldValue = buildDueFieldValue(input, dueFieldMode);
   if (dueFieldValue !== undefined) {
-    fields.Due = dueFieldValue;
+    fields[fieldNames.due] = dueFieldValue;
   }
 
   const doneFieldValue = buildDoneFieldValue(input, doneFieldMode);
   if (doneFieldValue !== undefined) {
-    fields.Done = doneFieldValue;
+    fields[fieldNames.done] = doneFieldValue;
   }
 
   const attachmentFieldValue = buildAttachmentFieldValue(input, attachmentFieldMode);
   if (attachmentFieldValue !== undefined) {
-    fields.Attachment = attachmentFieldValue;
+    fields[fieldNames.attachment] = attachmentFieldValue;
   }
 
   const linkFieldValue = buildLinkFieldValue(input, linkFieldMode);
   if (linkFieldValue !== undefined) {
-    fields.LinkedRecords = linkFieldValue;
+    fields[fieldNames.linkedRecords] = linkFieldValue;
   }
 
   const notes = [
@@ -315,14 +369,22 @@ export function buildTableRecordDraft(
     widenedModes.push('LinkedRecords is emitted as a Bitable linked-record payload ({ link_record_ids }) using comma-separated record IDs');
   }
 
+  const renamedFields = Object.entries(fieldNames)
+    .filter(([key, value]) => value !== defaultFieldNames[key as keyof TableFieldNames])
+    .map(([key, value]) => `${key}→${value}`);
+
   if (widenedModes.length > 0) {
     notes.push(
-      `${widenedModes.join('. ')}. Title, Details, and SourceCommand still assume text-compatible fields.`,
+      `${widenedModes.join('. ')}. ${fieldNames.title}, ${fieldNames.details}, and ${fieldNames.sourceCommand} still assume text-compatible fields.`,
     );
   } else {
     notes.push(
-      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, Done, Attachment, LinkedRecords, SourceCommand.',
+      `The starter field mapping assumes simple text fields: ${fieldNames.title}, ${fieldNames.list}, ${fieldNames.details}, ${fieldNames.owner}, ${fieldNames.estimate}, ${fieldNames.due}, ${fieldNames.done}, ${fieldNames.attachment}, ${fieldNames.linkedRecords}, ${fieldNames.sourceCommand}.`,
     );
+  }
+
+  if (renamedFields.length > 0) {
+    notes.push(`Field-name overrides active: ${renamedFields.join(', ')}.`);
   }
 
   return {

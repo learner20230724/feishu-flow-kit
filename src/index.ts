@@ -30,6 +30,18 @@ async function main() {
     bitableDoneFieldMode: config.bitableDoneFieldMode,
     bitableAttachmentFieldMode: config.bitableAttachmentFieldMode,
     bitableLinkFieldMode: config.bitableLinkFieldMode,
+    bitableFieldNames: {
+      title: config.bitableTitleFieldName,
+      list: config.bitableListFieldName,
+      details: config.bitableDetailsFieldName,
+      owner: config.bitableOwnerFieldName,
+      estimate: config.bitableEstimateFieldName,
+      due: config.bitableDueFieldName,
+      done: config.bitableDoneFieldName,
+      attachment: config.bitableAttachmentFieldName,
+      linkedRecords: config.bitableLinkedRecordsFieldName,
+      sourceCommand: config.bitableSourceCommandFieldName,
+    },
   });
 
   if (config.mockMode) {
@@ -42,7 +54,19 @@ async function main() {
       bitableDueFieldMode: config.bitableDueFieldMode,
       bitableDoneFieldMode: config.bitableDoneFieldMode,
       bitableAttachmentFieldMode: config.bitableAttachmentFieldMode,
-    bitableLinkFieldMode: config.bitableLinkFieldMode,
+      bitableLinkFieldMode: config.bitableLinkFieldMode,
+      bitableFieldNames: {
+        title: config.bitableTitleFieldName,
+        list: config.bitableListFieldName,
+        details: config.bitableDetailsFieldName,
+        owner: config.bitableOwnerFieldName,
+        estimate: config.bitableEstimateFieldName,
+        due: config.bitableDueFieldName,
+        done: config.bitableDoneFieldName,
+        attachment: config.bitableAttachmentFieldName,
+        linkedRecords: config.bitableLinkedRecordsFieldName,
+        sourceCommand: config.bitableSourceCommandFieldName,
+      },
     });
 
     logger.info('mock event loaded', {

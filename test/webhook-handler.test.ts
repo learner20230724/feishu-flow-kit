@@ -1199,3 +1199,51 @@ test('handleWebhookPayload matches the invalid webhook payload fixture', async (
 
   assert.deepEqual(result, expected);
 });
+
+
+test('handleWebhookPayload propagates table field-name overrides into the draft', async () => {
+  const result = await handleWebhookPayload(
+    {
+      header: {
+        event_type: 'im.message.receive_v1',
+        create_time: '2026-03-30T10:10:00Z',
+        tenant_key: 'tenant_demo',
+      },
+      event: {
+        sender: {
+          sender_id: {
+            open_id: 'ou_demo_sender',
+          },
+        },
+        message: {
+          message_id: 'om_table_override_demo',
+          chat_id: 'oc_demo_chat',
+          chat_type: 'p2p',
+          content: JSON.stringify({ text: '/table add backlog item: improve webhook errors / owner=alex' }),
+          create_time: '2026-03-30T10:10:00Z',
+        },
+      },
+    },
+    {
+      appId: 'cli_demo_app_id',
+      appSecret: 'demo_app_secret',
+      enableOutboundReply: false,
+      enableDocCreate: false,
+      enableTableCreate: false,
+      bitableTitleFieldName: 'Task',
+      bitableListFieldName: 'Stage',
+      bitableDetailsFieldName: 'Context',
+      bitableOwnerFieldName: 'Assignee',
+      bitableSourceCommandFieldName: 'ChatCommand',
+    },
+  );
+
+  assert.equal(result.statusCode, 200);
+  assert.deepEqual(result.body.tableRecordDraft.body.fields, {
+    Task: 'improve webhook errors',
+    Stage: 'backlog',
+    ChatCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    Context: 'item',
+    Assignee: 'alex',
+  });
+});

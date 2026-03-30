@@ -82,16 +82,19 @@ The current adapter builds a `create-record` request with this field set:
 
 Default starter mode still assumes text-compatible fields.
 
-Optional widening now available:
-- `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` → emits `List` as `{ "name": "..." }`
-- `FEISHU_BITABLE_LIST_FIELD_MODE=multi_select` + comma-separated `<list>` like `backlog,urgent` → emits `List` as `[{ "name": "backlog" }, { "name": "urgent" }]`
-- `FEISHU_BITABLE_OWNER_FIELD_MODE=user` + `/ owner_open_id=ou_xxx` → emits `Owner` as `[{ "id": "ou_xxx" }]`
-- `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` + `/ estimate=5` → emits `Estimate` as a numeric value instead of text
-- `FEISHU_BITABLE_DUE_FIELD_MODE=date` + `/ due=2026-04-01` → emits `Due` as a UTC midnight timestamp in milliseconds
-- `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` + `/ due=2026-04-01T09:30:00Z` → emits `Due` as a datetime timestamp in milliseconds
-- `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox` + `/ done=true` → emits `Done` as a boolean checkbox payload
-- `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment` + `/ attachment_token=file_v2_xxx[,file_v2_yyy]` → emits `Attachment` as `[{ "file_token": "..." }]`
-- `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record` + `/ link_record_id=recA[,recB]` → emits `LinkedRecords` as `{ "link_record_ids": ["recA", "recB"] }`
+Optional field-name remapping is now available too:
+- `FEISHU_BITABLE_TITLE_FIELD_NAME=Task`
+- `FEISHU_BITABLE_LIST_FIELD_NAME=Stage`
+- `FEISHU_BITABLE_DETAILS_FIELD_NAME=Context`
+- `FEISHU_BITABLE_OWNER_FIELD_NAME=Assignee`
+- `FEISHU_BITABLE_ESTIMATE_FIELD_NAME=Points`
+- `FEISHU_BITABLE_DUE_FIELD_NAME=TargetDate`
+- `FEISHU_BITABLE_DONE_FIELD_NAME=Completed`
+- `FEISHU_BITABLE_ATTACHMENT_FIELD_NAME=Files`
+- `FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME=Dependencies`
+- `FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand`
+
+That means you can keep the current command shape while targeting a table that does **not** literally use `Title`, `List`, `Details`, `Owner`, `Estimate`, `Due`, `Done`, `Attachment`, `LinkedRecords`, and `SourceCommand` as column names.
 
 That means the safest matching table schema is:
 
@@ -123,7 +126,7 @@ It also does not currently:
 - validate field existence before calling `create-record`
 - coerce values into different field payload shapes beyond the current starter modes
 - auto-create missing fields
-- reconcile localized field names
+- reconcile localized field names automatically (manual field-name overrides are supported, schema discovery is not)
 
 That is deliberate. The current milestone is about a visible, understandable starter path, not a general Bitable ORM.
 

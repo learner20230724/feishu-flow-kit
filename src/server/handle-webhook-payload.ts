@@ -42,6 +42,16 @@ export async function handleWebhookPayload(
     | 'bitableDoneFieldMode'
     | 'bitableAttachmentFieldMode'
     | 'bitableLinkFieldMode'
+    | 'bitableTitleFieldName'
+    | 'bitableListFieldName'
+    | 'bitableDetailsFieldName'
+    | 'bitableOwnerFieldName'
+    | 'bitableEstimateFieldName'
+    | 'bitableDueFieldName'
+    | 'bitableDoneFieldName'
+    | 'bitableAttachmentFieldName'
+    | 'bitableLinkedRecordsFieldName'
+    | 'bitableSourceCommandFieldName'
   >,
 ): Promise<WebhookHandlerResult> {
   if (isUrlVerificationPayload(payload)) {
@@ -72,6 +82,20 @@ export async function handleWebhookPayload(
     bitableDoneFieldMode: config?.bitableDoneFieldMode,
     bitableAttachmentFieldMode: config?.bitableAttachmentFieldMode,
     bitableLinkFieldMode: config?.bitableLinkFieldMode,
+    bitableFieldNames: config
+      ? {
+          title: config.bitableTitleFieldName,
+          list: config.bitableListFieldName,
+          details: config.bitableDetailsFieldName,
+          owner: config.bitableOwnerFieldName,
+          estimate: config.bitableEstimateFieldName,
+          due: config.bitableDueFieldName,
+          done: config.bitableDoneFieldName,
+          attachment: config.bitableAttachmentFieldName,
+          linkedRecords: config.bitableLinkedRecordsFieldName,
+          sourceCommand: config.bitableSourceCommandFieldName,
+        }
+      : undefined,
   });
   const replyDraft = buildReplyMessageDraft(event.message.messageId, workflow.replyText);
   const docCreateDraft =

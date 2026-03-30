@@ -51,6 +51,16 @@ FEISHU_BITABLE_DUE_FIELD_MODE=text
 FEISHU_BITABLE_DONE_FIELD_MODE=text
 FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=text
 FEISHU_BITABLE_LINK_FIELD_MODE=text
+FEISHU_BITABLE_TITLE_FIELD_NAME=Title
+FEISHU_BITABLE_LIST_FIELD_NAME=List
+FEISHU_BITABLE_DETAILS_FIELD_NAME=Details
+FEISHU_BITABLE_OWNER_FIELD_NAME=Owner
+FEISHU_BITABLE_ESTIMATE_FIELD_NAME=Estimate
+FEISHU_BITABLE_DUE_FIELD_NAME=Due
+FEISHU_BITABLE_DONE_FIELD_NAME=Done
+FEISHU_BITABLE_ATTACHMENT_FIELD_NAME=Attachment
+FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME=LinkedRecords
+FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=SourceCommand
 LOG_LEVEL=debug
 ```
 
@@ -246,6 +256,15 @@ Checklist:
 - a real `FEISHU_BITABLE_APP_TOKEN`
 - a real `FEISHU_BITABLE_TABLE_ID`
 - a target table that has compatible starter fields, or a plan to adapt the field mapping
+
+If your real table uses different column names, you can now remap them without touching code. Example:
+
+```bash
+FEISHU_BITABLE_TITLE_FIELD_NAME=Task
+FEISHU_BITABLE_LIST_FIELD_NAME=Stage
+FEISHU_BITABLE_DETAILS_FIELD_NAME=Context
+FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand
+```
 
 The current repo keeps this write path intentionally small:
 1. parse `/table add ...`

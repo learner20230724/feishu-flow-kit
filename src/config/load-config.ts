@@ -30,6 +30,16 @@ export interface AppConfig {
   bitableDoneFieldMode: TableDoneFieldMode;
   bitableAttachmentFieldMode: TableAttachmentFieldMode;
   bitableLinkFieldMode: TableLinkFieldMode;
+  bitableTitleFieldName: string;
+  bitableListFieldName: string;
+  bitableDetailsFieldName: string;
+  bitableOwnerFieldName: string;
+  bitableEstimateFieldName: string;
+  bitableDueFieldName: string;
+  bitableDoneFieldName: string;
+  bitableAttachmentFieldName: string;
+  bitableLinkedRecordsFieldName: string;
+  bitableSourceCommandFieldName: string;
 }
 
 const LOG_LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
@@ -109,6 +119,11 @@ function parseTableLinkFieldMode(value: string | undefined): TableLinkFieldMode 
   throw new Error(`Invalid FEISHU_BITABLE_LINK_FIELD_MODE: ${value}`);
 }
 
+function parseFieldName(value: string | undefined, defaultValue: string) {
+  const trimmed = value?.trim();
+  return trimmed || defaultValue;
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     appId: env.FEISHU_APP_ID ?? '',
@@ -136,5 +151,15 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     bitableDoneFieldMode: parseTableDoneFieldMode(env.FEISHU_BITABLE_DONE_FIELD_MODE),
     bitableAttachmentFieldMode: parseTableAttachmentFieldMode(env.FEISHU_BITABLE_ATTACHMENT_FIELD_MODE),
     bitableLinkFieldMode: parseTableLinkFieldMode(env.FEISHU_BITABLE_LINK_FIELD_MODE),
+    bitableTitleFieldName: parseFieldName(env.FEISHU_BITABLE_TITLE_FIELD_NAME, 'Title'),
+    bitableListFieldName: parseFieldName(env.FEISHU_BITABLE_LIST_FIELD_NAME, 'List'),
+    bitableDetailsFieldName: parseFieldName(env.FEISHU_BITABLE_DETAILS_FIELD_NAME, 'Details'),
+    bitableOwnerFieldName: parseFieldName(env.FEISHU_BITABLE_OWNER_FIELD_NAME, 'Owner'),
+    bitableEstimateFieldName: parseFieldName(env.FEISHU_BITABLE_ESTIMATE_FIELD_NAME, 'Estimate'),
+    bitableDueFieldName: parseFieldName(env.FEISHU_BITABLE_DUE_FIELD_NAME, 'Due'),
+    bitableDoneFieldName: parseFieldName(env.FEISHU_BITABLE_DONE_FIELD_NAME, 'Done'),
+    bitableAttachmentFieldName: parseFieldName(env.FEISHU_BITABLE_ATTACHMENT_FIELD_NAME, 'Attachment'),
+    bitableLinkedRecordsFieldName: parseFieldName(env.FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME, 'LinkedRecords'),
+    bitableSourceCommandFieldName: parseFieldName(env.FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME, 'SourceCommand'),
   };
 }

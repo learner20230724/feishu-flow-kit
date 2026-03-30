@@ -83,6 +83,16 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
         bitableDoneFieldMode: config.bitableDoneFieldMode,
         bitableAttachmentFieldMode: config.bitableAttachmentFieldMode,
         bitableLinkFieldMode: config.bitableLinkFieldMode,
+        bitableTitleFieldName: config.bitableTitleFieldName,
+        bitableListFieldName: config.bitableListFieldName,
+        bitableDetailsFieldName: config.bitableDetailsFieldName,
+        bitableOwnerFieldName: config.bitableOwnerFieldName,
+        bitableEstimateFieldName: config.bitableEstimateFieldName,
+        bitableDueFieldName: config.bitableDueFieldName,
+        bitableDoneFieldName: config.bitableDoneFieldName,
+        bitableAttachmentFieldName: config.bitableAttachmentFieldName,
+        bitableLinkedRecordsFieldName: config.bitableLinkedRecordsFieldName,
+        bitableSourceCommandFieldName: config.bitableSourceCommandFieldName,
       });
 
       logger.info('webhook request handled', {
