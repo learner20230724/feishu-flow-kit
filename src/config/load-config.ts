@@ -6,6 +6,7 @@ export type TableEstimateFieldMode = 'text' | 'number';
 export type TableDueFieldMode = 'text' | 'date' | 'datetime';
 export type TableDoneFieldMode = 'text' | 'checkbox';
 export type TableAttachmentFieldMode = 'text' | 'attachment';
+export type TableLinkFieldMode = 'text' | 'linked_record';
 
 export interface AppConfig {
   appId: string;
@@ -28,6 +29,7 @@ export interface AppConfig {
   bitableDueFieldMode: TableDueFieldMode;
   bitableDoneFieldMode: TableDoneFieldMode;
   bitableAttachmentFieldMode: TableAttachmentFieldMode;
+  bitableLinkFieldMode: TableLinkFieldMode;
 }
 
 const LOG_LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
@@ -101,6 +103,12 @@ function parseTableAttachmentFieldMode(value: string | undefined): TableAttachme
   throw new Error(`Invalid FEISHU_BITABLE_ATTACHMENT_FIELD_MODE: ${value}`);
 }
 
+function parseTableLinkFieldMode(value: string | undefined): TableLinkFieldMode {
+  if (!value) return 'text';
+  if (value === 'text' || value === 'linked_record') return value;
+  throw new Error(`Invalid FEISHU_BITABLE_LINK_FIELD_MODE: ${value}`);
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     appId: env.FEISHU_APP_ID ?? '',
@@ -127,5 +135,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     bitableDueFieldMode: parseTableDueFieldMode(env.FEISHU_BITABLE_DUE_FIELD_MODE),
     bitableDoneFieldMode: parseTableDoneFieldMode(env.FEISHU_BITABLE_DONE_FIELD_MODE),
     bitableAttachmentFieldMode: parseTableAttachmentFieldMode(env.FEISHU_BITABLE_ATTACHMENT_FIELD_MODE),
+    bitableLinkFieldMode: parseTableLinkFieldMode(env.FEISHU_BITABLE_LINK_FIELD_MODE),
   };
 }

@@ -3,6 +3,7 @@ import { parseSlashCommand } from '../core/parse-slash-command.js';
 import {
   buildTableRecordDraft,
   type TableAttachmentFieldMode,
+  type TableLinkFieldMode,
   type TableCommandDraftInput,
   type TableDoneFieldMode,
   type TableDueFieldMode,
@@ -33,6 +34,7 @@ export interface WorkflowOptions {
   bitableDueFieldMode?: TableDueFieldMode;
   bitableDoneFieldMode?: TableDoneFieldMode;
   bitableAttachmentFieldMode?: TableAttachmentFieldMode;
+  bitableLinkFieldMode?: TableLinkFieldMode;
 }
 
 function summarizeTodoRequest(argsText: string) {
@@ -109,6 +111,7 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
   let due: string | undefined;
   let done: string | undefined;
   let attachmentToken: string | undefined;
+  let linkRecordId: string | undefined;
 
   for (const opt of options) {
     const kv = parseKeyValueOption(opt);
@@ -119,6 +122,7 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
     if (kv.key === 'due') due = kv.value;
     if (kv.key === 'done') done = kv.value;
     if (kv.key === 'attachment_token') attachmentToken = kv.value;
+    if (kv.key === 'link_record_id') linkRecordId = kv.value;
   }
 
   let title = first;
@@ -146,6 +150,7 @@ function parseTableDraftInput(argsText: string): TableCommandDraftInput | null {
     due,
     done,
     attachmentToken,
+    linkRecordId,
     sourceCommand: `/table ${argsText}`.trim(),
   };
 }
@@ -164,6 +169,7 @@ function formatTableDraftReply(
   dueFieldMode: TableDueFieldMode,
   doneFieldMode: TableDoneFieldMode,
   attachmentFieldMode: TableAttachmentFieldMode,
+  linkFieldMode: TableLinkFieldMode,
 ) {
   const lines: string[] = ['Table workflow draft'];
 
@@ -176,6 +182,7 @@ function formatTableDraftReply(
   if (input.due) lines.push(`- due: ${input.due}`);
   if (input.done) lines.push(`- done: ${input.done}`);
   if (input.attachmentToken) lines.push(`- attachment_token: ${input.attachmentToken}`);
+  if (input.linkRecordId) lines.push(`- link_record_id: ${input.linkRecordId}`);
   if (listFieldMode === 'single_select') lines.push('- list field mode: single_select');
   if (listFieldMode === 'multi_select') lines.push('- list field mode: multi_select');
   if (ownerFieldMode === 'user') lines.push('- owner field mode: user');
@@ -184,6 +191,7 @@ function formatTableDraftReply(
   if (dueFieldMode === 'datetime') lines.push('- due field mode: datetime');
   if (doneFieldMode === 'checkbox') lines.push('- done field mode: checkbox');
   if (attachmentFieldMode === 'attachment') lines.push('- attachment field mode: attachment');
+  if (linkFieldMode === 'linked_record') lines.push('- link field mode: linked_record');
 
   lines.push('');
   lines.push('Draft fields:');
@@ -249,6 +257,7 @@ export function runMessageWorkflow(
           '- /table add <list> <title...> / due=<YYYY-MM-DD-or-ISO8601>',
           '- /table add <list> <title...> / done=<true-or-false>',
           '- /table add <list> <title...> / attachment_token=<file_token-or-comma-separated-file_tokens>',
+          '- /table add <list> <title...> / link_record_id=<record_id-or-comma-separated-record_ids>',
           '- in multi_select list mode, <list> can be comma-separated like backlog,urgent',
           '',
           'Example:',
@@ -257,6 +266,7 @@ export function runMessageWorkflow(
           '- /table add sprint fix flaky webhook tests / due=2026-04-01',
           '- /table add sprint close flaky webhook tests / done=true',
           '- /table add sprint share demo pack / attachment_token=file_v2_demo123,file_v2_demo456',
+          '- /table add sprint ship follow-up / link_record_id=recA123,recB456',
         ].join('\n'),
         tags: ['table', 'demo', 'usage'],
       };
@@ -268,6 +278,7 @@ export function runMessageWorkflow(
     const dueFieldMode = options.bitableDueFieldMode ?? 'text';
     const doneFieldMode = options.bitableDoneFieldMode ?? 'text';
     const attachmentFieldMode = options.bitableAttachmentFieldMode ?? 'text';
+    const linkFieldMode = options.bitableLinkFieldMode ?? 'text';
     const draft = buildTableRecordDraft(input, {
       listFieldMode,
       ownerFieldMode,
@@ -275,6 +286,7 @@ export function runMessageWorkflow(
       dueFieldMode,
       doneFieldMode,
       attachmentFieldMode,
+      linkFieldMode,
     });
 
     return {
@@ -288,6 +300,7 @@ export function runMessageWorkflow(
         dueFieldMode,
         doneFieldMode,
         attachmentFieldMode,
+        linkFieldMode,
       ),
       tags: ['table', 'demo'],
       hasTableRecordDraft: true,

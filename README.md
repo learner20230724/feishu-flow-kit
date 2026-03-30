@@ -87,7 +87,7 @@ Feishu message event
   (+ optional outbound Feishu reply)
 ```
 
-Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` or `multi_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`, `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`, and `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`.
+Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` or `multi_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`, `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`, and `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`, or `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`.
 
 ## Demo assets
 
@@ -109,7 +109,7 @@ By default the project runs in mock mode and loads `examples/mock-message-event.
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
-FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=multi_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime FEISHU_BITABLE_DONE_FIELD_MODE=checkbox FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=multi_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime FEISHU_BITABLE_DONE_FIELD_MODE=checkbox FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment FEISHU_BITABLE_LINK_FIELD_MODE=linked_record npm run dev
 ```
 
 The current demo path is:
@@ -130,12 +130,13 @@ Starter commands available right now:
 - `/table add sprint close flaky webhook tests / done=true`
 - `/table add sprint share demo pack / attachment_token=file_v2_demo123,file_v2_demo456`
 - `/table add sprint,urgent flaky webhook tests / owner_open_id=ou_xxx / estimate=5 / due=2026-04-01T09:30:00Z / done=true`
+- `/table add sprint ship follow-up / link_record_id=recA123,recB456`
 
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
 - `examples/mock-doc-message-event.json` → `/doc` flow
 - `examples/mock-table-message-event.json` → `/table` text-first flow
-- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode flow (`multi_select` + `user` + `number` + `datetime` + `checkbox` + `attachment`)
+- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode flow (`multi_select` + `user` + `number` + `datetime` + `checkbox` + `attachment` + `linked_record`)
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 
@@ -189,7 +190,7 @@ The current test set covers:
 Already runnable in the repo:
 - `/todo ...` → turns a request into a small action-list draft
 - `/doc ...` → turns a topic into a markdown-style outline, then can create a Feishu doc and append a minimal native docx body (headings / bullets / todos / paragraphs)
-- `/table ...` → turns a short record request into a Bitable create-record draft (local-first, opt-in outbound write; starter support for `List` single-select or multi-select payloads, `Owner` user payloads, `Estimate` numeric payloads, `Due` date/datetime timestamp payloads, `Done` checkbox payloads, and `Attachment` file-token payloads is now available via config)
+- `/table ...` → turns a short record request into a Bitable create-record draft (local-first, opt-in outbound write; starter support for `List` single-select or multi-select payloads, `Owner` user payloads, `Estimate` numeric payloads, `Due` date/datetime timestamp payloads, `Done` checkbox payloads, `Attachment` file-token payloads, and `LinkedRecords` linked-record payloads is now available via config)
 
 Still good next candidates:
 - sync selected Feishu content into a local markdown workspace

@@ -83,6 +83,14 @@ test('loadConfig parses FEISHU_BITABLE_ATTACHMENT_FIELD_MODE', () => {
   assert.equal(config.bitableAttachmentFieldMode, 'attachment');
 });
 
+test('loadConfig parses FEISHU_BITABLE_LINK_FIELD_MODE', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_LINK_FIELD_MODE: 'linked_record',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableLinkFieldMode, 'linked_record');
+});
+
 test('runMessageWorkflow returns noop for non-command messages', () => {
   const event: FeishuMessageEvent = {
     type: 'message.received',
@@ -442,6 +450,38 @@ test('runMessageWorkflow can emit Attachment as a Bitable attachment payload', (
       },
     ],
   });
+test('runMessageWorkflow can emit LinkedRecords as a Bitable linked-record payload', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_9',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add sprint ship follow-up / link_record_id=recA123,recB456',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableLinkFieldMode: 'linked_record',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /link_record_id: recA123,recB456/);
+  assert.match(result.replyText, /link field mode: linked_record/);
+  assert.match(result.replyText, /LinkedRecords: \{"link_record_ids":\["recA123","recB456"\]\}/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'ship follow-up',
+    List: 'sprint',
+    SourceCommand: '/table add sprint ship follow-up / link_record_id=recA123,recB456',
+    LinkedRecords: {
+      link_record_ids: ['recA123', 'recB456'],
+    },
+  });
+});
+
 });
 
 test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
@@ -616,6 +656,25 @@ test('buildTableRecordDraft can emit Attachment as attachment payload', () => {
     },
   ]);
   assert.match(draft.notes[1] ?? '', /attachment payload/);
+});
+
+test('buildTableRecordDraft can emit LinkedRecords as linked-record payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'sprint',
+      title: 'ship follow-up',
+      linkRecordId: 'recA123,recB456',
+      sourceCommand: '/table add sprint ship follow-up / link_record_id=recA123,recB456',
+    },
+    {
+      linkFieldMode: 'linked_record',
+    },
+  );
+
+  assert.deepEqual(draft.body.fields.LinkedRecords, {
+    link_record_ids: ['recA123', 'recB456'],
+  });
+  assert.match(draft.notes[1] ?? '', /linked-record payload/);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {

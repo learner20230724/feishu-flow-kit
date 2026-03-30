@@ -4,6 +4,7 @@ export type TableEstimateFieldMode = 'text' | 'number';
 export type TableDueFieldMode = 'text' | 'date' | 'datetime';
 export type TableDoneFieldMode = 'text' | 'checkbox';
 export type TableAttachmentFieldMode = 'text' | 'attachment';
+export type TableLinkFieldMode = 'text' | 'linked_record';
 
 export interface TableSingleSelectFieldValue {
   name: string;
@@ -23,7 +24,11 @@ export interface TableAttachmentFieldItemValue {
 
 export type TableAttachmentFieldValue = TableAttachmentFieldItemValue[];
 
-export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableMultiSelectFieldValue | TableUserFieldValue | TableAttachmentFieldValue;
+export interface TableLinkedRecordFieldValue {
+  link_record_ids: string[];
+}
+
+export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableMultiSelectFieldValue | TableUserFieldValue | TableAttachmentFieldValue | TableLinkedRecordFieldValue;
 
 export interface TableRecordDraft {
   endpoint: string;
@@ -44,6 +49,7 @@ export interface TableCommandDraftInput {
   due?: string;
   done?: string;
   attachmentToken?: string;
+  linkRecordId?: string;
   sourceCommand: string;
 }
 
@@ -54,6 +60,7 @@ export interface BuildTableRecordDraftOptions {
   dueFieldMode?: TableDueFieldMode;
   doneFieldMode?: TableDoneFieldMode;
   attachmentFieldMode?: TableAttachmentFieldMode;
+  linkFieldMode?: TableLinkFieldMode;
 }
 
 function buildListFieldValue(
@@ -200,6 +207,30 @@ function buildAttachmentFieldValue(
   return input.attachmentToken;
 }
 
+function buildLinkFieldValue(
+  input: TableCommandDraftInput,
+  mode: TableLinkFieldMode,
+): TableRecordFieldValue | undefined {
+  if (!input.linkRecordId) return undefined;
+
+  if (mode === 'linked_record') {
+    const values = input.linkRecordId
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    if (values.length > 0) {
+      return {
+        link_record_ids: values,
+      };
+    }
+
+    return undefined;
+  }
+
+  return input.linkRecordId;
+}
+
 export function buildTableRecordDraft(
   input: TableCommandDraftInput,
   options: BuildTableRecordDraftOptions = {},
@@ -210,6 +241,7 @@ export function buildTableRecordDraft(
   const dueFieldMode = options.dueFieldMode ?? 'text';
   const doneFieldMode = options.doneFieldMode ?? 'text';
   const attachmentFieldMode = options.attachmentFieldMode ?? 'text';
+  const linkFieldMode = options.linkFieldMode ?? 'text';
   const fields: Record<string, TableRecordFieldValue> = {
     Title: input.title,
     List: buildListFieldValue(input.listName, listFieldMode),
@@ -245,6 +277,11 @@ export function buildTableRecordDraft(
     fields.Attachment = attachmentFieldValue;
   }
 
+  const linkFieldValue = buildLinkFieldValue(input, linkFieldMode);
+  if (linkFieldValue !== undefined) {
+    fields.LinkedRecords = linkFieldValue;
+  }
+
   const notes = [
     'Local-first draft only. Replace {app_token} and {table_id} before wiring to a real Bitable write.',
   ];
@@ -274,6 +311,9 @@ export function buildTableRecordDraft(
   if (attachmentFieldMode === 'attachment') {
     widenedModes.push('Attachment is emitted as a Bitable attachment payload ([{ file_token }]) using comma-separated file tokens');
   }
+  if (linkFieldMode === 'linked_record') {
+    widenedModes.push('LinkedRecords is emitted as a Bitable linked-record payload ({ link_record_ids }) using comma-separated record IDs');
+  }
 
   if (widenedModes.length > 0) {
     notes.push(
@@ -281,7 +321,7 @@ export function buildTableRecordDraft(
     );
   } else {
     notes.push(
-      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, Done, Attachment, SourceCommand.',
+      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, Done, Attachment, LinkedRecords, SourceCommand.',
     );
   }
 

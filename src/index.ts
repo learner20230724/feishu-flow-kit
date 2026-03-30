@@ -29,6 +29,7 @@ async function main() {
     bitableDueFieldMode: config.bitableDueFieldMode,
     bitableDoneFieldMode: config.bitableDoneFieldMode,
     bitableAttachmentFieldMode: config.bitableAttachmentFieldMode,
+    bitableLinkFieldMode: config.bitableLinkFieldMode,
   });
 
   if (config.mockMode) {
@@ -41,6 +42,7 @@ async function main() {
       bitableDueFieldMode: config.bitableDueFieldMode,
       bitableDoneFieldMode: config.bitableDoneFieldMode,
       bitableAttachmentFieldMode: config.bitableAttachmentFieldMode,
+    bitableLinkFieldMode: config.bitableLinkFieldMode,
     });
 
     logger.info('mock event loaded', {

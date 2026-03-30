@@ -50,6 +50,7 @@ FEISHU_BITABLE_ESTIMATE_FIELD_MODE=text
 FEISHU_BITABLE_DUE_FIELD_MODE=text
 FEISHU_BITABLE_DONE_FIELD_MODE=text
 FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=text
+FEISHU_BITABLE_LINK_FIELD_MODE=text
 LOG_LEVEL=debug
 ```
 
@@ -67,7 +68,7 @@ Or switch the input file directly:
 
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
-FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=multi_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime FEISHU_BITABLE_DONE_FIELD_MODE=checkbox FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=multi_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime FEISHU_BITABLE_DONE_FIELD_MODE=checkbox FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment FEISHU_BITABLE_LINK_FIELD_MODE=linked_record npm run dev
 ```
 
 What happens in that flow:
@@ -92,6 +93,7 @@ Starter commands available right now:
 - `/table add sprint close flaky webhook tests / done=true`
 - `/table add sprint share demo pack / attachment_token=file_v2_demo123,file_v2_demo456`
 - `/table add sprint,urgent flaky webhook tests / owner_open_id=ou_xxx / estimate=5 / due=2026-04-01T09:30:00Z / done=true`
+- `/table add sprint ship follow-up / link_record_id=recA123,recB456`
 
 For a richer `/table` local run, use:
 
@@ -103,6 +105,7 @@ FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number \
 FEISHU_BITABLE_DUE_FIELD_MODE=datetime \
 FEISHU_BITABLE_DONE_FIELD_MODE=checkbox \
 FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment \
+FEISHU_BITABLE_LINK_FIELD_MODE=linked_record \
 npm run dev
 ```
 
@@ -254,6 +257,7 @@ Starter mapping assumptions right now:
 - `Due` → text by default, or UTC milliseconds with `FEISHU_BITABLE_DUE_FIELD_MODE=date` + `/ due=YYYY-MM-DD`, or datetime milliseconds with `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` + `/ due=ISO8601`
 - `Done` → text by default, or checkbox with `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox` + `/ done=true`
 - `Attachment` → text by default, or `[{ file_token: ... }]` with `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment` + `/ attachment_token=file_v2_xxx[,file_v2_yyy]`
+- `LinkedRecords` → text by default, or `{ link_record_ids: [...] }` with `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record` + `/ link_record_id=recA[,recB]`
 - `SourceCommand` → text
 
 If token fetch works but record creation fails, the usual causes are missing Bitable scope, wrong `app_token` / `table_id`, or field types/names that do not match this starter mapping.
