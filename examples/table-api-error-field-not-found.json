@@ -1,0 +1,12 @@
+{
+  "code": 1254046,
+  "msg": "Field not found",
+  "error": {
+    "message": "Field not found: Due",
+    "details": {
+      "field": "Due",
+      "suggestion": "Check whether the target Bitable table contains a field named Due and whether field names match the starter mapping exactly."
+    }
+  },
+  "request_id": "table_demo_field_not_found"
+}

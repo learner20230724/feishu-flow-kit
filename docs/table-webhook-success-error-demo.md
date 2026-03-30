@@ -190,3 +190,5 @@ What was still missing was one outward-facing page that shows:
 - what the current invalid-payload failure looks like
 
 That makes the starter boundary easier to understand without reading the whole codebase first.
+
+If you want a matching set of more realistic create-record failure shapes, see [`table-api-error-fixtures.md`](./table-api-error-fixtures.md).

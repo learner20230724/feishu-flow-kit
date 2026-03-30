@@ -1,0 +1,14 @@
+{
+  "code": 1254062,
+  "msg": "Invalid field value",
+  "error": {
+    "message": "Field value type mismatch: Due",
+    "details": {
+      "field": "Due",
+      "expected": "datetime",
+      "received": "text",
+      "suggestion": "If Due is a date/datetime column, enable FEISHU_BITABLE_DUE_FIELD_MODE=date or datetime and send / due=YYYY-MM-DD or / due=ISO8601."
+    }
+  },
+  "request_id": "table_demo_type_mismatch"
+}

@@ -185,6 +185,7 @@ Starter mapping caveat:
 
 If you need the exact current assumptions, see:
 - [`table-bitable-field-mapping.md`](./table-bitable-field-mapping.md)
+- [`table-api-error-fixtures.md`](./table-api-error-fixtures.md)
 
 ---
 
