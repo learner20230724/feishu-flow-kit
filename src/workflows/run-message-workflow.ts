@@ -170,6 +170,7 @@ function formatTableDraftReply(
   if (input.due) lines.push(`- due: ${input.due}`);
   if (input.done) lines.push(`- done: ${input.done}`);
   if (listFieldMode === 'single_select') lines.push('- list field mode: single_select');
+  if (listFieldMode === 'multi_select') lines.push('- list field mode: multi_select');
   if (ownerFieldMode === 'user') lines.push('- owner field mode: user');
   if (estimateFieldMode === 'number') lines.push('- estimate field mode: number');
   if (dueFieldMode === 'date') lines.push('- due field mode: date');
@@ -239,6 +240,7 @@ export function runMessageWorkflow(
           '- /table add <list> <title...> / estimate=<number-or-text>',
           '- /table add <list> <title...> / due=<YYYY-MM-DD-or-ISO8601>',
           '- /table add <list> <title...> / done=<true-or-false>',
+          '- in multi_select list mode, <list> can be comma-separated like backlog,urgent',
           '',
           'Example:',
           '- /table add backlog item: improve webhook errors / owner=alex / estimate=3',

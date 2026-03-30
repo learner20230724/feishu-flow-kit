@@ -44,6 +44,7 @@ FEISHU_ENABLE_TABLE_CREATE=false
 FEISHU_BITABLE_APP_TOKEN=
 FEISHU_BITABLE_TABLE_ID=
 FEISHU_BITABLE_LIST_FIELD_MODE=text
+# text | single_select | multi_select
 FEISHU_BITABLE_OWNER_FIELD_MODE=text
 FEISHU_BITABLE_ESTIMATE_FIELD_MODE=text
 FEISHU_BITABLE_DUE_FIELD_MODE=text
@@ -65,7 +66,7 @@ Or switch the input file directly:
 
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
-FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime FEISHU_BITABLE_DONE_FIELD_MODE=checkbox npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=multi_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime FEISHU_BITABLE_DONE_FIELD_MODE=checkbox npm run dev
 ```
 
 What happens in that flow:
@@ -88,12 +89,13 @@ Starter commands available right now:
 - `/table add sprint fix flaky webhook tests / estimate=5`
 - `/table add sprint fix flaky webhook tests / due=2026-04-01`
 - `/table add sprint close flaky webhook tests / done=true`
+- `/table add sprint,urgent flaky webhook tests / owner_open_id=ou_xxx / estimate=5 / due=2026-04-01T09:30:00Z / done=true`
 
 For a richer `/table` local run, use:
 
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json \
-FEISHU_BITABLE_LIST_FIELD_MODE=single_select \
+FEISHU_BITABLE_LIST_FIELD_MODE=multi_select \
 FEISHU_BITABLE_OWNER_FIELD_MODE=user \
 FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number \
 FEISHU_BITABLE_DUE_FIELD_MODE=datetime \
@@ -242,7 +244,7 @@ The current repo keeps this write path intentionally small:
 
 Starter mapping assumptions right now:
 - `Title` → text
-- `List` → text by default, or `{ name: ... }` with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`
+- `List` → text by default, `{ name: ... }` with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`, or `[{ name: ... }, { name: ... }]` with `FEISHU_BITABLE_LIST_FIELD_MODE=multi_select` and a comma-separated `/table add backlog,urgent ...` list input
 - `Details` → text
 - `Owner` → text by default, or `[{ id: ... }]` with `FEISHU_BITABLE_OWNER_FIELD_MODE=user` + `/ owner_open_id=...`
 - `Estimate` → text by default, or number with `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` + `/ estimate=...`

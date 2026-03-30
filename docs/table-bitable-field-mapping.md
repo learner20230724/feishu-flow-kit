@@ -22,7 +22,7 @@ Examples:
 /table add roadmap refine onboarding copy
 /table add backlog improve webhook errors / owner_open_id=ou_xxx
 /table add sprint fix flaky webhook tests / estimate=5
-/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true
+/table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true
 /table add sprint fix flaky webhook tests / due=2026-04-01
 /table add sprint close flaky webhook tests / done=true
 ```
@@ -31,6 +31,7 @@ Current parsing behavior:
 - command family: `/table`
 - action: `add`
 - first token after `add`: treated as the list name
+- in `multi_select` list mode, that list token can be comma-separated like `backlog,urgent`
 - remaining text: treated as the title
 - optional `label: title` prefix: the part before `:` becomes `Details`
 - optional `/ owner=<name>`: becomes `Owner`
@@ -77,6 +78,7 @@ Default starter mode still assumes text-compatible fields.
 
 Optional widening now available:
 - `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` → emits `List` as `{ "name": "..." }`
+- `FEISHU_BITABLE_LIST_FIELD_MODE=multi_select` + comma-separated `<list>` like `backlog,urgent` → emits `List` as `[{ "name": "backlog" }, { "name": "urgent" }]`
 - `FEISHU_BITABLE_OWNER_FIELD_MODE=user` + `/ owner_open_id=ou_xxx` → emits `Owner` as `[{ "id": "ou_xxx" }]`
 - `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` + `/ estimate=5` → emits `Estimate` as a numeric value instead of text
 - `FEISHU_BITABLE_DUE_FIELD_MODE=date` + `/ due=2026-04-01` → emits `Due` as a UTC midnight timestamp in milliseconds
@@ -88,7 +90,7 @@ That means the safest matching table schema is:
 | Field | Expected meaning | Safest field type right now |
 | --- | --- | --- |
 | `Title` | main record title | Text |
-| `List` | bucket / list name | Text |
+| `List` | bucket / list name | Text by default, SingleSelect or MultiSelect when enabled |
 | `Details` | small label or extra context | Text |
 | `Owner` | owner name from chat command | Text |
 | `Estimate` | rough effort or size | Text by default, Number when enabled |
@@ -104,7 +106,6 @@ If your Bitable uses these exact names and text-like field types, the starter pa
 
 The current `/table` write path does **not** yet map richer field types such as:
 
-- multi-select
 - attachment
 - linked records
 
@@ -166,6 +167,10 @@ A select field is useful, but it adds one more failure class:
 - select label mismatch
 
 Treat that as a follow-up, not a first step.
+
+Current starter options:
+- `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` for one bucket value
+- `FEISHU_BITABLE_LIST_FIELD_MODE=multi_select` for comma-separated list values like `backlog,urgent`
 
 ### 4. Upgrade `Estimate` or `Due` one at a time
 These are good next fields because they map to common planning-table schemas.

@@ -1,6 +1,6 @@
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-export type TableListFieldMode = 'text' | 'single_select';
+export type TableListFieldMode = 'text' | 'single_select' | 'multi_select';
 export type TableOwnerFieldMode = 'text' | 'user';
 export type TableEstimateFieldMode = 'text' | 'number';
 export type TableDueFieldMode = 'text' | 'date' | 'datetime';
@@ -65,7 +65,7 @@ function parsePositiveInteger(
 
 function parseTableListFieldMode(value: string | undefined): TableListFieldMode {
   if (!value) return 'text';
-  if (value === 'text' || value === 'single_select') return value;
+  if (value === 'text' || value === 'single_select' || value === 'multi_select') return value;
   throw new Error(`Invalid FEISHU_BITABLE_LIST_FIELD_MODE: ${value}`);
 }
 

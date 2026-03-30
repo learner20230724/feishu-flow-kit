@@ -35,6 +35,14 @@ test('loadConfig parses FEISHU_BITABLE_LIST_FIELD_MODE', () => {
   assert.equal(config.bitableListFieldMode, 'single_select');
 });
 
+test('loadConfig parses FEISHU_BITABLE_LIST_FIELD_MODE=multi_select', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_LIST_FIELD_MODE: 'multi_select',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableListFieldMode, 'multi_select');
+});
+
 test('loadConfig parses FEISHU_BITABLE_OWNER_FIELD_MODE', () => {
   const config = loadConfig({
     FEISHU_BITABLE_OWNER_FIELD_MODE: 'user',
@@ -195,6 +203,43 @@ test('runMessageWorkflow can emit a single-select List field for /table add', ()
       name: 'backlog',
     },
     SourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    Details: 'item',
+    Owner: 'alex',
+  });
+});
+
+test('runMessageWorkflow can emit a multi-select List field payload for /table add', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_2b',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add backlog,urgent item: improve webhook errors / owner=alex',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableListFieldMode: 'multi_select',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /list field mode: multi_select/);
+  assert.match(result.replyText, /List: \[\{"name":"backlog"\},\{"name":"urgent"\}\]/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'improve webhook errors',
+    List: [
+      {
+        name: 'backlog',
+      },
+      {
+        name: 'urgent',
+      },
+    ],
+    SourceCommand: '/table add backlog,urgent item: improve webhook errors / owner=alex',
     Details: 'item',
     Owner: 'alex',
   });
@@ -388,6 +433,31 @@ test('buildTableRecordDraft can emit List as single-select payload', () => {
     name: 'backlog',
   });
   assert.match(draft.notes[1] ?? '', /single-select payload/);
+});
+
+test('buildTableRecordDraft can emit List as multi-select payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'backlog, urgent',
+      title: 'improve webhook errors',
+      details: 'item',
+      owner: 'alex',
+      sourceCommand: '/table add backlog, urgent item: improve webhook errors / owner=alex',
+    },
+    {
+      listFieldMode: 'multi_select',
+    },
+  );
+
+  assert.deepEqual(draft.body.fields.List, [
+    {
+      name: 'backlog',
+    },
+    {
+      name: 'urgent',
+    },
+  ]);
+  assert.match(draft.notes[1] ?? '', /multi-select payload/);
 });
 
 test('buildTableRecordDraft can emit Owner as a user field payload', () => {

@@ -1,4 +1,4 @@
-export type TableListFieldMode = 'text' | 'single_select';
+export type TableListFieldMode = 'text' | 'single_select' | 'multi_select';
 export type TableOwnerFieldMode = 'text' | 'user';
 export type TableEstimateFieldMode = 'text' | 'number';
 export type TableDueFieldMode = 'text' | 'date' | 'datetime';
@@ -8,13 +8,15 @@ export interface TableSingleSelectFieldValue {
   name: string;
 }
 
+export type TableMultiSelectFieldValue = TableSingleSelectFieldValue[];
+
 export interface TableUserFieldMemberValue {
   id: string;
 }
 
 export type TableUserFieldValue = TableUserFieldMemberValue[];
 
-export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableUserFieldValue;
+export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableMultiSelectFieldValue | TableUserFieldValue;
 
 export interface TableRecordDraft {
   endpoint: string;
@@ -53,6 +55,18 @@ function buildListFieldValue(
     return {
       name: listName,
     };
+  }
+
+  if (mode === 'multi_select') {
+    const values = listName
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .map((value) => ({ name: value }));
+
+    if (values.length > 0) {
+      return values;
+    }
   }
 
   return listName;
@@ -200,6 +214,9 @@ export function buildTableRecordDraft(
   const widenedModes: string[] = [];
   if (listFieldMode === 'single_select') {
     widenedModes.push('List is emitted as a single-select payload ({ name: value })');
+  }
+  if (listFieldMode === 'multi_select') {
+    widenedModes.push('List is emitted as a multi-select payload ([{ name }]) using comma-separated list values');
   }
   if (ownerFieldMode === 'user') {
     widenedModes.push('Owner is emitted as a Bitable user field payload ([{ id }])');
