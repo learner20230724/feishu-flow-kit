@@ -20,6 +20,9 @@ async function main() {
     webhookPort: config.webhookPort,
     enableOutboundReply: config.enableOutboundReply,
     enableDocCreate: config.enableDocCreate,
+    enableTableCreate: config.enableTableCreate,
+    hasBitableAppToken: Boolean(config.bitableAppToken),
+    hasBitableTableId: Boolean(config.bitableTableId),
   });
 
   if (config.mockMode) {
@@ -37,12 +40,15 @@ async function main() {
       config.enableDocCreate && result.hasDocCreateDraft && result.docTopic && result.docMarkdown
         ? buildDocCreateDraft(result.docTopic, result.docMarkdown)
         : undefined;
+    const tableRecordDraft =
+      config.enableTableCreate && result.hasTableRecordDraft ? result.tableRecordDraft : undefined;
 
     logger.info('workflow result', {
       ok: result.ok,
       tags: result.tags,
       replyText: result.replyText,
       hasDocCreateDraft: Boolean(docCreateDraft),
+      hasTableRecordDraft: Boolean(tableRecordDraft),
     });
 
     console.log('\n--- mock workflow reply ---\n');
@@ -51,6 +57,11 @@ async function main() {
     if (docCreateDraft) {
       console.log('\n--- mock doc create draft ---\n');
       console.log(JSON.stringify(docCreateDraft, null, 2));
+    }
+
+    if (tableRecordDraft) {
+      console.log('\n--- mock table record draft ---\n');
+      console.log(JSON.stringify(tableRecordDraft, null, 2));
     }
 
     return;

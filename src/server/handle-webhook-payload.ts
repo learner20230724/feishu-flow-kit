@@ -3,6 +3,7 @@ import { adaptWebhookMessageEvent } from '../adapters/adapt-webhook-message-even
 import { buildDocCreateDraft } from '../adapters/build-doc-create-draft.js';
 import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
 import { maybeCreateDoc } from '../adapters/maybe-create-doc.js';
+import { maybeCreateTableRecord } from '../adapters/maybe-create-table-record.js';
 import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
 import { runMessageWorkflow } from '../workflows/run-message-workflow.js';
 
@@ -25,7 +26,16 @@ function isUrlVerificationPayload(payload: unknown): payload is UrlVerificationP
 
 export async function handleWebhookPayload(
   payload: unknown,
-  config?: Pick<AppConfig, 'appId' | 'appSecret' | 'enableOutboundReply' | 'enableDocCreate'>,
+  config?: Pick<
+    AppConfig,
+    | 'appId'
+    | 'appSecret'
+    | 'enableOutboundReply'
+    | 'enableDocCreate'
+    | 'enableTableCreate'
+    | 'bitableAppToken'
+    | 'bitableTableId'
+  >,
 ): Promise<WebhookHandlerResult> {
   if (isUrlVerificationPayload(payload)) {
     return {
@@ -53,6 +63,7 @@ export async function handleWebhookPayload(
     workflow.docTopic && workflow.docMarkdown
       ? buildDocCreateDraft(workflow.docTopic, workflow.docMarkdown)
       : null;
+  const tableRecordDraft = workflow.hasTableRecordDraft ? workflow.tableRecordDraft ?? null : null;
 
   const outboundReply = config
     ? await maybeSendReplyMessage(
@@ -82,6 +93,22 @@ export async function handleWebhookPayload(
         ? { attempted: false, skippedReason: 'No doc create config provided.' }
         : null;
 
+  const tableCreate =
+    config && tableRecordDraft
+      ? await maybeCreateTableRecord(
+          {
+            appId: config.appId,
+            appSecret: config.appSecret,
+            enableTableCreate: config.enableTableCreate ?? false,
+            bitableAppToken: config.bitableAppToken ?? '',
+            bitableTableId: config.bitableTableId ?? '',
+          },
+          tableRecordDraft,
+        )
+      : tableRecordDraft
+        ? { attempted: false, skippedReason: 'No table create config provided.' }
+        : null;
+
   return {
     statusCode: 200,
     body: {
@@ -92,7 +119,9 @@ export async function handleWebhookPayload(
       replyText: workflow.replyText,
       replyDraft,
       docCreateDraft,
+      tableRecordDraft,
       docCreate,
+      tableCreate,
       outboundReply,
     },
   };

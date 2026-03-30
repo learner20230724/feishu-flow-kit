@@ -3,6 +3,7 @@ import { parseSlashCommand } from '../core/parse-slash-command.js';
 import {
   buildTableRecordDraft,
   type TableCommandDraftInput,
+  type TableRecordDraft,
 } from '../adapters/build-table-record-draft.js';
 
 export interface WorkflowResult {
@@ -14,6 +15,7 @@ export interface WorkflowResult {
   hasDocCreateDraft?: boolean;
   hasTableRecordDraft?: boolean;
   tableRecordTitle?: string;
+  tableRecordDraft?: TableRecordDraft;
   tableRecordDraftFields?: Record<string, string>;
 }
 
@@ -201,6 +203,7 @@ export function runMessageWorkflow(event: FeishuMessageEvent): WorkflowResult {
       tags: ['table', 'demo'],
       hasTableRecordDraft: true,
       tableRecordTitle: input.title,
+      tableRecordDraft: draft,
       tableRecordDraftFields: draft.body.fields,
     };
   }

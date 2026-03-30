@@ -12,6 +12,9 @@ export interface AppConfig {
   webhookSignatureToleranceSeconds: number;
   enableOutboundReply: boolean;
   enableDocCreate: boolean;
+  enableTableCreate: boolean;
+  bitableAppToken: string;
+  bitableTableId: string;
 }
 
 const LOG_LEVELS: LogLevel[] = ['debug', 'info', 'warn', 'error'];
@@ -66,5 +69,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     ),
     enableOutboundReply: parseBoolean(env.FEISHU_ENABLE_OUTBOUND_REPLY, false),
     enableDocCreate: parseBoolean(env.FEISHU_ENABLE_DOC_CREATE, false),
+    enableTableCreate: parseBoolean(env.FEISHU_ENABLE_TABLE_CREATE, false),
+    bitableAppToken: env.FEISHU_BITABLE_APP_TOKEN ?? '',
+    bitableTableId: env.FEISHU_BITABLE_TABLE_ID ?? '',
   };
 }

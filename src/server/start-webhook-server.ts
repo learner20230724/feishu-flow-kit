@@ -73,6 +73,9 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
         appSecret: config.appSecret,
         enableOutboundReply: config.enableOutboundReply,
         enableDocCreate: config.enableDocCreate,
+        enableTableCreate: config.enableTableCreate,
+        bitableAppToken: config.bitableAppToken,
+        bitableTableId: config.bitableTableId,
       });
 
       logger.info('webhook request handled', {
@@ -80,6 +83,7 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
         signatureVerified: config.webhookSecret ? true : false,
         outboundReplyEnabled: config.enableOutboundReply,
         docCreateEnabled: config.enableDocCreate,
+        tableCreateEnabled: config.enableTableCreate,
       });
 
       writeJson(res, result.statusCode, result.body);

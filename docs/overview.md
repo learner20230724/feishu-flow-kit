@@ -58,9 +58,8 @@ This repo should avoid that by keeping boundaries simple:
 ## Near-term extension points
 
 - upgrade token caching beyond the current tiny in-memory starter cache
-- append richer block content after the initial doc create request, instead of stopping at document creation
-- add retry helpers once a real outbound API path exists
-- add a minimal `/table` outbound write path once a real app_token/table_id setup is available
+- add retry helpers once real outbound API paths have enough failure cases to justify them
+- widen `/table` field mapping beyond the current starter text-field assumptions
 - widen payload support beyond the current narrow message event slice
 
 ## Current webhook path
@@ -75,6 +74,7 @@ The repo now has a minimal real webhook slice:
 6. a draft reply plus a reply API request draft are returned as JSON for local inspection
 7. when outbound reply is enabled, the same slice can fetch a tenant token and call the simplest text reply endpoint
 8. when doc creation is enabled and the workflow is `/doc`, the same slice can call the Feishu doc create endpoint, append a minimal set of heading / bullet / todo / paragraph blocks, and return the created document metadata
+9. when table creation is enabled and the workflow is `/table`, the same slice can call the Feishu Bitable create-record endpoint for one configured table and return the created record metadata
 
 This keeps the current implementation honest: it is useful enough to test the repo structure with real callback shapes, but still small enough to read in one sitting.
 

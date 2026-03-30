@@ -2,11 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { buildDocCreateDraft } from '../src/adapters/build-doc-create-draft.ts';
+import { buildTableRecordDraft } from '../src/adapters/build-table-record-draft.ts';
 import { fetchTenantAccessToken } from '../src/adapters/fetch-tenant-access-token.ts';
 import { maybeCreateDoc } from '../src/adapters/maybe-create-doc.ts';
+import { maybeCreateTableRecord } from '../src/adapters/maybe-create-table-record.ts';
 import { maybeSendReplyMessage } from '../src/adapters/maybe-send-reply-message.ts';
 import { sendDocCreateRequest } from '../src/adapters/send-doc-create-request.ts';
 import { sendReplyMessage } from '../src/adapters/send-reply-message.ts';
+import { sendTableRecordRequest } from '../src/adapters/send-table-record-request.ts';
 
 test('fetchTenantAccessToken requests a tenant token from Feishu auth API', async () => {
   const requests: Array<{ url: string; method: string; body: string }> = [];
@@ -367,4 +370,138 @@ test('maybeCreateDoc fetches a token, creates a doc, and appends starter blocks 
   assert.equal(result.attempted, true);
   assert.equal(result.response?.documentId, 'docxcn_demo');
   assert.deepEqual(result.response?.blockAppend?.response?.blockIds, ['blk_1', 'blk_2']);
+});
+
+test('sendTableRecordRequest posts a bitable create-record request to the Feishu table endpoint', async () => {
+  const requests: Array<{ url: string; method: string; body: string }> = [];
+
+  const result = await sendTableRecordRequest({
+    tenantAccessToken: 'tenant_token_demo',
+    appToken: 'app_demo_token',
+    tableId: 'tbl_demo_id',
+    draft: buildTableRecordDraft({
+      listName: 'backlog',
+      title: 'improve webhook errors',
+      details: 'item',
+      owner: 'alex',
+      sourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    }),
+    fetchImpl: (async (input, init) => {
+      requests.push({
+        url: String(input),
+        method: String(init?.method ?? ''),
+        body: String(init?.body ?? ''),
+      });
+
+      return new Response(
+        JSON.stringify({
+          code: 0,
+          data: {
+            record: {
+              record_id: 'rec_demo_1',
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    }) as typeof fetch,
+  });
+
+  assert.equal(requests.length, 1);
+  assert.match(requests[0]?.url ?? '', /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records$/);
+  assert.equal(requests[0]?.method, 'POST');
+  assert.match(requests[0]?.body ?? '', /improve webhook errors/);
+  assert.match(requests[0]?.body ?? '', /"Owner":"alex"/);
+  assert.equal(result.ok, true);
+  assert.equal(result.recordId, 'rec_demo_1');
+});
+
+test('maybeCreateTableRecord skips table record creation when disabled', async () => {
+  const result = await maybeCreateTableRecord(
+    {
+      appId: 'cli_demo_app_id',
+      appSecret: 'demo_app_secret',
+      enableTableCreate: false,
+      bitableAppToken: 'app_demo_token',
+      bitableTableId: 'tbl_demo_id',
+    },
+    buildTableRecordDraft({
+      listName: 'backlog',
+      title: 'improve webhook errors',
+      sourceCommand: '/table add backlog improve webhook errors',
+    }),
+  );
+
+  assert.equal(result.attempted, false);
+  assert.match(String(result.skippedReason), /disabled/);
+});
+
+test('maybeCreateTableRecord fetches a token and creates a bitable record when enabled', async () => {
+  const requests: Array<{ url: string; body: string }> = [];
+
+  const result = await maybeCreateTableRecord(
+    {
+      appId: 'cli_demo_app_id',
+      appSecret: 'demo_app_secret',
+      enableTableCreate: true,
+      bitableAppToken: 'app_demo_token',
+      bitableTableId: 'tbl_demo_id',
+    },
+    buildTableRecordDraft({
+      listName: 'backlog',
+      title: 'improve webhook errors',
+      details: 'item',
+      owner: 'alex',
+      sourceCommand: '/table add backlog item: improve webhook errors / owner=alex',
+    }),
+    async (input, init) => {
+      const url = String(input);
+      const body = String(init?.body ?? '');
+      requests.push({ url, body });
+
+      if (url.includes('/auth/v3/tenant_access_token/internal')) {
+        return new Response(
+          JSON.stringify({
+            code: 0,
+            tenant_access_token: 'tenant_token_demo',
+            expire: 7200,
+          }),
+          {
+            status: 200,
+            headers: {
+              'content-type': 'application/json',
+            },
+          },
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          code: 0,
+          data: {
+            record: {
+              record_id: 'rec_demo_1',
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    },
+  );
+
+  assert.equal(requests.length, 2);
+  assert.match(requests[0]?.url ?? '', /tenant_access_token/);
+  assert.match(requests[1]?.url ?? '', /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records$/);
+  assert.equal(result.attempted, true);
+  assert.equal(result.response?.recordId, 'rec_demo_1');
 });

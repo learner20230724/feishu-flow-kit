@@ -40,6 +40,9 @@ FEISHU_WEBHOOK_SECRET=
 FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS=300
 FEISHU_ENABLE_OUTBOUND_REPLY=false
 FEISHU_ENABLE_DOC_CREATE=false
+FEISHU_ENABLE_TABLE_CREATE=false
+FEISHU_BITABLE_APP_TOKEN=
+FEISHU_BITABLE_TABLE_ID=
 LOG_LEVEL=debug
 ```
 
@@ -63,15 +66,18 @@ What happens in that flow:
 
 1. typed config is loaded from env
 2. the configured mock input file is read locally
-3. a slash command such as `/todo ...` or `/doc ...` is parsed
+3. a slash command such as `/todo ...`, `/doc ...`, or `/table ...` is parsed
 4. the demo workflow generates a draft reply
 5. the `/doc` path also produces a starter Feishu doc create draft alongside the markdown outline
-6. if real doc creation is enabled, that draft can continue into a minimal block-append step so the new doc gets a starter body
-7. the result is logged and printed to stdout
+6. the `/table` path also produces a starter Bitable create-record draft alongside the reply text
+7. if real doc creation is enabled, that draft can continue into a minimal block-append step so the new doc gets a starter body
+8. if real table creation is enabled, that draft can continue into a minimal `create-record` call for one configured Bitable table
+9. the result is logged and printed to stdout
 
 Starter commands available right now:
 - `/todo ship webhook adapter`
 - `/doc weekly launch review`
+- `/table add backlog item: improve webhook errors / owner=alex`
 
 This is small on purpose. It gives you one end-to-end slice to extend before adding real Feishu transport code.
 
@@ -102,12 +108,14 @@ Current behavior:
 8. returns a JSON body with the generated draft reply text plus a reply API request draft
 9. when `FEISHU_ENABLE_OUTBOUND_REPLY=true`, it can also fetch a tenant token and send the simplest text reply path to Feishu
 10. when `FEISHU_ENABLE_DOC_CREATE=true` and the workflow is `/doc`, it can also call the Feishu doc create API, then append a starter set of plain paragraph blocks, and return the created document metadata
-11. rejects non-`POST` webhook requests with a clear `405` response
+11. when `FEISHU_ENABLE_TABLE_CREATE=true` and the workflow is `/table`, it can also call the Feishu Bitable create-record API for one configured table and return the created record metadata
+12. rejects non-`POST` webhook requests with a clear `405` response
 
 Current boundaries:
 - signature verification is still intentionally small and not a substitute for a production hardening pass
 - outbound reply sending is opt-in and only covers the simplest text reply path right now
 - doc creation is opt-in and still intentionally small: it now covers `docx/v1/documents` plus one starter block-append step, but it still does not translate markdown into richer native document structure
+- table creation is opt-in and intentionally narrow: it writes one configured Bitable table via `create-record` and currently assumes a starter text-field mapping (`Title`, `List`, `Details`, `Owner`, `SourceCommand`)
 - tenant token reuse currently relies on a tiny in-memory cache only; there is still no persistence, refresh worker, or concurrency dedupe strategy
 - only a narrow subset of message payload fields is normalized
 
@@ -194,6 +202,30 @@ This repo currently uses a very small write path:
 2. append starter paragraph blocks
 
 So if create works but content append fails, the missing permission is usually on the content-write side rather than token fetch.
+
+### For `/table` workflow Bitable record creation
+Use this when `FEISHU_ENABLE_TABLE_CREATE=true`.
+
+Checklist:
+- app credentials that can fetch a tenant access token
+- permission to write records into the target Bitable app/table
+- a real `FEISHU_BITABLE_APP_TOKEN`
+- a real `FEISHU_BITABLE_TABLE_ID`
+- a target table that has compatible starter fields, or a plan to adapt the field mapping
+
+The current repo keeps this write path intentionally small:
+1. parse `/table add ...`
+2. build a local draft with starter fields
+3. if enabled, send one `create-record` call to the configured table
+
+Starter mapping assumptions right now:
+- `Title` → text
+- `List` → text
+- `Details` → text
+- `Owner` → text
+- `SourceCommand` → text
+
+If token fetch works but record creation fails, the usual causes are missing Bitable scope, wrong `app_token` / `table_id`, or field types/names that do not match this starter mapping.
 
 ## Token refresh handling notes
 

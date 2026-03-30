@@ -87,7 +87,7 @@ Feishu 消息事件
   （可选：真实发送 Feishu 回复）
 ```
 
-以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true` 或 `FEISHU_ENABLE_DOC_CREATE=true` 即可从 draft 模式切换到真实 Feishu API 调用。
+以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。
 
 ## Demo 资产
 
@@ -171,6 +171,7 @@ npm test
 - outbound reply request draft 生成
 - 最小 tenant token 获取 + 文本 reply sender 流程
 - webhook `/doc` 路径里的最小 Feishu doc create 与 starter richer-block append 流程
+- 最小 Bitable create-record 请求，以及 webhook `/table` 路径的 opt-in 真实写入链路
 - `GET /healthz` 与 `POST /webhook` 的本地 HTTP 行为
 
 ## 可继续扩展的 workflow 方向

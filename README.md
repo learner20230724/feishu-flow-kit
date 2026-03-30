@@ -87,7 +87,7 @@ Feishu message event
   (+ optional outbound Feishu reply)
 ```
 
-Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true` or `FEISHU_ENABLE_DOC_CREATE=true` to switch from draft mode to real Feishu API calls.
+Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls.
 
 ## Demo asset
 
@@ -171,6 +171,7 @@ The current test set covers:
 - outbound reply request draft generation
 - minimal tenant token fetch + text reply sender flow
 - minimal Feishu doc create request and starter richer-block append path for webhook `/doc` flow
+- minimal Bitable create-record request and opt-in webhook `/table` write path
 - local HTTP behavior for `GET /healthz` and `POST /webhook`
 
 ## Example workflow ideas
