@@ -3,6 +3,7 @@ export type TableOwnerFieldMode = 'text' | 'user';
 export type TableEstimateFieldMode = 'text' | 'number';
 export type TableDueFieldMode = 'text' | 'date' | 'datetime';
 export type TableDoneFieldMode = 'text' | 'checkbox';
+export type TableAttachmentFieldMode = 'text' | 'attachment';
 
 export interface TableSingleSelectFieldValue {
   name: string;
@@ -16,7 +17,13 @@ export interface TableUserFieldMemberValue {
 
 export type TableUserFieldValue = TableUserFieldMemberValue[];
 
-export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableMultiSelectFieldValue | TableUserFieldValue;
+export interface TableAttachmentFieldItemValue {
+  file_token: string;
+}
+
+export type TableAttachmentFieldValue = TableAttachmentFieldItemValue[];
+
+export type TableRecordFieldValue = string | number | boolean | TableSingleSelectFieldValue | TableMultiSelectFieldValue | TableUserFieldValue | TableAttachmentFieldValue;
 
 export interface TableRecordDraft {
   endpoint: string;
@@ -36,6 +43,7 @@ export interface TableCommandDraftInput {
   estimate?: string;
   due?: string;
   done?: string;
+  attachmentToken?: string;
   sourceCommand: string;
 }
 
@@ -45,6 +53,7 @@ export interface BuildTableRecordDraftOptions {
   estimateFieldMode?: TableEstimateFieldMode;
   dueFieldMode?: TableDueFieldMode;
   doneFieldMode?: TableDoneFieldMode;
+  attachmentFieldMode?: TableAttachmentFieldMode;
 }
 
 function buildListFieldValue(
@@ -168,6 +177,29 @@ function buildDoneFieldValue(
   return input.done;
 }
 
+function buildAttachmentFieldValue(
+  input: TableCommandDraftInput,
+  mode: TableAttachmentFieldMode,
+): TableRecordFieldValue | undefined {
+  if (!input.attachmentToken) return undefined;
+
+  if (mode === 'attachment') {
+    const values = input.attachmentToken
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .map((value) => ({ file_token: value }));
+
+    if (values.length > 0) {
+      return values;
+    }
+
+    return undefined;
+  }
+
+  return input.attachmentToken;
+}
+
 export function buildTableRecordDraft(
   input: TableCommandDraftInput,
   options: BuildTableRecordDraftOptions = {},
@@ -177,6 +209,7 @@ export function buildTableRecordDraft(
   const estimateFieldMode = options.estimateFieldMode ?? 'text';
   const dueFieldMode = options.dueFieldMode ?? 'text';
   const doneFieldMode = options.doneFieldMode ?? 'text';
+  const attachmentFieldMode = options.attachmentFieldMode ?? 'text';
   const fields: Record<string, TableRecordFieldValue> = {
     Title: input.title,
     List: buildListFieldValue(input.listName, listFieldMode),
@@ -207,6 +240,11 @@ export function buildTableRecordDraft(
     fields.Done = doneFieldValue;
   }
 
+  const attachmentFieldValue = buildAttachmentFieldValue(input, attachmentFieldMode);
+  if (attachmentFieldValue !== undefined) {
+    fields.Attachment = attachmentFieldValue;
+  }
+
   const notes = [
     'Local-first draft only. Replace {app_token} and {table_id} before wiring to a real Bitable write.',
   ];
@@ -233,6 +271,9 @@ export function buildTableRecordDraft(
   if (doneFieldMode === 'checkbox') {
     widenedModes.push('Done is emitted as a checkbox payload (boolean)');
   }
+  if (attachmentFieldMode === 'attachment') {
+    widenedModes.push('Attachment is emitted as a Bitable attachment payload ([{ file_token }]) using comma-separated file tokens');
+  }
 
   if (widenedModes.length > 0) {
     notes.push(
@@ -240,7 +281,7 @@ export function buildTableRecordDraft(
     );
   } else {
     notes.push(
-      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, Done, SourceCommand.',
+      'The starter field mapping assumes simple text fields: Title, List, Details, Owner, Estimate, Due, Done, Attachment, SourceCommand.',
     );
   }
 

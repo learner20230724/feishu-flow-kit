@@ -75,6 +75,14 @@ test('loadConfig parses FEISHU_BITABLE_DONE_FIELD_MODE', () => {
   assert.equal(config.bitableDoneFieldMode, 'checkbox');
 });
 
+test('loadConfig parses FEISHU_BITABLE_ATTACHMENT_FIELD_MODE', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_ATTACHMENT_FIELD_MODE: 'attachment',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableAttachmentFieldMode, 'attachment');
+});
+
 test('runMessageWorkflow returns noop for non-command messages', () => {
   const event: FeishuMessageEvent = {
     type: 'message.received',
@@ -399,6 +407,43 @@ test('runMessageWorkflow can emit Done as a checkbox field payload', () => {
   });
 });
 
+test('runMessageWorkflow can emit Attachment as a Bitable attachment payload', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_8',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add sprint share demo pack / attachment_token=file_v2_demo123,file_v2_demo456',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableAttachmentFieldMode: 'attachment',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /attachment_token: file_v2_demo123,file_v2_demo456/);
+  assert.match(result.replyText, /attachment field mode: attachment/);
+  assert.match(result.replyText, /Attachment: \[\{"file_token":"file_v2_demo123"\},\{"file_token":"file_v2_demo456"\}\]/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'share demo pack',
+    List: 'sprint',
+    SourceCommand: '/table add sprint share demo pack / attachment_token=file_v2_demo123,file_v2_demo456',
+    Attachment: [
+      {
+        file_token: 'file_v2_demo123',
+      },
+      {
+        file_token: 'file_v2_demo456',
+      },
+    ],
+  });
+});
+
 test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
   const draft = buildTableRecordDraft({
     listName: 'backlog',
@@ -547,6 +592,30 @@ test('buildTableRecordDraft can emit Done as checkbox payload', () => {
 
   assert.equal(draft.body.fields.Done, true);
   assert.match(draft.notes[1] ?? '', /checkbox payload/);
+});
+
+test('buildTableRecordDraft can emit Attachment as attachment payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'sprint',
+      title: 'share demo pack',
+      attachmentToken: 'file_v2_demo123,file_v2_demo456',
+      sourceCommand: '/table add sprint share demo pack / attachment_token=file_v2_demo123,file_v2_demo456',
+    },
+    {
+      attachmentFieldMode: 'attachment',
+    },
+  );
+
+  assert.deepEqual(draft.body.fields.Attachment, [
+    {
+      file_token: 'file_v2_demo123',
+    },
+    {
+      file_token: 'file_v2_demo456',
+    },
+  ]);
+  assert.match(draft.notes[1] ?? '', /attachment payload/);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {

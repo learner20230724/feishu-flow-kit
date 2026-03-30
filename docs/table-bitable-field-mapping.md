@@ -22,7 +22,7 @@ Examples:
 /table add roadmap refine onboarding copy
 /table add backlog improve webhook errors / owner_open_id=ou_xxx
 /table add sprint fix flaky webhook tests / estimate=5
-/table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true
+/table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true / attachment_token=file_v2_demo123,file_v2_demo456
 /table add sprint fix flaky webhook tests / due=2026-04-01
 /table add sprint close flaky webhook tests / done=true
 ```
@@ -39,6 +39,7 @@ Current parsing behavior:
 - optional `/ estimate=<number>`: becomes `Estimate`
 - optional `/ due=<YYYY-MM-DD-or-ISO8601>`: becomes `Due`
 - optional `/ done=<true-or-false>`: becomes `Done`
+- optional `/ attachment_token=<file_token[,file_token]>`: becomes `Attachment` input for attachment-field mode
 - original chat command is kept as `SourceCommand`
 
 Example:
@@ -72,6 +73,7 @@ The current adapter builds a `create-record` request with this field set:
 - `Estimate` (optional)
 - `Due` (optional)
 - `Done` (optional)
+- `Attachment` (optional)
 - `SourceCommand`
 
 Default starter mode still assumes text-compatible fields.
@@ -84,6 +86,7 @@ Optional widening now available:
 - `FEISHU_BITABLE_DUE_FIELD_MODE=date` + `/ due=2026-04-01` → emits `Due` as a UTC midnight timestamp in milliseconds
 - `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` + `/ due=2026-04-01T09:30:00Z` → emits `Due` as a datetime timestamp in milliseconds
 - `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox` + `/ done=true` → emits `Done` as a boolean checkbox payload
+- `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment` + `/ attachment_token=file_v2_xxx[,file_v2_yyy]` → emits `Attachment` as `[{ "file_token": "..." }]`
 
 That means the safest matching table schema is:
 
@@ -96,6 +99,7 @@ That means the safest matching table schema is:
 | `Estimate` | rough effort or size | Text by default, Number when enabled |
 | `Due` | target date or due timestamp | Text by default, Date / Datetime when enabled |
 | `Done` | completion state from chat command | Text by default, Checkbox when enabled |
+| `Attachment` | uploaded file tokens from chat or prior workflow | Text by default, Attachment when enabled |
 | `SourceCommand` | raw original slash command | Text |
 
 If your Bitable uses these exact names and text-like field types, the starter path should be easy to wire.
@@ -106,7 +110,6 @@ If your Bitable uses these exact names and text-like field types, the starter pa
 
 The current `/table` write path does **not** yet map richer field types such as:
 
-- attachment
 - linked records
 
 It also does not currently:
@@ -131,7 +134,8 @@ If you want the fastest path to a successful real write, create or reuse a Bitab
 4. `Owner` → Text
 5. `Estimate` → Text or Number
 6. `Due` → Text or Date / Datetime
-7. `SourceCommand` → Text
+7. `Attachment` → Text or Attachment
+8. `SourceCommand` → Text
 
 This keeps the first real integration honest:
 - command parsing stays simple
@@ -172,15 +176,16 @@ Current starter options:
 - `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` for one bucket value
 - `FEISHU_BITABLE_LIST_FIELD_MODE=multi_select` for comma-separated list values like `backlog,urgent`
 
-### 4. Upgrade `Estimate` or `Due` one at a time
+### 4. Upgrade `Estimate`, `Due`, or `Attachment` one at a time
 These are good next fields because they map to common planning-table schemas.
 
 Current starter options:
 - `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` for rough effort values
 - `FEISHU_BITABLE_DUE_FIELD_MODE=date` for `YYYY-MM-DD`
 - `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` for ISO8601 timestamps
+- `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment` for comma-separated file tokens like `file_v2_demo123,file_v2_demo456`
 
-A practical habit is to prove `Estimate` and `Due` separately before combining them in the same real table.
+A practical habit is to prove `Estimate`, `Due`, and `Attachment` separately before combining them in the same real table.
 
 ### 5. Only add schema-aware mapping when repeated failures justify it
 If real usage shows repeated confusion around field types or names, then it becomes worth adding:
@@ -218,6 +223,7 @@ Check:
 - whether `List` is a select field instead of text
 - whether `Estimate` is a number field instead of text
 - whether `Due` is a date/datetime field instead of text
+- whether `Attachment` is an attachment field instead of text
 - whether `Details` or `SourceCommand` is missing entirely
 
 ---
@@ -271,6 +277,7 @@ FEISHU_BITABLE_OWNER_FIELD_MODE=text
 FEISHU_BITABLE_ESTIMATE_FIELD_MODE=text
 FEISHU_BITABLE_DUE_FIELD_MODE=text
 FEISHU_BITABLE_DONE_FIELD_MODE=text
+FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=text
 ```
 
 The current outbound write path is opt-in.
