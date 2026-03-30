@@ -59,6 +59,14 @@ test('loadConfig parses FEISHU_BITABLE_DUE_FIELD_MODE', () => {
   assert.equal(config.bitableDueFieldMode, 'datetime');
 });
 
+test('loadConfig parses FEISHU_BITABLE_DONE_FIELD_MODE', () => {
+  const config = loadConfig({
+    FEISHU_BITABLE_DONE_FIELD_MODE: 'checkbox',
+  } as NodeJS.ProcessEnv);
+
+  assert.equal(config.bitableDoneFieldMode, 'checkbox');
+});
+
 test('runMessageWorkflow returns noop for non-command messages', () => {
   const event: FeishuMessageEvent = {
     type: 'message.received',
@@ -316,6 +324,36 @@ test('runMessageWorkflow can emit Due as a datetime field payload', () => {
   });
 });
 
+test('runMessageWorkflow can emit Done as a checkbox field payload', () => {
+  const event: FeishuMessageEvent = {
+    type: 'message.received',
+    timestamp: '2026-03-30T05:20:00Z',
+    tenantKey: 'tenant_demo',
+    message: {
+      messageId: 'msg_table_7',
+      chatId: 'chat_1',
+      chatType: 'group',
+      senderId: 'user_1',
+      text: '/table add sprint close flaky webhook tests / done=true',
+    },
+  };
+
+  const result = runMessageWorkflow(event, {
+    bitableDoneFieldMode: 'checkbox',
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.replyText, /done: true/);
+  assert.match(result.replyText, /done field mode: checkbox/);
+  assert.match(result.replyText, /Done: true/);
+  assert.deepEqual(result.tableRecordDraftFields, {
+    Title: 'close flaky webhook tests',
+    List: 'sprint',
+    SourceCommand: '/table add sprint close flaky webhook tests / done=true',
+    Done: true,
+  });
+});
+
 test('buildTableRecordDraft uses the expected bitable create-record endpoint', () => {
   const draft = buildTableRecordDraft({
     listName: 'backlog',
@@ -422,6 +460,23 @@ test('buildTableRecordDraft can emit Due as datetime payload', () => {
 
   assert.equal(draft.body.fields.Due, 1775035800000);
   assert.match(draft.notes[1] ?? '', /datetime timestamp payload/);
+});
+
+test('buildTableRecordDraft can emit Done as checkbox payload', () => {
+  const draft = buildTableRecordDraft(
+    {
+      listName: 'sprint',
+      title: 'close flaky webhook tests',
+      done: 'true',
+      sourceCommand: '/table add sprint close flaky webhook tests / done=true',
+    },
+    {
+      doneFieldMode: 'checkbox',
+    },
+  );
+
+  assert.equal(draft.body.fields.Done, true);
+  assert.match(draft.notes[1] ?? '', /checkbox payload/);
 });
 
 test('buildDocCreateDraft turns workflow doc output into Feishu doc draft metadata', () => {

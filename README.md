@@ -87,7 +87,7 @@ Feishu message event
   (+ optional outbound Feishu reply)
 ```
 
-Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, and `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`.
+Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, and `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`, and `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`.
 
 ## Demo assets
 
@@ -109,7 +109,7 @@ By default the project runs in mock mode and loads `examples/mock-message-event.
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
-FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime FEISHU_BITABLE_DONE_FIELD_MODE=checkbox npm run dev
 ```
 
 The current demo path is:
@@ -127,12 +127,13 @@ Starter commands available right now:
 - `/table add backlog improve webhook errors / owner_open_id=ou_xxx`
 - `/table add sprint fix flaky webhook tests / estimate=5`
 - `/table add sprint fix flaky webhook tests / due=2026-04-01`
+- `/table add sprint close flaky webhook tests / done=true`
 
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
 - `examples/mock-doc-message-event.json` → `/doc` flow
 - `examples/mock-table-message-event.json` → `/table` text-first flow
-- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode flow (`single_select` + `user` + `number` + `datetime`)
+- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode flow (`single_select` + `user` + `number` + `datetime` + `checkbox`)
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 
@@ -186,7 +187,7 @@ The current test set covers:
 Already runnable in the repo:
 - `/todo ...` → turns a request into a small action-list draft
 - `/doc ...` → turns a topic into a markdown-style outline, then can create a Feishu doc and append a minimal native docx body (headings / bullets / todos / paragraphs)
-- `/table ...` → turns a short record request into a Bitable create-record draft (local-first, opt-in outbound write; starter support for `List` single-select, `Owner` user payloads, `Estimate` numeric payloads, and `Due` date/datetime timestamp payloads is now available via config)
+- `/table ...` → turns a short record request into a Bitable create-record draft (local-first, opt-in outbound write; starter support for `List` single-select, `Owner` user payloads, `Estimate` numeric payloads, `Due` date/datetime timestamp payloads, and `Done` checkbox payloads is now available via config)
 
 Still good next candidates:
 - sync selected Feishu content into a local markdown workspace

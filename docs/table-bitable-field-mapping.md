@@ -22,8 +22,9 @@ Examples:
 /table add roadmap refine onboarding copy
 /table add backlog improve webhook errors / owner_open_id=ou_xxx
 /table add sprint fix flaky webhook tests / estimate=5
-/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z
+/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true
 /table add sprint fix flaky webhook tests / due=2026-04-01
+/table add sprint close flaky webhook tests / done=true
 ```
 
 Current parsing behavior:
@@ -36,6 +37,7 @@ Current parsing behavior:
 - optional `/ owner_open_id=<open_id>`: becomes `Owner` input for user-field mode
 - optional `/ estimate=<number>`: becomes `Estimate`
 - optional `/ due=<YYYY-MM-DD-or-ISO8601>`: becomes `Due`
+- optional `/ done=<true-or-false>`: becomes `Done`
 - original chat command is kept as `SourceCommand`
 
 Example:
@@ -68,6 +70,7 @@ The current adapter builds a `create-record` request with this field set:
 - `Owner` (optional)
 - `Estimate` (optional)
 - `Due` (optional)
+- `Done` (optional)
 - `SourceCommand`
 
 Default starter mode still assumes text-compatible fields.
@@ -78,6 +81,7 @@ Optional widening now available:
 - `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` + `/ estimate=5` → emits `Estimate` as a numeric value instead of text
 - `FEISHU_BITABLE_DUE_FIELD_MODE=date` + `/ due=2026-04-01` → emits `Due` as a UTC midnight timestamp in milliseconds
 - `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` + `/ due=2026-04-01T09:30:00Z` → emits `Due` as a datetime timestamp in milliseconds
+- `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox` + `/ done=true` → emits `Done` as a boolean checkbox payload
 
 That means the safest matching table schema is:
 
@@ -89,6 +93,7 @@ That means the safest matching table schema is:
 | `Owner` | owner name from chat command | Text |
 | `Estimate` | rough effort or size | Text by default, Number when enabled |
 | `Due` | target date or due timestamp | Text by default, Date / Datetime when enabled |
+| `Done` | completion state from chat command | Text by default, Checkbox when enabled |
 | `SourceCommand` | raw original slash command | Text |
 
 If your Bitable uses these exact names and text-like field types, the starter path should be easy to wire.
@@ -100,7 +105,6 @@ If your Bitable uses these exact names and text-like field types, the starter pa
 The current `/table` write path does **not** yet map richer field types such as:
 
 - multi-select
-- checkbox
 - attachment
 - linked records
 
@@ -261,6 +265,7 @@ FEISHU_BITABLE_LIST_FIELD_MODE=text
 FEISHU_BITABLE_OWNER_FIELD_MODE=text
 FEISHU_BITABLE_ESTIMATE_FIELD_MODE=text
 FEISHU_BITABLE_DUE_FIELD_MODE=text
+FEISHU_BITABLE_DONE_FIELD_MODE=text
 ```
 
 The current outbound write path is opt-in.
