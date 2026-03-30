@@ -194,6 +194,10 @@ npm test
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)
 - [GitHub 仓库元数据](./docs/github-repo-meta.md)
 
+## 参与贡献
+
+贡献范围、本地运行方式和 PR 预期见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+
 ## 路线图
 
 - [x] 建最小 TypeScript 项目骨架

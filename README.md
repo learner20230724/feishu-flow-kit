@@ -194,6 +194,10 @@ You can always add deployment pieces later.
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
 - [GitHub repo metadata](./docs/github-repo-meta.md)
 
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution scope, local setup, and PR expectations.
+
 ## Roadmap
 
 - [x] create minimal TypeScript project skeleton
