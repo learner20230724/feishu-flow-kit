@@ -199,6 +199,7 @@ You can always add deployment pieces later.
 
 - [Setup guide](./docs/setup-guide.md)
 - [Architecture overview](./docs/overview.md)
+- [Table / Bitable field mapping notes](./docs/table-bitable-field-mapping.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
 - [GitHub repo metadata](./docs/github-repo-meta.md)
 - [Publishing to GitHub (no-browser)](./docs/publish-to-github.md)

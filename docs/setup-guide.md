@@ -261,4 +261,5 @@ A practical rule for this repo:
 ## Related docs
 
 - [Architecture overview](./overview.md)
+- [Table / Bitable field mapping notes](./table-bitable-field-mapping.md)
 - [Troubleshooting by API error pattern](./troubleshooting-by-api-error-pattern.md)

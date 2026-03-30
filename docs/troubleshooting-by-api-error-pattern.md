@@ -162,7 +162,33 @@ If you need more:
 
 ---
 
-## 5. "Permission denied" class errors
+## 5. `/table` workflow failures (Bitable create-record)
+
+### Pattern: `/table` draft looks fine, but real create-record fails
+
+What it usually means:
+- wrong `FEISHU_BITABLE_APP_TOKEN`
+- wrong `FEISHU_BITABLE_TABLE_ID`
+- app does not have record-write permission for that Bitable table
+- target table fields do not match the repo's current starter mapping
+
+What to check:
+- `FEISHU_ENABLE_TABLE_CREATE=true`
+- `FEISHU_BITABLE_APP_TOKEN` points to the intended Bitable app
+- `FEISHU_BITABLE_TABLE_ID` points to the intended table
+- your app has write permission for that table
+- target fields match the current starter assumptions: `Title`, `List`, optional `Details`, optional `Owner`, `SourceCommand`
+
+Starter mapping caveat:
+- the current repo assumes text-compatible fields only
+- it does not yet coerce user / select / date / number / linked-record fields into richer Feishu payload shapes
+
+If you need the exact current assumptions, see:
+- [`table-bitable-field-mapping.md`](./table-bitable-field-mapping.md)
+
+---
+
+## 6. "Permission denied" class errors
 
 ### Pattern: `permission denied` / `forbidden` / 403-like errors
 
