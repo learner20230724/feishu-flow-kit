@@ -29,11 +29,20 @@ Use `docs/demo-webhook-doc-flow.svg` as the repo's Open Graph image or pin it to
 1. Create repo `learner20230724/feishu-flow-kit` on GitHub (public, no template, no auto README)
 2. In `publish/feishu-flow-kit/`:
    ```
+   # one-time
+   git branch -M main
    git remote add origin https://github.com/learner20230724/feishu-flow-kit.git
+
+   # push
    git push -u origin main
+   ```
+   Or use:
+   ```
+   ./scripts/publish-to-github.sh
    ```
 3. On GitHub: set description + topics from above
 4. Tag `v0.1.0` from the GitHub UI or:
    ```
-   git tag v0.1.0 && git push origin v0.1.0
+   git tag v0.1.0
+   git push origin v0.1.0
    ```
