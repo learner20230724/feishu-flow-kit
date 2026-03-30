@@ -2,7 +2,7 @@
 
 Use this before publishing `feishu-flow-kit` as a public repo or cutting a visible snapshot tag.
 
-Last verified locally: 2026-03-30 05:06 UTC.
+Last verified locally: 2026-03-30 16:14 UTC.
 
 ## 1. Repo hygiene
 
@@ -52,7 +52,7 @@ Last verified locally: 2026-03-30 05:06 UTC.
 
 There are no known local release blockers inside the standalone repo right now.
 
-The remaining decision is product-facing rather than technical:
+The remaining blockers are external / publication-facing rather than code correctness:
 
-- pick the next visible milestone after first publish: richer inline doc formatting, table / bitable automation, or DX polish
-- choose when to push the standalone repo to GitHub and what short launch copy to use
+- GitHub push from this machine is still blocked by missing credentials or login state
+- if publishing before more M5 work, the current scope is honest as-is; if continuing M5, keep roadmap/docs synced as richer `/table` mapping lands

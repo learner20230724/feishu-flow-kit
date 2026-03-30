@@ -32,7 +32,7 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 - [x] message event demo
 - [x] docs automation demo (`/doc` → create doc + starter block append)
 - [x] inline markdown span support (bold, italic, code, strikethrough, link)
-- [ ] table automation demo
+- [x] table automation demo (`/table` → draft + opt-in create-record path)
 - [x] local mock event runner
 
 ### M4 — Packaging
@@ -44,7 +44,8 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 
 ### M5 — Next increment (locked)
 - [x] decide the next visible milestone
-- [ ] table / bitable slash-command workflow (**chosen**)
+- [x] table / bitable slash-command workflow (**chosen**)
+- [ ] richer table field mapping (date / number / linked record)
 - [ ] richer inline doc formatting (nested styles, auto-link)
 - [ ] DX polish (CLI dry-run flag, better error messages)
 
@@ -52,4 +53,4 @@ Notes:
 - M5 plan doc: `docs/m5-table-workflow-plan.md`
 
 ## Current next step
-Push standalone repo to GitHub (`learner20230724/feishu-flow-kit`) and start M5.
+Push standalone repo to GitHub (`learner20230724/feishu-flow-kit`) when credentials are available, then continue M5 by widening `/table` field mapping beyond text / single-select / user starter coverage.

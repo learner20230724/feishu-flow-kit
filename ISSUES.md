@@ -66,6 +66,33 @@ Why:
 Plan doc:
 - `docs/m5-table-workflow-plan.md`
 
+## Current M5 status
+
+### 20. Ship the first `/table` workflow slice
+Status: done.
+
+Delivered:
+- `/table add ...` slash-command parsing
+- local draft output for Bitable `create-record`
+- opt-in outbound `create-record` path
+- mock example event and workflow coverage
+- field-mapping notes in `docs/table-bitable-field-mapping.md`
+
+### 21. Widen starter table field mapping carefully
+Status: in progress.
+
+Done so far:
+- `List` can emit `single_select` payloads via `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`
+- `Owner` can emit user payloads via `FEISHU_BITABLE_OWNER_FIELD_MODE=user` and `/ owner_open_id=...`
+
+Still open:
+- date / datetime fields
+- number fields
+- checkbox fields
+- linked-record fields
+- schema-aware validation and better per-field error messages
+
+
 ## Packaging
 
 ### 16. Prepare release checklist
