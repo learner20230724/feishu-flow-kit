@@ -28,21 +28,20 @@ Use `docs/demo-webhook-doc-flow.svg` as the repo's Open Graph image or pin it to
 ## Push checklist (one-time)
 1. Create repo `learner20230724/feishu-flow-kit` on GitHub (public, no template, no auto README)
 2. In `publish/feishu-flow-kit/`:
-   ```
-   # one-time
-   git branch -M main
-   git remote add origin https://github.com/learner20230724/feishu-flow-kit.git
-
-   # push
-   git push -u origin main
-   ```
-   Or use:
-   ```
+   ```bash
+   # push main (preferred)
    ./scripts/publish-to-github.sh
    ```
+
+   If you see auth errors like:
+   - `fatal: could not read Username for 'https://github.com': No such device or address`
+
+   Use one of the no-browser publishing options:
+   - `docs/publish-to-github.md` (SSH recommended)
+
 3. On GitHub: set description + topics from above
-4. Tag `v0.1.0` from the GitHub UI or:
-   ```
+4. Tag `v0.1.0` (CLI):
+   ```bash
    git tag v0.1.0
    git push origin v0.1.0
    ```

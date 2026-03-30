@@ -195,6 +195,7 @@ npm test
 - [Architecture overview](./docs/overview.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)
 - [GitHub 仓库元数据](./docs/github-repo-meta.md)
+- [无浏览器环境下发布到 GitHub](./docs/publish-to-github.md)
 
 ## 参与贡献
 

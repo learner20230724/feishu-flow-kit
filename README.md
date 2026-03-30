@@ -195,6 +195,7 @@ You can always add deployment pieces later.
 - [Architecture overview](./docs/overview.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
 - [GitHub repo metadata](./docs/github-repo-meta.md)
+- [Publishing to GitHub (no-browser)](./docs/publish-to-github.md)
 
 ## Contributing
 
