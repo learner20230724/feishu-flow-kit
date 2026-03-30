@@ -87,7 +87,7 @@ Feishu 消息事件
   （可选：真实发送 Feishu 回复）
 ```
 
-以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` 和 `FEISHU_BITABLE_OWNER_FIELD_MODE=user` 逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。
+以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`、`FEISHU_BITABLE_OWNER_FIELD_MODE=user` 和 `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`，逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。
 
 ## Demo 资产
 
@@ -122,6 +122,7 @@ FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
 - `/doc weekly launch review`
 - `/table add backlog item: improve webhook errors / owner=alex`
 - `/table add backlog improve webhook errors / owner_open_id=ou_xxx`
+- `/table add sprint fix flaky webhook tests / estimate=5`
 
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程
@@ -180,7 +181,7 @@ npm test
 仓库里已经能直接跑的：
 - `/todo ...` → 把请求整理成一个简短 action-list draft
 - `/doc ...` → 把主题转成 markdown 风格 outline，并可进一步创建 Feishu 文档、追加最小原生 docx 正文（headings / bullets / todos / paragraphs）
-- `/table ...` → 把一段短的 record 请求转成 Bitable create-record draft（本地优先，真实写入显式 opt-in；当前已可通过配置把 `List` 扩到 single-select、把 `Owner` 扩到 user payload）
+- `/table ...` → 把一段短的 record 请求转成 Bitable create-record draft（本地优先，真实写入显式 opt-in；当前已可通过配置把 `List` 扩到 single-select、把 `Owner` 扩到 user payload、把 `Estimate` 扩到 number payload）
 
 下一批比较合适的方向：
 - 将选定的飞书内容同步到本地 markdown 工作区

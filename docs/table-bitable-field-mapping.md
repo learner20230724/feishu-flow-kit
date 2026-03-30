@@ -21,6 +21,7 @@ Examples:
 /table add leads ACME follow-up / owner=sam
 /table add roadmap refine onboarding copy
 /table add backlog improve webhook errors / owner_open_id=ou_xxx
+/table add sprint fix flaky webhook tests / estimate=5
 ```
 
 Current parsing behavior:
@@ -31,6 +32,7 @@ Current parsing behavior:
 - optional `label: title` prefix: the part before `:` becomes `Details`
 - optional `/ owner=<name>`: becomes `Owner`
 - optional `/ owner_open_id=<open_id>`: becomes `Owner` input for user-field mode
+- optional `/ estimate=<number>`: becomes `Estimate`
 - original chat command is kept as `SourceCommand`
 
 Example:
@@ -61,6 +63,7 @@ The current adapter builds a `create-record` request with this field set:
 - `List`
 - `Details` (optional)
 - `Owner` (optional)
+- `Estimate` (optional)
 - `SourceCommand`
 
 Default starter mode still assumes text-compatible fields.
@@ -68,6 +71,7 @@ Default starter mode still assumes text-compatible fields.
 Optional widening now available:
 - `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` → emits `List` as `{ "name": "..." }`
 - `FEISHU_BITABLE_OWNER_FIELD_MODE=user` + `/ owner_open_id=ou_xxx` → emits `Owner` as `[{ "id": "ou_xxx" }]`
+- `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` + `/ estimate=5` → emits `Estimate` as a numeric value instead of text
 
 That means the safest matching table schema is:
 
@@ -77,6 +81,7 @@ That means the safest matching table schema is:
 | `List` | bucket / list name | Text |
 | `Details` | small label or extra context | Text |
 | `Owner` | owner name from chat command | Text |
+| `Estimate` | rough effort or size | Text by default, Number when enabled |
 | `SourceCommand` | raw original slash command | Text |
 
 If your Bitable uses these exact names and text-like field types, the starter path should be easy to wire.

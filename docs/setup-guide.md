@@ -45,6 +45,7 @@ FEISHU_BITABLE_APP_TOKEN=
 FEISHU_BITABLE_TABLE_ID=
 FEISHU_BITABLE_LIST_FIELD_MODE=text
 FEISHU_BITABLE_OWNER_FIELD_MODE=text
+FEISHU_BITABLE_ESTIMATE_FIELD_MODE=text
 LOG_LEVEL=debug
 ```
 
@@ -81,6 +82,7 @@ Starter commands available right now:
 - `/doc weekly launch review`
 - `/table add backlog item: improve webhook errors / owner=alex`
 - `/table add backlog improve webhook errors / owner_open_id=ou_xxx`
+- `/table add sprint fix flaky webhook tests / estimate=5`
 
 This is small on purpose. It gives you one end-to-end slice to extend before adding real Feishu transport code.
 
@@ -223,9 +225,10 @@ The current repo keeps this write path intentionally small:
 
 Starter mapping assumptions right now:
 - `Title` → text
-- `List` → text
+- `List` → text by default, or `{ name: ... }` with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`
 - `Details` → text
-- `Owner` → text
+- `Owner` → text by default, or `[{ id: ... }]` with `FEISHU_BITABLE_OWNER_FIELD_MODE=user` + `/ owner_open_id=...`
+- `Estimate` → text by default, or number with `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` + `/ estimate=...`
 - `SourceCommand` → text
 
 If token fetch works but record creation fails, the usual causes are missing Bitable scope, wrong `app_token` / `table_id`, or field types/names that do not match this starter mapping.
