@@ -22,7 +22,8 @@ Examples:
 /table add roadmap refine onboarding copy
 /table add backlog improve webhook errors / owner_open_id=ou_xxx
 /table add sprint fix flaky webhook tests / estimate=5
-/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5
+/table add sprint flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z
+/table add sprint fix flaky webhook tests / due=2026-04-01
 ```
 
 Current parsing behavior:
@@ -34,6 +35,7 @@ Current parsing behavior:
 - optional `/ owner=<name>`: becomes `Owner`
 - optional `/ owner_open_id=<open_id>`: becomes `Owner` input for user-field mode
 - optional `/ estimate=<number>`: becomes `Estimate`
+- optional `/ due=<YYYY-MM-DD-or-ISO8601>`: becomes `Due`
 - original chat command is kept as `SourceCommand`
 
 Example:
@@ -65,6 +67,7 @@ The current adapter builds a `create-record` request with this field set:
 - `Details` (optional)
 - `Owner` (optional)
 - `Estimate` (optional)
+- `Due` (optional)
 - `SourceCommand`
 
 Default starter mode still assumes text-compatible fields.
@@ -73,6 +76,8 @@ Optional widening now available:
 - `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` → emits `List` as `{ "name": "..." }`
 - `FEISHU_BITABLE_OWNER_FIELD_MODE=user` + `/ owner_open_id=ou_xxx` → emits `Owner` as `[{ "id": "ou_xxx" }]`
 - `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` + `/ estimate=5` → emits `Estimate` as a numeric value instead of text
+- `FEISHU_BITABLE_DUE_FIELD_MODE=date` + `/ due=2026-04-01` → emits `Due` as a UTC midnight timestamp in milliseconds
+- `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` + `/ due=2026-04-01T09:30:00Z` → emits `Due` as a datetime timestamp in milliseconds
 
 That means the safest matching table schema is:
 
@@ -83,6 +88,7 @@ That means the safest matching table schema is:
 | `Details` | small label or extra context | Text |
 | `Owner` | owner name from chat command | Text |
 | `Estimate` | rough effort or size | Text by default, Number when enabled |
+| `Due` | target date or due timestamp | Text by default, Date / Datetime when enabled |
 | `SourceCommand` | raw original slash command | Text |
 
 If your Bitable uses these exact names and text-like field types, the starter path should be easy to wire.
@@ -93,12 +99,8 @@ If your Bitable uses these exact names and text-like field types, the starter pa
 
 The current `/table` write path does **not** yet map richer field types such as:
 
-- single select
 - multi-select
-- user / person picker
-- date / datetime
 - checkbox
-- number
 - attachment
 - linked records
 
@@ -106,7 +108,7 @@ It also does not currently:
 
 - fetch table schema before writing
 - validate field existence before calling `create-record`
-- coerce values into different field payload shapes
+- coerce values into different field payload shapes beyond the current starter modes
 - auto-create missing fields
 - reconcile localized field names
 
@@ -122,7 +124,9 @@ If you want the fastest path to a successful real write, create or reuse a Bitab
 2. `List` → Text
 3. `Details` → Text
 4. `Owner` → Text
-5. `SourceCommand` → Text
+5. `Estimate` → Text or Number
+6. `Due` → Text or Date / Datetime
+7. `SourceCommand` → Text
 
 This keeps the first real integration honest:
 - command parsing stays simple
@@ -159,7 +163,17 @@ A select field is useful, but it adds one more failure class:
 
 Treat that as a follow-up, not a first step.
 
-### 4. Only add schema-aware mapping when repeated failures justify it
+### 4. Upgrade `Estimate` or `Due` one at a time
+These are good next fields because they map to common planning-table schemas.
+
+Current starter options:
+- `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` for rough effort values
+- `FEISHU_BITABLE_DUE_FIELD_MODE=date` for `YYYY-MM-DD`
+- `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` for ISO8601 timestamps
+
+A practical habit is to prove `Estimate` and `Due` separately before combining them in the same real table.
+
+### 5. Only add schema-aware mapping when repeated failures justify it
 If real usage shows repeated confusion around field types or names, then it becomes worth adding:
 - schema fetch
 - explicit mapping config
@@ -193,7 +207,23 @@ Usual causes:
 Check:
 - whether `Owner` is a user field instead of text
 - whether `List` is a select field instead of text
+- whether `Estimate` is a number field instead of text
+- whether `Due` is a date/datetime field instead of text
 - whether `Details` or `SourceCommand` is missing entirely
+
+---
+
+### Pattern: date field is configured, but Due still fails
+
+Usual causes:
+- `FEISHU_BITABLE_DUE_FIELD_MODE=date` is enabled, but the input is not `YYYY-MM-DD`
+- `FEISHU_BITABLE_DUE_FIELD_MODE=datetime` expects an ISO8601 timestamp, but the command sends a loose local format
+- the target field is Date while the table actually expects Datetime, or the reverse
+
+Check:
+- for date mode, use `/ due=2026-04-01`
+- for datetime mode, use `/ due=2026-04-01T09:30:00Z`
+- verify the target field type in Bitable matches the mode you enabled
 
 ---
 
@@ -229,6 +259,8 @@ FEISHU_BITABLE_APP_TOKEN=
 FEISHU_BITABLE_TABLE_ID=
 FEISHU_BITABLE_LIST_FIELD_MODE=text
 FEISHU_BITABLE_OWNER_FIELD_MODE=text
+FEISHU_BITABLE_ESTIMATE_FIELD_MODE=text
+FEISHU_BITABLE_DUE_FIELD_MODE=text
 ```
 
 The current outbound write path is opt-in.

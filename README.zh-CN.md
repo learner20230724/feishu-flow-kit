@@ -87,7 +87,7 @@ Feishu 消息事件
   （可选：真实发送 Feishu 回复）
 ```
 
-以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`、`FEISHU_BITABLE_OWNER_FIELD_MODE=user` 和 `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`，逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。
+以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select`、`FEISHU_BITABLE_OWNER_FIELD_MODE=user`、`FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`，以及 `FEISHU_BITABLE_DUE_FIELD_MODE=date` 或 `datetime`，逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。
 
 ## Demo 资产
 
@@ -109,7 +109,7 @@ npm run dev
 ```bash
 FEISHU_MOCK_EVENT_PATH=examples/mock-doc-message-event.json npm run dev
 FEISHU_MOCK_EVENT_PATH=examples/mock-table-message-event.json npm run dev
-FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number npm run dev
+FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABLE_LIST_FIELD_MODE=single_select FEISHU_BITABLE_OWNER_FIELD_MODE=user FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number FEISHU_BITABLE_DUE_FIELD_MODE=datetime npm run dev
 ```
 
 当前 demo 路径是：
@@ -126,12 +126,13 @@ FEISHU_MOCK_EVENT_PATH=examples/mock-table-rich-message-event.json FEISHU_BITABL
 - `/table add backlog item: improve webhook errors / owner=alex`
 - `/table add backlog improve webhook errors / owner_open_id=ou_xxx`
 - `/table add sprint fix flaky webhook tests / estimate=5`
+- `/table add sprint fix flaky webhook tests / due=2026-04-01`
 
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程
 - `examples/mock-doc-message-event.json` → `/doc` 流程
 - `examples/mock-table-message-event.json` → `/table` text-first 流程
-- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode 流程（`single_select` + `user` + `number`）
+- `examples/mock-table-rich-message-event.json` → `/table` richer field-mode 流程（`single_select` + `user` + `number` + `datetime`）
 
 这个 demo 刻意保持很小，但已经足够证明仓库能把真实输入跑过一条清楚、可读的本地链路。
 
@@ -185,7 +186,7 @@ npm test
 仓库里已经能直接跑的：
 - `/todo ...` → 把请求整理成一个简短 action-list draft
 - `/doc ...` → 把主题转成 markdown 风格 outline，并可进一步创建 Feishu 文档、追加最小原生 docx 正文（headings / bullets / todos / paragraphs）
-- `/table ...` → 把一段短的 record 请求转成 Bitable create-record draft（本地优先，真实写入显式 opt-in；当前已可通过配置把 `List` 扩到 single-select、把 `Owner` 扩到 user payload、把 `Estimate` 扩到 number payload）
+- `/table ...` → 把一段短的 record 请求转成 Bitable create-record draft（本地优先，真实写入显式 opt-in；当前已可通过配置把 `List` 扩到 single-select、把 `Owner` 扩到 user payload、把 `Estimate` 扩到 number payload、把 `Due` 扩到 date/datetime 时间戳 payload）
 
 下一批比较合适的方向：
 - 将选定的飞书内容同步到本地 markdown 工作区
