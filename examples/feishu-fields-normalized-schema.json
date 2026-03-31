@@ -1,0 +1,92 @@
+{
+  "tableName": "Sprint Tasks",
+  "appToken": "app_demo123",
+  "tableId": "tbl_demo456",
+  "fields": [
+    {
+      "name": "Task",
+      "type": "text",
+      "sourceTypeId": 1,
+      "sourceFieldId": "fldTitle001",
+      "uiType": "Text",
+      "isPrimary": true
+    },
+    {
+      "name": "Stage",
+      "type": "single_select",
+      "sourceTypeId": 3,
+      "sourceFieldId": "fldList001",
+      "uiType": "SingleSelect",
+      "isPrimary": false
+    },
+    {
+      "name": "Context",
+      "type": "text",
+      "sourceTypeId": 1,
+      "sourceFieldId": "fldDetails001",
+      "uiType": "Text",
+      "isPrimary": false
+    },
+    {
+      "name": "Assignee",
+      "type": "user",
+      "sourceTypeId": 11,
+      "sourceFieldId": "fldOwner001",
+      "uiType": "User",
+      "isPrimary": false
+    },
+    {
+      "name": "Points",
+      "type": "number",
+      "sourceTypeId": 2,
+      "sourceFieldId": "fldEstimate001",
+      "uiType": "Number",
+      "isPrimary": false
+    },
+    {
+      "name": "TargetDate",
+      "type": "date",
+      "sourceTypeId": 5,
+      "sourceFieldId": "fldDue001",
+      "uiType": "DateTime",
+      "isPrimary": false
+    },
+    {
+      "name": "Completed",
+      "type": "checkbox",
+      "sourceTypeId": 7,
+      "sourceFieldId": "fldDone001",
+      "uiType": "Checkbox",
+      "isPrimary": false
+    },
+    {
+      "name": "Files",
+      "type": "attachment",
+      "sourceTypeId": 17,
+      "sourceFieldId": "fldAttachment001",
+      "uiType": "Attachment",
+      "isPrimary": false
+    },
+    {
+      "name": "Dependencies",
+      "type": "linked_record",
+      "sourceTypeId": 18,
+      "sourceFieldId": "fldLinked001",
+      "uiType": "SingleLink",
+      "isPrimary": false
+    },
+    {
+      "name": "ChatCommand",
+      "type": "text",
+      "sourceTypeId": 1,
+      "sourceFieldId": "fldSource001",
+      "uiType": "Text",
+      "isPrimary": false
+    }
+  ],
+  "source": {
+    "inputPath": "examples/feishu-fields-list-response.json",
+    "itemCount": 10,
+    "format": "data.items"
+  }
+}

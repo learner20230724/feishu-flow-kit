@@ -140,7 +140,26 @@ npm run table:mapping-draft -- examples/table-schema-partial.json --format json
 npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-draft.json
 ```
 
-Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md).
+If what you have is a raw Feishu field-list response instead of a cleaned `fields` array, normalize it first:
+
+```bash
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json --out ./table-schema-from-feishu.json
+npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
+```
+
+The repo also includes a full handoff fixture chain you can inspect directly:
+- `examples/feishu-fields-list-response.json`
+- `examples/feishu-fields-normalized-schema.json`
+- `examples/feishu-fields-mapping-draft.json`
+
+And if you want to quickly confirm that the committed handoff artifacts still match current CLI behavior:
+
+```bash
+npm run verify:table-schema-handoff
+```
+
+Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md), and the end-to-end review path is shown in [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md).
 
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
@@ -153,6 +172,7 @@ Example mock inputs:
 - `examples/table-api-error-type-mismatch.json` → fixture-backed field-type mismatch sample
 - `examples/table-api-error-permission-denied.json` → fixture-backed Bitable write-permission failure sample
 - `examples/table-schema-sample.json` / `examples/table-schema-partial.json` / `examples/table-schema-localized.json` / `examples/table-schema-unmatched.json` → mapping generator input samples for happy-path, partial rollout, localized column names, and unmatched-column review
+- `examples/feishu-fields-list-response.json` / `examples/feishu-fields-normalized-schema.json` / `examples/feishu-fields-mapping-draft.json` → raw-response-to-review-artifact schema handoff fixture chain
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 
@@ -229,6 +249,7 @@ You can always add deployment pieces later.
 - [Table / Bitable field mapping notes](./docs/table-bitable-field-mapping.md)
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
+- [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)

@@ -1,0 +1,111 @@
+{
+  "source": {
+    "inputPath": "examples/feishu-fields-normalized-schema.json",
+    "tableName": "Sprint Tasks"
+  },
+  "config": {
+    "FEISHU_ENABLE_TABLE_CREATE": "true",
+    "FEISHU_BITABLE_APP_TOKEN": "app_demo123",
+    "FEISHU_BITABLE_TABLE_ID": "tbl_demo456",
+    "FEISHU_BITABLE_LIST_FIELD_MODE": "single_select",
+    "FEISHU_BITABLE_OWNER_FIELD_MODE": "user",
+    "FEISHU_BITABLE_ESTIMATE_FIELD_MODE": "number",
+    "FEISHU_BITABLE_DUE_FIELD_MODE": "date",
+    "FEISHU_BITABLE_DONE_FIELD_MODE": "checkbox",
+    "FEISHU_BITABLE_ATTACHMENT_FIELD_MODE": "attachment",
+    "FEISHU_BITABLE_LINK_FIELD_MODE": "linked_record",
+    "FEISHU_BITABLE_TITLE_FIELD_NAME": "Task",
+    "FEISHU_BITABLE_LIST_FIELD_NAME": "Stage",
+    "FEISHU_BITABLE_DETAILS_FIELD_NAME": "Context",
+    "FEISHU_BITABLE_OWNER_FIELD_NAME": "Assignee",
+    "FEISHU_BITABLE_ESTIMATE_FIELD_NAME": "Points",
+    "FEISHU_BITABLE_DUE_FIELD_NAME": "TargetDate",
+    "FEISHU_BITABLE_DONE_FIELD_NAME": "Completed",
+    "FEISHU_BITABLE_ATTACHMENT_FIELD_NAME": "Files",
+    "FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME": "Dependencies",
+    "FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME": "ChatCommand"
+  },
+  "matches": [
+    {
+      "starterField": "Title",
+      "actualName": "Task",
+      "actualType": "text",
+      "inferredMode": "text",
+      "envName": "FEISHU_BITABLE_TITLE_FIELD_NAME",
+      "modeEnvName": null
+    },
+    {
+      "starterField": "List",
+      "actualName": "Stage",
+      "actualType": "single_select",
+      "inferredMode": "single_select",
+      "envName": "FEISHU_BITABLE_LIST_FIELD_NAME",
+      "modeEnvName": "FEISHU_BITABLE_LIST_FIELD_MODE"
+    },
+    {
+      "starterField": "Details",
+      "actualName": "Context",
+      "actualType": "text",
+      "inferredMode": "text",
+      "envName": "FEISHU_BITABLE_DETAILS_FIELD_NAME",
+      "modeEnvName": null
+    },
+    {
+      "starterField": "Owner",
+      "actualName": "Assignee",
+      "actualType": "user",
+      "inferredMode": "user",
+      "envName": "FEISHU_BITABLE_OWNER_FIELD_NAME",
+      "modeEnvName": "FEISHU_BITABLE_OWNER_FIELD_MODE"
+    },
+    {
+      "starterField": "Estimate",
+      "actualName": "Points",
+      "actualType": "number",
+      "inferredMode": "number",
+      "envName": "FEISHU_BITABLE_ESTIMATE_FIELD_NAME",
+      "modeEnvName": "FEISHU_BITABLE_ESTIMATE_FIELD_MODE"
+    },
+    {
+      "starterField": "Due",
+      "actualName": "TargetDate",
+      "actualType": "date",
+      "inferredMode": "date",
+      "envName": "FEISHU_BITABLE_DUE_FIELD_NAME",
+      "modeEnvName": "FEISHU_BITABLE_DUE_FIELD_MODE"
+    },
+    {
+      "starterField": "Done",
+      "actualName": "Completed",
+      "actualType": "checkbox",
+      "inferredMode": "checkbox",
+      "envName": "FEISHU_BITABLE_DONE_FIELD_NAME",
+      "modeEnvName": "FEISHU_BITABLE_DONE_FIELD_MODE"
+    },
+    {
+      "starterField": "Attachment",
+      "actualName": "Files",
+      "actualType": "attachment",
+      "inferredMode": "attachment",
+      "envName": "FEISHU_BITABLE_ATTACHMENT_FIELD_NAME",
+      "modeEnvName": "FEISHU_BITABLE_ATTACHMENT_FIELD_MODE"
+    },
+    {
+      "starterField": "LinkedRecords",
+      "actualName": "Dependencies",
+      "actualType": "linked_record",
+      "inferredMode": "linked_record",
+      "envName": "FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME",
+      "modeEnvName": "FEISHU_BITABLE_LINK_FIELD_MODE"
+    },
+    {
+      "starterField": "SourceCommand",
+      "actualName": "ChatCommand",
+      "actualType": "text",
+      "inferredMode": "text",
+      "envName": "FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME",
+      "modeEnvName": null
+    }
+  ],
+  "unmatched": []
+}

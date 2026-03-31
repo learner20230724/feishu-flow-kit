@@ -163,6 +163,8 @@ If you want a concrete request/response example before reading the code, see [`/
 
 If you are already past the happy path and need representative Bitable write failures, see [`/table` API error fixture pack](./table-api-error-fixtures.md). The fixture files live in `examples/table-api-error-field-not-found.json`, `examples/table-api-error-type-mismatch.json`, and `examples/table-api-error-permission-denied.json`.
 
+If what you need is the schema handoff path before real write enablement, see [`/table` schema handoff demo](./table-schema-handoff-demo.md). It walks through the included fixture chain from `examples/feishu-fields-list-response.json` to `examples/feishu-fields-normalized-schema.json` and finally `examples/feishu-fields-mapping-draft.json`.
+
 This is still a starter path, not a production webhook implementation.
 
 ## Development strategy
@@ -276,6 +278,14 @@ If you already exported or copied the target field list into JSON, you can gener
 npm run table:mapping-draft -- examples/table-schema-sample.json
 npm run table:mapping-draft -- examples/table-schema-partial.json --format json
 npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-draft.json
+```
+
+If you only have the raw Feishu field-list response body, normalize it first and then feed that result into the mapping draft generator:
+
+```bash
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json --out ./table-schema-from-feishu.json
+npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 ```
 
 Use env output when you want something ready to paste into `.env`. Use JSON output when you want to inspect inferred modes and unmatched fields programmatically before turning on real writes. The expected JSON shape and sample variants are documented in [`/table` mapping generator input guide](./table-mapping-generator-inputs.md).

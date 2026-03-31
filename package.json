@@ -27,6 +27,8 @@
     "check": "tsc --noEmit",
     "test": "node --import tsx --test",
     "table:mapping-draft": "node ./scripts/generate-table-mapping-env.mjs",
+    "table:normalize-feishu-fields": "node ./scripts/normalize-feishu-table-fields.mjs",
+    "verify:table-schema-handoff": "node ./scripts/verify-table-schema-handoff.mjs",
     "verify:release": "bash ./scripts/verify-release-ready.sh"
   },
   "devDependencies": {

@@ -140,7 +140,20 @@ npm run table:mapping-draft -- examples/table-schema-partial.json --format json
 npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-draft.json
 ```
 
-默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)。
+如果你手上拿到的是 Feishu 字段列表 API 的原始响应，而不是已经整理好的 `fields` 数组，可以先做一次标准化：
+
+```bash
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json --out ./table-schema-from-feishu.json
+npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
+```
+
+仓库里也附带了一条完整的 handoff fixture chain，可直接复查：
+- `examples/feishu-fields-list-response.json`
+- `examples/feishu-fields-normalized-schema.json`
+- `examples/feishu-fields-mapping-draft.json`
+
+默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)，完整审查路径见 [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)。
 
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程
@@ -153,6 +166,7 @@ npm run table:mapping-draft -- examples/table-schema-unmatched.json --format jso
 - `examples/table-api-error-type-mismatch.json` → fixture-backed 字段类型不匹配失败示例
 - `examples/table-api-error-permission-denied.json` → fixture-backed Bitable 写权限失败示例
 - `examples/table-schema-sample.json` / `examples/table-schema-partial.json` / `examples/table-schema-localized.json` / `examples/table-schema-unmatched.json` → mapping generator 输入样例，分别覆盖 happy path、首轮少字段接入、多语言列名审查、额外 unmatched 列审查
+- `examples/feishu-fields-list-response.json` / `examples/feishu-fields-normalized-schema.json` / `examples/feishu-fields-mapping-draft.json` → 从原始字段响应到 review artifact 的 schema handoff 样例链路
 
 这个 demo 刻意保持很小，但已经足够证明仓库能把真实输入跑过一条清楚、可读的本地链路。
 
@@ -229,6 +243,7 @@ npm test
 - [`/table` 字段映射说明](./docs/table-bitable-field-mapping.md)
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
+- [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)
 - [`/table` webhook 成功 / 失败示例](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)

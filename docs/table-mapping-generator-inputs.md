@@ -10,6 +10,7 @@ It does **not** call Feishu APIs, fetch schema automatically, or discover select
 Use it together with:
 - [`/table` schema mapping worksheet](./table-schema-mapping-worksheet.md)
 - [Setup guide](./setup-guide.md)
+- [`/table` schema handoff demo](./table-schema-handoff-demo.md)
 - [`/table` API error fixture pack](./table-api-error-fixtures.md)
 
 ---
@@ -20,6 +21,14 @@ Use it together with:
 npm run table:mapping-draft -- examples/table-schema-sample.json
 npm run table:mapping-draft -- examples/table-schema-partial.json --format json
 npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-review.json
+```
+
+If your starting point is the raw JSON returned by Feishu's field-list API, normalize it first:
+
+```bash
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json
+npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json --out ./table-schema-from-feishu.json
+npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 ```
 
 Default output is env text.

@@ -1,0 +1,99 @@
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "has_more": false,
+    "page_token": "",
+    "total": 10,
+    "table_name": "Sprint Tasks",
+    "app_token": "app_demo123",
+    "table_id": "tbl_demo456",
+    "items": [
+      {
+        "field_id": "fldTitle001",
+        "field_name": "Task",
+        "type": 1,
+        "ui_type": "Text",
+        "is_primary": true,
+        "property": {}
+      },
+      {
+        "field_id": "fldList001",
+        "field_name": "Stage",
+        "type": 3,
+        "ui_type": "SingleSelect",
+        "is_primary": false,
+        "property": {
+          "options": [
+            { "id": "opt_backlog", "name": "Backlog" },
+            { "id": "opt_doing", "name": "Doing" }
+          ]
+        }
+      },
+      {
+        "field_id": "fldDetails001",
+        "field_name": "Context",
+        "type": 1,
+        "ui_type": "Text",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldOwner001",
+        "field_name": "Assignee",
+        "type": 11,
+        "ui_type": "User",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldEstimate001",
+        "field_name": "Points",
+        "type": 2,
+        "ui_type": "Number",
+        "is_primary": false,
+        "property": { "formatter": "0" }
+      },
+      {
+        "field_id": "fldDue001",
+        "field_name": "TargetDate",
+        "type": 5,
+        "ui_type": "DateTime",
+        "is_primary": false,
+        "property": { "date_formatter": "yyyy-MM-dd" }
+      },
+      {
+        "field_id": "fldDone001",
+        "field_name": "Completed",
+        "type": 7,
+        "ui_type": "Checkbox",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldAttachment001",
+        "field_name": "Files",
+        "type": 17,
+        "ui_type": "Attachment",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldLinked001",
+        "field_name": "Dependencies",
+        "type": 18,
+        "ui_type": "SingleLink",
+        "is_primary": false,
+        "property": { "table_id": "tbl_dependency" }
+      },
+      {
+        "field_id": "fldSource001",
+        "field_name": "ChatCommand",
+        "type": 1,
+        "ui_type": "Text",
+        "is_primary": false,
+        "property": {}
+      }
+    ]
+  }
+}
