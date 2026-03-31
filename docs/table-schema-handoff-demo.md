@@ -27,6 +27,12 @@ That gives you one stable, reviewable example of:
 
 raw response → normalized schema → mapping draft
 
+You can also verify that the committed normalized schema and mapping draft fixtures still match current CLI behavior:
+
+```bash
+npm run verify:table-schema-handoff
+```
+
 ---
 
 ## Step 1: start from raw Feishu field-list JSON

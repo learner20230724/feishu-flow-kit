@@ -47,7 +47,7 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 - [x] table / bitable slash-command workflow (**chosen**)
 - [x] richer table field mapping (date / number / linked record)
 - [ ] richer inline doc formatting (nested styles, auto-link)
-- [x] DX polish (mapping draft CLI now supports env output, file output, structured JSON review artifacts, documented input/sample variants, a raw Feishu field-list normalizer for schema handoff, and a fixture-backed handoff demo that shows raw response → normalized schema → mapping draft)
+- [x] DX polish (mapping draft CLI now supports env output, file output, structured JSON review artifacts, documented input/sample variants, a raw Feishu field-list normalizer for schema handoff, a fixture-backed handoff demo that shows raw response → normalized schema → mapping draft, and a dedicated verification script that re-checks the committed fixture chain)
 
 Notes:
 - M5 plan doc: `docs/m5-table-workflow-plan.md`
