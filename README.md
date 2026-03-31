@@ -159,7 +159,7 @@ And if you want to quickly confirm that the committed handoff artifacts still ma
 npm run verify:table-schema-handoff
 ```
 
-Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md), and the end-to-end review path is shown in [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md).
+Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md), the end-to-end review path is shown in [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md), and the manual review gate is written down in [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md).
 
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow

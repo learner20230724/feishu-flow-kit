@@ -159,7 +159,7 @@ npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 npm run verify:table-schema-handoff
 ```
 
-默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)，完整审查路径见 [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)。
+默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)，完整审查路径见 [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)，人工复核清单见 [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md)。
 
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程

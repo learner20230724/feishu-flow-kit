@@ -11,6 +11,7 @@ Use it when you have already exported a field list from Feishu and want one repo
 Use it together with:
 - [`/table` mapping generator input guide](./table-mapping-generator-inputs.md)
 - [`/table` schema mapping worksheet](./table-schema-mapping-worksheet.md)
+- [`/table` schema handoff review checklist](./table-schema-handoff-review-checklist.md)
 - [Setup guide](./setup-guide.md)
 
 ---
