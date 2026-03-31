@@ -101,6 +101,15 @@ Check every inferred mode before trusting it.
 
 These are the places where the current handoff scripts are intentionally conservative.
 
+The normalized schema now keeps a few review-oriented hints such as:
+- `rawSemanticType`
+- `dateFormatter`
+- `linkedTableId`
+- `optionCount`
+- `sourceProperty`
+
+Use those hints for review, but do not mistake them for a full schema model.
+
 - [ ] if raw response shows `ui_type=DateTime` or similar, confirm whether collapsing to `date` lost important time semantics
 - [ ] if raw response shows `single_link` / `duplex_link`, confirm that treating both as `linked_record` is good enough for this workflow
 - [ ] if the raw field has option metadata, confirm you do not need stable option IDs at this stage

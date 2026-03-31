@@ -89,10 +89,17 @@ test('feishu field-list normalizer can convert raw API response into mapping-gen
     sourceFieldId: 'fldTitle001',
     uiType: 'Text',
     isPrimary: true,
+    sourceProperty: {},
   });
   assert.equal(normalized.fields[5].name, 'TargetDate');
   assert.equal(normalized.fields[5].type, 'date');
+  assert.equal(normalized.fields[5].rawSemanticType, 'datetime');
+  assert.equal(normalized.fields[5].dateFormatter, 'yyyy-MM-dd');
+  assert.deepEqual(normalized.fields[5].sourceProperty, { date_formatter: 'yyyy-MM-dd' });
   assert.equal(normalized.fields[8].type, 'linked_record');
+  assert.equal(normalized.fields[8].rawSemanticType, 'single_link');
+  assert.equal(normalized.fields[8].linkedTableId, 'tbl_dependency');
+  assert.deepEqual(normalized.fields[8].sourceProperty, { table_id: 'tbl_dependency' });
 });
 
 test('feishu field-list fixture stays aligned with normalizer output', async () => {

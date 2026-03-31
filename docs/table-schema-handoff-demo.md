@@ -79,6 +79,8 @@ The normalized file keeps the parts needed for handoff:
 - top-level `tableId`
 - `fields[]` with normalized `name` and `type`
 - light source metadata such as `sourceTypeId`, `sourceFieldId`, and `uiType`
+- selected raw-fidelity hints such as `rawSemanticType`, `dateFormatter`, `linkedTableId`, `optionCount`, and `sourceProperty`
+- selected raw-property hints for review, such as `rawSemanticType`, `dateFormatter`, `linkedTableId`, `optionCount`, and the original `sourceProperty`
 
 Example excerpt:
 
@@ -89,12 +91,28 @@ Example excerpt:
   "tableId": "tbl_demo456",
   "fields": [
     {
-      "name": "Task",
-      "type": "text",
-      "sourceTypeId": 1,
-      "sourceFieldId": "fldTitle001",
-      "uiType": "Text",
-      "isPrimary": true
+      "name": "TargetDate",
+      "type": "date",
+      "sourceTypeId": 5,
+      "sourceFieldId": "fldDue001",
+      "uiType": "DateTime",
+      "rawSemanticType": "datetime",
+      "sourceProperty": {
+        "date_formatter": "yyyy-MM-dd"
+      },
+      "dateFormatter": "yyyy-MM-dd"
+    },
+    {
+      "name": "Dependencies",
+      "type": "linked_record",
+      "sourceTypeId": 18,
+      "sourceFieldId": "fldLinked001",
+      "uiType": "SingleLink",
+      "rawSemanticType": "single_link",
+      "sourceProperty": {
+        "table_id": "tbl_dependency"
+      },
+      "linkedTableId": "tbl_dependency"
     }
   ]
 }

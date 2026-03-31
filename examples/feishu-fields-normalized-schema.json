@@ -9,7 +9,8 @@
       "sourceTypeId": 1,
       "sourceFieldId": "fldTitle001",
       "uiType": "Text",
-      "isPrimary": true
+      "isPrimary": true,
+      "sourceProperty": {}
     },
     {
       "name": "Stage",
@@ -17,7 +18,20 @@
       "sourceTypeId": 3,
       "sourceFieldId": "fldList001",
       "uiType": "SingleSelect",
-      "isPrimary": false
+      "isPrimary": false,
+      "sourceProperty": {
+        "options": [
+          {
+            "id": "opt_backlog",
+            "name": "Backlog"
+          },
+          {
+            "id": "opt_doing",
+            "name": "Doing"
+          }
+        ]
+      },
+      "optionCount": 2
     },
     {
       "name": "Context",
@@ -25,7 +39,8 @@
       "sourceTypeId": 1,
       "sourceFieldId": "fldDetails001",
       "uiType": "Text",
-      "isPrimary": false
+      "isPrimary": false,
+      "sourceProperty": {}
     },
     {
       "name": "Assignee",
@@ -33,7 +48,8 @@
       "sourceTypeId": 11,
       "sourceFieldId": "fldOwner001",
       "uiType": "User",
-      "isPrimary": false
+      "isPrimary": false,
+      "sourceProperty": {}
     },
     {
       "name": "Points",
@@ -41,7 +57,11 @@
       "sourceTypeId": 2,
       "sourceFieldId": "fldEstimate001",
       "uiType": "Number",
-      "isPrimary": false
+      "isPrimary": false,
+      "sourceProperty": {
+        "formatter": "0"
+      },
+      "numberFormatter": "0"
     },
     {
       "name": "TargetDate",
@@ -49,7 +69,12 @@
       "sourceTypeId": 5,
       "sourceFieldId": "fldDue001",
       "uiType": "DateTime",
-      "isPrimary": false
+      "isPrimary": false,
+      "rawSemanticType": "datetime",
+      "sourceProperty": {
+        "date_formatter": "yyyy-MM-dd"
+      },
+      "dateFormatter": "yyyy-MM-dd"
     },
     {
       "name": "Completed",
@@ -57,7 +82,8 @@
       "sourceTypeId": 7,
       "sourceFieldId": "fldDone001",
       "uiType": "Checkbox",
-      "isPrimary": false
+      "isPrimary": false,
+      "sourceProperty": {}
     },
     {
       "name": "Files",
@@ -65,7 +91,8 @@
       "sourceTypeId": 17,
       "sourceFieldId": "fldAttachment001",
       "uiType": "Attachment",
-      "isPrimary": false
+      "isPrimary": false,
+      "sourceProperty": {}
     },
     {
       "name": "Dependencies",
@@ -73,7 +100,12 @@
       "sourceTypeId": 18,
       "sourceFieldId": "fldLinked001",
       "uiType": "SingleLink",
-      "isPrimary": false
+      "isPrimary": false,
+      "rawSemanticType": "single_link",
+      "sourceProperty": {
+        "table_id": "tbl_dependency"
+      },
+      "linkedTableId": "tbl_dependency"
     },
     {
       "name": "ChatCommand",
@@ -81,7 +113,8 @@
       "sourceTypeId": 1,
       "sourceFieldId": "fldSource001",
       "uiType": "Text",
-      "isPrimary": false
+      "isPrimary": false,
+      "sourceProperty": {}
     }
   ],
   "source": {

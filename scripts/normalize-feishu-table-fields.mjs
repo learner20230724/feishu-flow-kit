@@ -111,6 +111,11 @@ function pickNumber(...values) {
   return null;
 }
 
+function normalizeUiType(uiType) {
+  if (!uiType) return null;
+  return uiType.toLowerCase().replace(/\s+/g, '_');
+}
+
 function inferTypeName(item) {
   const explicitType = pickString(item.typeName, item.type_name, item.normalizedType);
   if (explicitType) return explicitType;
@@ -121,9 +126,8 @@ function inferTypeName(item) {
   const typeId = pickNumber(item.typeId, item.type_id, item.fieldType, item.field_type, rawType);
   if (typeId !== null && TYPE_ID_TO_NAME.has(typeId)) return TYPE_ID_TO_NAME.get(typeId);
 
-  const uiType = pickString(item.uiType, item.ui_type);
-  if (uiType) {
-    const normalizedUiType = uiType.toLowerCase().replace(/\s+/g, '_');
+  const normalizedUiType = normalizeUiType(pickString(item.uiType, item.ui_type));
+  if (normalizedUiType) {
     if (normalizedUiType === 'datetime') return 'datetime';
     if (normalizedUiType === 'date_time') return 'datetime';
     if (normalizedUiType === 'date') return 'date';
@@ -138,6 +142,44 @@ function inferTypeName(item) {
   }
 
   return 'text';
+}
+
+function buildRawMetadata(objectItem) {
+  const sourceProperty = asObject(objectItem.property);
+  const normalizedUiType = normalizeUiType(pickString(objectItem.ui_type, objectItem.uiType));
+  const metadata = {};
+
+  if (normalizedUiType === 'datetime' || normalizedUiType === 'date_time') {
+    metadata.rawSemanticType = 'datetime';
+  } else if (normalizedUiType === 'date') {
+    metadata.rawSemanticType = 'date';
+  } else if (normalizedUiType === 'singlelink') {
+    metadata.rawSemanticType = 'single_link';
+  } else if (normalizedUiType === 'duplexlink') {
+    metadata.rawSemanticType = 'duplex_link';
+  }
+
+  if (sourceProperty) {
+    metadata.sourceProperty = sourceProperty;
+
+    if (Array.isArray(sourceProperty.options)) {
+      metadata.optionCount = sourceProperty.options.length;
+    }
+
+    if (pickString(sourceProperty.table_id, sourceProperty.tableId)) {
+      metadata.linkedTableId = pickString(sourceProperty.table_id, sourceProperty.tableId);
+    }
+
+    if (pickString(sourceProperty.date_formatter, sourceProperty.dateFormatter)) {
+      metadata.dateFormatter = pickString(sourceProperty.date_formatter, sourceProperty.dateFormatter);
+    }
+
+    if (pickString(sourceProperty.formatter)) {
+      metadata.numberFormatter = pickString(sourceProperty.formatter);
+    }
+  }
+
+  return Object.keys(metadata).length > 0 ? metadata : null;
 }
 
 function normalizeField(item) {
@@ -159,6 +201,8 @@ function normalizeField(item) {
     objectItem.field_type,
   );
 
+  const rawMetadata = buildRawMetadata(objectItem);
+
   return {
     name,
     type: inferTypeName(objectItem),
@@ -171,6 +215,7 @@ function normalizeField(item) {
     } : {}),
     ...(typeof objectItem.is_primary === 'boolean' ? { isPrimary: objectItem.is_primary } : {}),
     ...(typeof objectItem.isPrimary === 'boolean' ? { isPrimary: objectItem.isPrimary } : {}),
+    ...(rawMetadata ?? {}),
   };
 }
 
