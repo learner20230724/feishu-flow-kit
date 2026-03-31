@@ -95,7 +95,13 @@ Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REP
 
 ![Local webhook to /table workflow demo](./docs/demo-webhook-table-flow.svg)
 
-Two small static assets are included so the repo has a visible first-screen explanation even before someone runs the local server.
+![Table schema handoff review demo](./docs/demo-table-schema-handoff-review.png)
+
+![Table schema review page snapshot](./docs/demo-table-schema-review-page.png)
+
+![Table schema review share card](./docs/demo-table-schema-review-share-card.png)
+
+Five small static assets are included so the repo has a visible first-screen explanation even before someone runs the local server. The first two explain runnable paths, the third visualizes the schema handoff review flow, the fourth compresses the schema review page into a single screenshot-friendly asset, and the fifth is a share-card-sized variant that fits README hero crops, issue links, and setup-note embeds a bit better. There is now also a standalone HTML snapshot page at [`docs/table-schema-review-snapshot.html`](./docs/table-schema-review-snapshot.html) if you want a cleaner browser-render target for screenshots, issue links, or setup-note embeds, plus a release-facing asset index at [`docs/table-schema-review-assets.md`](./docs/table-schema-review-assets.md) if you want the quickest chooser for which review image to link or crop. If you need to refresh the PNG exports after editing the SVG sources, run `npm run docs:export-assets`. For one-off exports, `npm run docs:export-svg-png -- docs/demo-table-schema-handoff-review.svg --out docs/demo-table-schema-handoff-review.png`, `npm run docs:export-svg-png -- docs/demo-table-schema-review-page.svg --out docs/demo-table-schema-review-page.png`, and `npm run docs:export-svg-png -- docs/demo-table-schema-review-share-card.svg --out docs/demo-table-schema-review-share-card.png` are available.
 
 ## Local demo
 
@@ -140,26 +146,26 @@ npm run table:mapping-draft -- examples/table-schema-partial.json --format json
 npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-draft.json
 ```
 
-If what you have is a raw Feishu field-list response instead of a cleaned `fields` array, normalize it first:
+If what you have is a raw Feishu field-list response instead of a cleaned `fields` array, normalize it first. The normalized output now also keeps small raw-property review hints such as `rawSemanticType`, `dateFormatter`, `linkedTableId`, `optionCount`, and `sourceProperty`, so date-vs-datetime and linked-table semantics are less likely to disappear during handoff:
 
 ```bash
 npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json
 npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json --out ./table-schema-from-feishu.json
 npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
+npm run table:extract-select-option-review -- examples/feishu-fields-mapping-draft-advanced.json --format override
 ```
 
-The repo also includes a full handoff fixture chain you can inspect directly:
-- `examples/feishu-fields-list-response.json`
-- `examples/feishu-fields-normalized-schema.json`
-- `examples/feishu-fields-mapping-draft.json`
+The repo also includes two full handoff fixture chains you can inspect directly:
+- `examples/feishu-fields-list-response.json` / `examples/feishu-fields-normalized-schema.json` / `examples/feishu-fields-mapping-draft.json` → baseline raw-response-to-review-artifact chain
+- `examples/feishu-fields-list-response-advanced.json` / `examples/feishu-fields-normalized-schema-advanced.json` / `examples/feishu-fields-mapping-draft-advanced.json` → advanced raw-fidelity chain with one short quoteable excerpt you can reuse in setup notes, PR review, or schema handoff comments when you need to show `optionCount`, `datetime` formatter drift, and `DuplexLink` relation shape without pasting the whole file
 
-And if you want to quickly confirm that the committed handoff artifacts still match current CLI behavior:
+And if you want to quickly confirm that the committed handoff artifacts still match current CLI behavior across both chains, including the standalone select-option override sample and its minimal shape contract:
 
 ```bash
 npm run verify:table-schema-handoff
 ```
 
-Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md), the end-to-end review path is shown in [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md), and the manual review gate is written down in [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md).
+Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The JSON draft now also includes a small `reviewWarnings` section for the handoff signals most likely to cause real-table surprises: select option-set review, raw-vs-normalized datetime drift, and linked-record relation-shape review. Each warning carries `reviewAction`, `suggestedEnv`, and `reviewChecklist` hints so the reviewer can see the next move without opening a separate note, and the select-option warning now also carries a tiny `optionLabelSample` plus a trimmed `sourcePropertyExcerpt` so reviewers can spot likely label drift without reopening the raw export. For the select case specifically, the same JSON draft now also emits `selectOptionReviewDrafts`, a smaller rollout-ready subset you can paste into setup notes or a lightweight override layer without filtering the whole warning list yourself; its `optionRemapDraft` now also includes a tiny `overrideExample` label→option-id map so the rollout asset is directly copyable instead of only reviewable. Env output now renders the same warning block once with inline action hints and select label samples. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md), the end-to-end review path is shown in [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md), the smaller select rollout asset is split out in [`/table` select-option handoff asset](./docs/table-select-option-handoff.md), the intended minimal override contract now lives in [`/table` select-option override schema draft](./docs/table-select-option-override-schema.md), there is now also a compact [`/table` schema review page](./docs/table-schema-review-page.md) for quoteable review snippets and quick `.env` decisions, and the manual review gate is written down in [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md).
 
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
@@ -250,6 +256,8 @@ You can always add deployment pieces later.
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
 - [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)
+- [`/table` schema review page](./docs/table-schema-review-page.md)
+- [`/table` select-option handoff asset](./docs/table-select-option-handoff.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)

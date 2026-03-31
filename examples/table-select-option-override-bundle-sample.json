@@ -1,0 +1,13 @@
+{
+  "overrides": [
+    {
+      "field": "List",
+      "mode": "single_select",
+      "byLabel": {
+        "Todo": "opt_todo",
+        "Doing": "opt_doing",
+        "Done": "opt_done"
+      }
+    }
+  ]
+}

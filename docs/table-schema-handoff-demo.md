@@ -12,19 +12,28 @@ Use it together with:
 - [`/table` mapping generator input guide](./table-mapping-generator-inputs.md)
 - [`/table` schema mapping worksheet](./table-schema-mapping-worksheet.md)
 - [`/table` schema handoff review checklist](./table-schema-handoff-review-checklist.md)
+- [`/table` select-option handoff asset](./table-select-option-handoff.md)
 - [Setup guide](./setup-guide.md)
 
 ---
 
 ## Included sample artifacts
 
-This repo now includes one fixture chain in `examples/`:
+This repo now includes two fixture chains in `examples/`:
+
+### Baseline handoff chain
 
 - `feishu-fields-list-response.json` — raw Feishu-like field-list response
 - `feishu-fields-normalized-schema.json` — normalized schema JSON after the first handoff step
 - `feishu-fields-mapping-draft.json` — structured mapping draft after alias matching and mode inference
 
-That gives you one stable, reviewable example of:
+### Advanced raw-fidelity chain
+
+- `feishu-fields-list-response-advanced.json` — raw field-list response with `DateTime`, `DuplexLink`, and select options metadata
+- `feishu-fields-normalized-schema-advanced.json` — normalized schema fixture that keeps `dateFormatter`, `rawSemanticType`, `linkedTableId`, and `optionCount` visible
+- `feishu-fields-mapping-draft-advanced.json` — mapping draft fixture that carries those review hints forward into `matches` and `reviewWarnings`
+
+Together they give you two stable, reviewable examples of:
 
 raw response → normalized schema → mapping draft
 
@@ -33,6 +42,12 @@ You can also verify that the committed normalized schema and mapping draft fixtu
 ```bash
 npm run verify:table-schema-handoff
 ```
+
+A small visual review asset is also included if you want something easier to paste into a README, issue, or PR than a long prose explanation:
+
+![Table schema handoff review demo](./demo-table-schema-handoff-review.png)
+
+If you want a cleaner browser-render target for screenshots or embeds, there is now also a standalone HTML snapshot page at [`table-schema-review-snapshot.html`](./table-schema-review-snapshot.html). A Chinese companion snapshot page now lives at [`table-schema-review-snapshot.zh-CN.html`](./table-schema-review-snapshot.zh-CN.html) for setup notes or review threads that need the surrounding explanation in Chinese. If the source SVG changes, refresh the PNG with `npm run docs:export-svg-png -- ./docs/demo-table-schema-handoff-review.svg --out ./docs/demo-table-schema-handoff-review.png`.
 
 ---
 
@@ -128,10 +143,12 @@ This step is useful when your integration notes still look like copied API outpu
 npm run table:mapping-draft -- examples/feishu-fields-normalized-schema.json --format json --out examples/feishu-fields-mapping-draft.json
 ```
 
-The resulting draft keeps four things in one file:
+The resulting draft keeps six things in one file:
 - `source`
 - `config`
 - `matches`
+- `reviewWarnings`
+- `selectOptionReviewDrafts`
 - `unmatched`
 
 Example excerpt:
@@ -155,6 +172,94 @@ Example excerpt:
 ```
 
 This is the review artifact to inspect before enabling real writes.
+
+`reviewWarnings` is where the current CLI now surfaces the most important handoff review signals. In the included fixture chains, that means:
+- select columns with existing option sets stay visible as an explicit option-label / option-ID review step
+- `TargetDate` still carries raw `datetime` semantics even though the normalized mapping draft lands on `date`
+- `Dependencies` still carries raw `single_link` semantics even though the normalized mapping draft lands on `linked_record`
+
+That warning layer is intentionally small. It does not auto-fix the mapping for you. It exists to make the fields most likely to need a human second look harder to miss during handoff.
+
+Each warning now also carries a little more review guidance:
+- `reviewAction` — the concrete thing to verify before enabling live writes
+- `suggestedEnv` — a suggested env override when there is an obvious next move
+- `reviewChecklist` — a short, machine-readable checklist you can keep in JSON review artifacts or CI snapshots
+- `optionLabelSample` — a tiny select-label sample so the reviewer can see likely live values without reopening the raw response
+- `sourcePropertyExcerpt` — a trimmed raw-property excerpt for the warning case when a quick schema spot-check is useful
+
+If you want the select-option part as a smaller rollout-ready asset instead of digging through the full warning list, the same JSON draft now also emits `selectOptionReviewDrafts`. It is just the reusable select-option subset: field name, mode, option label sample, trimmed raw excerpt, and the label→option-id remap draft you might paste into setup notes or a tiny override layer. That remap draft now also carries a small `overrideExample` object, so reviewers can copy a label→option-id map directly instead of reconstructing it from `entries` by hand.
+
+Example warning shape:
+
+```json
+{
+  "kind": "mode-mismatch",
+  "actualName": "TargetDate",
+  "rawSemanticType": "datetime",
+  "reviewAction": "Check whether the target Bitable column should keep FEISHU_BITABLE_DUE_FIELD_MODE=date or be upgraded to datetime before enabling real writes.",
+  "suggestedEnv": "FEISHU_BITABLE_DUE_FIELD_MODE=datetime",
+  "reviewChecklist": [
+    "Confirm whether the column stores date-only values or date-time values in the real table.",
+    "If time-of-day matters, switch the env mode to datetime before first live create-record calls.",
+    "Run one controlled write and compare the stored value in Bitable before rolling out wider."
+  ]
+}
+```
+
+If you prefer env output instead of JSON, the same warning block is now rendered once, with inline `action:` and `suggested env:` hints, so the pasteable draft still tells the reviewer what to do next.
+
+---
+
+## Advanced review excerpt
+
+The advanced fixture chain is meant to be quoteable in PRs, setup notes, and schema review comments, so here is the shortest useful excerpt from `examples/feishu-fields-mapping-draft-advanced.json`:
+
+```json
+{
+  "matches": [
+    {
+      "starterField": "List",
+      "actualName": "Status",
+      "actualType": "single_select",
+      "optionCount": 3,
+      "optionLabelSample": ["Todo", "Doing", "Done"]
+    },
+    {
+      "starterField": "Due",
+      "actualName": "Deadline",
+      "actualType": "date",
+      "rawSemanticType": "datetime",
+      "dateFormatter": "yyyy-MM-dd HH:mm"
+    },
+    {
+      "starterField": "LinkedRecords",
+      "actualName": "RelatedTasks",
+      "actualType": "linked_record",
+      "rawSemanticType": "duplex_link",
+      "linkedTableId": "tbl_related_release"
+    }
+  ],
+  "reviewWarnings": [
+    {
+      "kind": "mode-mismatch",
+      "actualName": "Deadline",
+      "suggestedEnv": "FEISHU_BITABLE_DUE_FIELD_MODE=datetime"
+    },
+    {
+      "kind": "link-shape-review",
+      "actualName": "RelatedTasks"
+    }
+  ]
+}
+```
+
+That one excerpt makes the highest-signal review hints visible in a few lines:
+- `optionCount` + `optionLabelSample` show the select field is not just a generic text fallback and let the reviewer see likely live values before opening the warning block
+- `optionLabelSample` and `sourcePropertyExcerpt` let the reviewer see real option names and a small raw excerpt without reopening the original field-list export
+- `dateFormatter` + `rawSemanticType=datetime` makes it obvious that `date` mode may be too weak for the real column
+- `rawSemanticType=duplex_link` + `linkedTableId` keeps the linked-table relation shape visible instead of collapsing it into a generic `linked_record`
+
+If someone only reads one JSON block before touching `.env`, this is the one worth pasting into the review thread.
 
 ---
 

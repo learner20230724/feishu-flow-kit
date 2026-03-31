@@ -23,7 +23,7 @@ npm run table:mapping-draft -- examples/table-schema-partial.json --format json
 npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-review.json
 ```
 
-If your starting point is the raw JSON returned by Feishu's field-list API, normalize it first:
+If your starting point is the raw JSON returned by Feishu's field-list API, normalize it first. The normalizer now keeps a small amount of raw-property metadata in the output as review hints, including things like `rawSemanticType`, `dateFormatter`, `linkedTableId`, `optionCount`, and the original `sourceProperty` block when present:
 
 ```bash
 npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json
@@ -32,7 +32,7 @@ npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 ```
 
 Default output is env text.
-Use `--format json` when you want a review artifact that keeps `matches`, `unmatched`, and inferred modes in one machine-readable file.
+Use `--format json` when you want a review artifact that keeps `matches`, `reviewWarnings`, `selectOptionReviewDrafts`, `unmatched`, and inferred modes in one machine-readable file.
 
 ---
 
@@ -141,12 +141,23 @@ JSON mode produces a review artifact with:
 - `source`
 - `config`
 - `matches`
+- `reviewWarnings`
+- `selectOptionReviewDrafts`
 - `unmatched`
 
 That is useful when you want to:
 - diff mapping changes between tables
 - keep review notes in CI or repo artifacts
 - inspect which columns were left unmatched before enabling real writes
+- surface raw-semantic review warnings when normalized `type` and Feishu's raw hint still diverge, such as `date` vs `datetime` or `linked_record` vs `single_link`
+- keep a small action/checklist trail inside the same JSON draft instead of splitting it into a separate review note
+
+Each `reviewWarnings[]` item now also carries:
+- `reviewAction` — the concrete follow-up to do next
+- `suggestedEnv` — a suggested env override when one is obvious
+- `reviewChecklist` — short verification bullets for handoff or CI snapshots
+
+And when the warning is specifically about a select column with existing options, `selectOptionReviewDrafts[]` gives you the same subset again in a smaller rollout-ready shape. That keeps the label sample, raw option excerpt, and label→option-id remap draft easy to reuse without filtering the full warning list yourself.
 
 ---
 

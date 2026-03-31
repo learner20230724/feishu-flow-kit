@@ -1,0 +1,106 @@
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "has_more": false,
+    "page_token": "",
+    "total": 10,
+    "table_name": "Release Ops",
+    "app_token": "app_advanced456",
+    "table_id": "tbl_advanced789",
+    "items": [
+      {
+        "field_id": "fldTitleA01",
+        "field_name": "Task",
+        "type": 1,
+        "ui_type": "Text",
+        "is_primary": true,
+        "property": {}
+      },
+      {
+        "field_id": "fldListA01",
+        "field_name": "Status",
+        "type": 3,
+        "ui_type": "SingleSelect",
+        "is_primary": false,
+        "property": {
+          "options": [
+            { "id": "opt_todo", "name": "Todo" },
+            { "id": "opt_doing", "name": "Doing" },
+            { "id": "opt_done", "name": "Done" }
+          ]
+        }
+      },
+      {
+        "field_id": "fldDetailsA01",
+        "field_name": "Notes",
+        "type": 1,
+        "ui_type": "Text",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldOwnerA01",
+        "field_name": "Owner",
+        "type": 11,
+        "ui_type": "User",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldEstimateA01",
+        "field_name": "Effort",
+        "type": 2,
+        "ui_type": "Number",
+        "is_primary": false,
+        "property": {
+          "formatter": "0.0"
+        }
+      },
+      {
+        "field_id": "fldDueA01",
+        "field_name": "Deadline",
+        "type": 5,
+        "ui_type": "DateTime",
+        "is_primary": false,
+        "property": {
+          "date_formatter": "yyyy-MM-dd HH:mm"
+        }
+      },
+      {
+        "field_id": "fldDoneA01",
+        "field_name": "Completed",
+        "type": 7,
+        "ui_type": "Checkbox",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldAttachmentA01",
+        "field_name": "Files",
+        "type": 17,
+        "ui_type": "Attachment",
+        "is_primary": false,
+        "property": {}
+      },
+      {
+        "field_id": "fldLinkedA01",
+        "field_name": "RelatedTasks",
+        "type": 21,
+        "ui_type": "DuplexLink",
+        "is_primary": false,
+        "property": {
+          "table_id": "tbl_related_release"
+        }
+      },
+      {
+        "field_id": "fldSourceA01",
+        "field_name": "SourceCommand",
+        "type": 1,
+        "ui_type": "Text",
+        "is_primary": false,
+        "property": {}
+      }
+    ]
+  }
+}

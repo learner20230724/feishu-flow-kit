@@ -47,6 +47,9 @@ require_file "CHANGELOG.md"
 require_file "CONTRIBUTING.md"
 require_file ".env.example"
 require_file "docs/demo-webhook-doc-flow.svg"
+require_file "docs/demo-table-schema-handoff-review.png"
+require_file "docs/demo-table-schema-review-page.png"
+require_file "docs/demo-table-schema-review-share-card.png"
 require_file ".github/workflows/ci.yml"
 
 green "required files present"
@@ -60,6 +63,12 @@ section "Test"
 npm test
 
 green "tests ok"
+
+section "Select-option override assets"
+npm run -s table:validate-select-option-override -- examples/table-select-option-override-sample.json
+npm run -s table:validate-select-option-override -- examples/table-select-option-override-bundle-sample.json --field List
+
+green "select-option override assets ok"
 
 section "npm pack (dry-run)"
 PACK_OUT="$(npm pack --dry-run 2>/dev/null | sed -n '1,200p')"

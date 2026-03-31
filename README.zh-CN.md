@@ -95,7 +95,13 @@ Feishu 消息事件
 
 ![本地 webhook → /table 工作流演示](./docs/demo-webhook-table-flow.svg)
 
-仓库里附带了两张静态展示资产，确保即使没有本地运行，第一页也有可见的结构说明。
+![`/table` schema handoff review 演示](./docs/demo-table-schema-handoff-review.png)
+
+![`/table` schema review page 单页图](./docs/demo-table-schema-review-page.png)
+
+![`/table` schema review share card](./docs/demo-table-schema-review-share-card.png)
+
+仓库里现在附带五张静态展示资产：前两张负责解释本地 runnable path，第三张展示 `/table` 的 schema handoff review flow，第四张把 schema review page 进一步压成一张更适合截图、外链和评审评论引用的单页图，第五张则收成更适合 README 首屏裁切、issue 链接和 setup note 引用的 share-card 尺寸。另外现在也补了独立的 HTML snapshot 页面：英文版 [`docs/table-schema-review-snapshot.html`](./docs/table-schema-review-snapshot.html) 和中文版 [`docs/table-schema-review-snapshot.zh-CN.html`](./docs/table-schema-review-snapshot.zh-CN.html)。后续如果要本地打开、截图，或在 issue / setup note 里引用，会比直接截 markdown 页面更顺手。现在也补了一个单独的发布向索引页 [`docs/table-schema-review-assets.md`](./docs/table-schema-review-assets.md)，用来快速判断三张 `/table` review 图分别适合拿去哪里引用、裁切或嵌入。如果后面改了 SVG 源文件，直接跑 `npm run docs:export-assets` 就能批量刷新三张 PNG；如果只想单独导出，也可以继续用 `npm run docs:export-svg-png -- docs/demo-table-schema-handoff-review.svg --out docs/demo-table-schema-handoff-review.png`、`npm run docs:export-svg-png -- docs/demo-table-schema-review-page.svg --out docs/demo-table-schema-review-page.png`，以及 `npm run docs:export-svg-png -- docs/demo-table-schema-review-share-card.svg --out docs/demo-table-schema-review-share-card.png`。
 
 ## 本地 demo
 
@@ -140,7 +146,7 @@ npm run table:mapping-draft -- examples/table-schema-partial.json --format json
 npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-draft.json
 ```
 
-如果你手上拿到的是 Feishu 字段列表 API 的原始响应，而不是已经整理好的 `fields` 数组，可以先做一次标准化：
+如果你手上拿到的是 Feishu 字段列表 API 的原始响应，而不是已经整理好的 `fields` 数组，可以先做一次标准化。现在标准化输出也会顺手保留少量 raw-property review hints，比如 `rawSemanticType`、`dateFormatter`、`linkedTableId`、`optionCount` 和 `sourceProperty`，这样 handoff 时不容易把 date/datetime、linked table 这些细节悄悄抹平：
 
 ```bash
 npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json
@@ -148,18 +154,17 @@ npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.js
 npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 ```
 
-仓库里也附带了一条完整的 handoff fixture chain，可直接复查：
-- `examples/feishu-fields-list-response.json`
-- `examples/feishu-fields-normalized-schema.json`
-- `examples/feishu-fields-mapping-draft.json`
+仓库里也附带了两条完整的 handoff fixture chain，可直接复查：
+- `examples/feishu-fields-list-response.json` / `examples/feishu-fields-normalized-schema.json` / `examples/feishu-fields-mapping-draft.json` → baseline 样例链路
+- `examples/feishu-fields-list-response-advanced.json` / `examples/feishu-fields-normalized-schema-advanced.json` / `examples/feishu-fields-mapping-draft-advanced.json` → advanced raw-fidelity 样例链路，并补了一段可直接复用到 setup notes、PR review、schema handoff comments 的短 excerpt，专门把 `optionCount`、`datetime` formatter 漂移、`DuplexLink` relation shape 摘出来
 
-如果你想快速确认仓库里提交的 handoff 产物仍和当前 CLI 行为一致，可以直接跑：
+如果你想快速确认仓库里提交的 handoff 产物仍和当前 CLI 行为一致，并同时覆盖这两条链路、独立的 select-option override sample，以及它的最小 shape contract，可以直接跑：
 
 ```bash
 npm run verify:table-schema-handoff
 ```
 
-默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)，完整审查路径见 [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)，人工复核清单见 [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md)。
+默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。现在 JSON draft 里也会额外给出一个很小的 `reviewWarnings` 区块，专门把 raw-vs-normalized 语义漂移显式标出来，避免像 raw `datetime` / `single_link` 这种信息在 handoff 里悄悄被折叠成通用的 `date` / `linked_record`。而对 select 列这类更常需要单独 rollout note 的场景，现在同一份 JSON 也会额外给出 `selectOptionReviewDrafts`，把 option label sample、精简后的 raw excerpt，以及 label→option-id remap draft 单独收出来，后续复用时不用自己再从完整 warning 列表里筛；其中 `optionRemapDraft` 现在还多了一段很小的 `overrideExample` label→option-id map，让这份 rollout 资产更接近可直接复制，而不只是可审查。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)，完整审查路径见 [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)，现在也把更小的 select rollout 资产单独拆成了 [`/table` select-option handoff asset](./docs/table-select-option-handoff.md)，并新增了 [`/table` select-option override schema draft](./docs/table-select-option-override-schema.md) 作为后续实现层可对齐的最小约定；另外还补了一页更适合引用和快速做 `.env` 决策的英文 [`/table` schema review page](./docs/table-schema-review-page.md) 与中文版 [`/table` schema review 页面](./docs/table-schema-review-page.zh-CN.md)，人工复核清单见 [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md)。
 
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程
@@ -250,6 +255,9 @@ npm test
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
 - [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)
+- [`/table` schema review page](./docs/table-schema-review-page.md)
+- [`/table` schema review 页面（中文）`](./docs/table-schema-review-page.zh-CN.md)
+- [`/table` select-option handoff 资产`](./docs/table-select-option-handoff.md)
 - [`/table` webhook 成功 / 失败示例](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)

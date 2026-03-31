@@ -1,12 +1,12 @@
 {
   "source": {
-    "inputPath": "examples/feishu-fields-normalized-schema.json",
-    "tableName": "Sprint Tasks"
+    "inputPath": "examples/feishu-fields-normalized-schema-advanced.json",
+    "tableName": "Release Ops"
   },
   "config": {
     "FEISHU_ENABLE_TABLE_CREATE": "true",
-    "FEISHU_BITABLE_APP_TOKEN": "app_demo123",
-    "FEISHU_BITABLE_TABLE_ID": "tbl_demo456",
+    "FEISHU_BITABLE_APP_TOKEN": "app_advanced456",
+    "FEISHU_BITABLE_TABLE_ID": "tbl_advanced789",
     "FEISHU_BITABLE_LIST_FIELD_MODE": "single_select",
     "FEISHU_BITABLE_OWNER_FIELD_MODE": "user",
     "FEISHU_BITABLE_ESTIMATE_FIELD_MODE": "number",
@@ -15,15 +15,15 @@
     "FEISHU_BITABLE_ATTACHMENT_FIELD_MODE": "attachment",
     "FEISHU_BITABLE_LINK_FIELD_MODE": "linked_record",
     "FEISHU_BITABLE_TITLE_FIELD_NAME": "Task",
-    "FEISHU_BITABLE_LIST_FIELD_NAME": "Stage",
-    "FEISHU_BITABLE_DETAILS_FIELD_NAME": "Context",
-    "FEISHU_BITABLE_OWNER_FIELD_NAME": "Assignee",
-    "FEISHU_BITABLE_ESTIMATE_FIELD_NAME": "Points",
-    "FEISHU_BITABLE_DUE_FIELD_NAME": "TargetDate",
+    "FEISHU_BITABLE_LIST_FIELD_NAME": "Status",
+    "FEISHU_BITABLE_DETAILS_FIELD_NAME": "Notes",
+    "FEISHU_BITABLE_OWNER_FIELD_NAME": "Owner",
+    "FEISHU_BITABLE_ESTIMATE_FIELD_NAME": "Effort",
+    "FEISHU_BITABLE_DUE_FIELD_NAME": "Deadline",
     "FEISHU_BITABLE_DONE_FIELD_NAME": "Completed",
     "FEISHU_BITABLE_ATTACHMENT_FIELD_NAME": "Files",
-    "FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME": "Dependencies",
-    "FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME": "ChatCommand"
+    "FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME": "RelatedTasks",
+    "FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME": "SourceCommand"
   },
   "matches": [
     {
@@ -38,33 +38,38 @@
     },
     {
       "starterField": "List",
-      "actualName": "Stage",
+      "actualName": "Status",
       "actualType": "single_select",
       "inferredMode": "single_select",
       "envName": "FEISHU_BITABLE_LIST_FIELD_NAME",
       "modeEnvName": "FEISHU_BITABLE_LIST_FIELD_MODE",
       "uiType": "SingleSelect",
-      "optionCount": 2,
+      "optionCount": 3,
       "optionLabelSample": [
-        "Backlog",
-        "Doing"
+        "Todo",
+        "Doing",
+        "Done"
       ],
       "sourceProperty": {
         "options": [
           {
-            "id": "opt_backlog",
-            "name": "Backlog"
+            "id": "opt_todo",
+            "name": "Todo"
           },
           {
             "id": "opt_doing",
             "name": "Doing"
+          },
+          {
+            "id": "opt_done",
+            "name": "Done"
           }
         ]
       }
     },
     {
       "starterField": "Details",
-      "actualName": "Context",
+      "actualName": "Notes",
       "actualType": "text",
       "inferredMode": "text",
       "envName": "FEISHU_BITABLE_DETAILS_FIELD_NAME",
@@ -74,7 +79,7 @@
     },
     {
       "starterField": "Owner",
-      "actualName": "Assignee",
+      "actualName": "Owner",
       "actualType": "user",
       "inferredMode": "user",
       "envName": "FEISHU_BITABLE_OWNER_FIELD_NAME",
@@ -84,28 +89,28 @@
     },
     {
       "starterField": "Estimate",
-      "actualName": "Points",
+      "actualName": "Effort",
       "actualType": "number",
       "inferredMode": "number",
       "envName": "FEISHU_BITABLE_ESTIMATE_FIELD_NAME",
       "modeEnvName": "FEISHU_BITABLE_ESTIMATE_FIELD_MODE",
       "uiType": "Number",
       "sourceProperty": {
-        "formatter": "0"
+        "formatter": "0.0"
       }
     },
     {
       "starterField": "Due",
-      "actualName": "TargetDate",
+      "actualName": "Deadline",
       "actualType": "date",
       "inferredMode": "date",
       "envName": "FEISHU_BITABLE_DUE_FIELD_NAME",
       "modeEnvName": "FEISHU_BITABLE_DUE_FIELD_MODE",
       "rawSemanticType": "datetime",
       "uiType": "DateTime",
-      "dateFormatter": "yyyy-MM-dd",
+      "dateFormatter": "yyyy-MM-dd HH:mm",
       "sourceProperty": {
-        "date_formatter": "yyyy-MM-dd"
+        "date_formatter": "yyyy-MM-dd HH:mm"
       }
     },
     {
@@ -130,21 +135,21 @@
     },
     {
       "starterField": "LinkedRecords",
-      "actualName": "Dependencies",
+      "actualName": "RelatedTasks",
       "actualType": "linked_record",
       "inferredMode": "linked_record",
       "envName": "FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME",
       "modeEnvName": "FEISHU_BITABLE_LINK_FIELD_MODE",
-      "rawSemanticType": "single_link",
-      "uiType": "SingleLink",
-      "linkedTableId": "tbl_dependency",
+      "rawSemanticType": "duplex_link",
+      "uiType": "DuplexLink",
+      "linkedTableId": "tbl_related_release",
       "sourceProperty": {
-        "table_id": "tbl_dependency"
+        "table_id": "tbl_related_release"
       }
     },
     {
       "starterField": "SourceCommand",
-      "actualName": "ChatCommand",
+      "actualName": "SourceCommand",
       "actualType": "text",
       "inferredMode": "text",
       "envName": "FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME",
@@ -157,23 +162,28 @@
     {
       "kind": "select-options-review",
       "starterField": "List",
-      "actualName": "Stage",
+      "actualName": "Status",
       "actualType": "single_select",
       "inferredMode": "single_select",
-      "optionCount": 2,
+      "optionCount": 3,
       "optionLabelSample": [
-        "Backlog",
-        "Doing"
+        "Todo",
+        "Doing",
+        "Done"
       ],
       "sourcePropertyExcerpt": {
         "options": [
           {
-            "id": "opt_backlog",
-            "name": "Backlog"
+            "id": "opt_todo",
+            "name": "Todo"
           },
           {
             "id": "opt_doing",
             "name": "Doing"
+          },
+          {
+            "id": "opt_done",
+            "name": "Done"
           }
         ]
       },
@@ -182,22 +192,28 @@
         "strategy": "label_to_option_id",
         "entries": [
           {
-            "sourceLabel": "Backlog",
-            "targetLabel": "Backlog",
-            "targetOptionId": "opt_backlog"
+            "sourceLabel": "Todo",
+            "targetLabel": "Todo",
+            "targetOptionId": "opt_todo"
           },
           {
             "sourceLabel": "Doing",
             "targetLabel": "Doing",
             "targetOptionId": "opt_doing"
+          },
+          {
+            "sourceLabel": "Done",
+            "targetLabel": "Done",
+            "targetOptionId": "opt_done"
           }
         ],
         "overrideExample": {
           "field": "List",
           "mode": "single_select",
           "byLabel": {
-            "Backlog": "opt_backlog",
-            "Doing": "opt_doing"
+            "Todo": "opt_todo",
+            "Doing": "opt_doing",
+            "Done": "opt_done"
           }
         },
         "note": "Copy this draft into your rollout notes or a small override layer if workflow labels and live Bitable option IDs need explicit review."
@@ -209,12 +225,12 @@
         "Verify that the existing option labels match the values your workflow will send.",
         "If the real table uses different option labels or IDs, adjust the column or add a mapping layer before rollout."
       ],
-      "message": "Detected 2 existing select options. Review option labels and IDs before first live writes."
+      "message": "Detected 3 existing select options. Review option labels and IDs before first live writes."
     },
     {
       "kind": "mode-mismatch",
       "starterField": "Due",
-      "actualName": "TargetDate",
+      "actualName": "Deadline",
       "actualType": "date",
       "inferredMode": "date",
       "rawSemanticType": "datetime",
@@ -230,10 +246,10 @@
     {
       "kind": "link-shape-review",
       "starterField": "LinkedRecords",
-      "actualName": "Dependencies",
+      "actualName": "RelatedTasks",
       "actualType": "linked_record",
       "inferredMode": "linked_record",
-      "rawSemanticType": "single_link",
+      "rawSemanticType": "duplex_link",
       "reviewAction": "Check whether the linked-record column is single-link or duplex-link in the real table before enabling real writes.",
       "suggestedEnv": null,
       "reviewChecklist": [
@@ -247,23 +263,28 @@
   "selectOptionReviewDrafts": [
     {
       "starterField": "List",
-      "actualName": "Stage",
+      "actualName": "Status",
       "actualType": "single_select",
       "inferredMode": "single_select",
-      "optionCount": 2,
+      "optionCount": 3,
       "optionLabelSample": [
-        "Backlog",
-        "Doing"
+        "Todo",
+        "Doing",
+        "Done"
       ],
       "sourcePropertyExcerpt": {
         "options": [
           {
-            "id": "opt_backlog",
-            "name": "Backlog"
+            "id": "opt_todo",
+            "name": "Todo"
           },
           {
             "id": "opt_doing",
             "name": "Doing"
+          },
+          {
+            "id": "opt_done",
+            "name": "Done"
           }
         ]
       },
@@ -272,22 +293,28 @@
         "strategy": "label_to_option_id",
         "entries": [
           {
-            "sourceLabel": "Backlog",
-            "targetLabel": "Backlog",
-            "targetOptionId": "opt_backlog"
+            "sourceLabel": "Todo",
+            "targetLabel": "Todo",
+            "targetOptionId": "opt_todo"
           },
           {
             "sourceLabel": "Doing",
             "targetLabel": "Doing",
             "targetOptionId": "opt_doing"
+          },
+          {
+            "sourceLabel": "Done",
+            "targetLabel": "Done",
+            "targetOptionId": "opt_done"
           }
         ],
         "overrideExample": {
           "field": "List",
           "mode": "single_select",
           "byLabel": {
-            "Backlog": "opt_backlog",
-            "Doing": "opt_doing"
+            "Todo": "opt_todo",
+            "Doing": "opt_doing",
+            "Done": "opt_done"
           }
         },
         "note": "Copy this draft into your rollout notes or a small override layer if workflow labels and live Bitable option IDs need explicit review."

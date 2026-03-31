@@ -19,6 +19,7 @@ Last verified locally: 2026-03-30 16:14 UTC.
 - [x] quickstart commands were re-run recently
 - [x] roadmap items reflect what is actually done
 - [x] at least one demo asset is ready if screenshots / diagrams are promised (`docs/demo-webhook-doc-flow.svg`)
+- [x] release-facing asset notes exist for denser `/table` review images (`docs/table-schema-review-assets.md`)
 
 ## 3. Setup and examples
 
@@ -32,6 +33,8 @@ Last verified locally: 2026-03-30 16:14 UTC.
 - [x] `npm install` works from a clean clone
 - [x] `npm run check`
 - [x] `npm test`
+- [x] `npm run table:validate-select-option-override -- examples/table-select-option-override-sample.json`
+- [x] `npm run table:validate-select-option-override -- examples/table-select-option-override-bundle-sample.json --field List`
 - [x] no knowingly broken demo path remains in docs
 - [x] `npm run verify:release` provides a one-command local pre-publish sanity check
 

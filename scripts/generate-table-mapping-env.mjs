@@ -187,6 +187,153 @@ function findMatch(starter, fields, usedIndexes) {
   return { index: bestIndex, field: fields[bestIndex] };
 }
 
+function pickSelectOptionLabels(sourceProperty) {
+  const options = sourceProperty?.options;
+  if (!Array.isArray(options)) return [];
+
+  return options
+    .map((option) => option?.name)
+    .filter((name) => typeof name === 'string' && name.trim().length > 0)
+    .slice(0, 3);
+}
+
+function buildSelectSourceExcerpt(sourceProperty) {
+  const options = sourceProperty?.options;
+  if (!Array.isArray(options) || options.length === 0) return null;
+
+  return {
+    options: options.slice(0, 3).map((option) => ({
+      ...(typeof option?.id === 'string' ? { id: option.id } : {}),
+      ...(typeof option?.name === 'string' ? { name: option.name } : {}),
+    })),
+  };
+}
+
+function buildSelectOptionRemapDraft(starterField, inferredMode, optionLabelSample, sourceProperty) {
+  if (starterField !== 'List') return null;
+  if (!['single_select', 'multi_select'].includes(inferredMode)) return null;
+  if (!Array.isArray(optionLabelSample) || optionLabelSample.length === 0) return null;
+
+  const options = Array.isArray(sourceProperty?.options) ? sourceProperty.options : [];
+  const entries = optionLabelSample.map((label) => {
+    const matchedOption = options.find((option) => option?.name === label);
+    return {
+      sourceLabel: label,
+      targetLabel: label,
+      ...(typeof matchedOption?.id === 'string' ? { targetOptionId: matchedOption.id } : {}),
+    };
+  });
+
+  return {
+    sourceFieldMode: inferredMode,
+    strategy: 'label_to_option_id',
+    entries,
+    overrideExample: {
+      field: starterField,
+      mode: inferredMode,
+      byLabel: Object.fromEntries(entries.map((entry) => [entry.sourceLabel, entry.targetOptionId ?? entry.targetLabel])),
+    },
+    note: 'Copy this draft into your rollout notes or a small override layer if workflow labels and live Bitable option IDs need explicit review.',
+  };
+}
+
+function buildSelectOptionReviewDrafts(reviewWarnings) {
+  return reviewWarnings
+    .filter((warning) => warning.kind === 'select-options-review' && warning.optionRemapDraft)
+    .map((warning) => ({
+      starterField: warning.starterField,
+      actualName: warning.actualName,
+      actualType: warning.actualType,
+      inferredMode: warning.inferredMode,
+      optionCount: warning.optionCount,
+      ...(Array.isArray(warning.optionLabelSample) && warning.optionLabelSample.length > 0 ? { optionLabelSample: warning.optionLabelSample } : {}),
+      ...(warning.sourcePropertyExcerpt ? { sourcePropertyExcerpt: warning.sourcePropertyExcerpt } : {}),
+      optionRemapDraft: warning.optionRemapDraft,
+      reviewAction: warning.reviewAction,
+      reviewChecklist: warning.reviewChecklist,
+    }));
+}
+
+function buildReviewWarnings(matches) {
+  const warnings = [];
+
+  for (const match of matches) {
+    if (
+      match.starterField === 'List'
+      && ['single_select', 'multi_select'].includes(match.inferredMode)
+      && typeof match.optionCount === 'number'
+      && match.optionCount > 0
+    ) {
+      const optionLabelSample = pickSelectOptionLabels(match.sourceProperty);
+      const sourcePropertyExcerpt = buildSelectSourceExcerpt(match.sourceProperty);
+      const optionRemapDraft = buildSelectOptionRemapDraft(match.starterField, match.inferredMode, optionLabelSample, match.sourceProperty);
+
+      warnings.push({
+        kind: 'select-options-review',
+        starterField: match.starterField,
+        actualName: match.actualName,
+        actualType: match.actualType,
+        inferredMode: match.inferredMode,
+        optionCount: match.optionCount,
+        ...(optionLabelSample.length > 0 ? { optionLabelSample } : {}),
+        ...(sourcePropertyExcerpt ? { sourcePropertyExcerpt } : {}),
+        ...(optionRemapDraft ? { optionRemapDraft } : {}),
+        reviewAction: 'Check whether the target select column already has matching option labels and IDs before enabling real writes.',
+        suggestedEnv: null,
+        reviewChecklist: [
+          'Confirm whether the target Bitable column is single_select or multi_select as expected.',
+          'Verify that the existing option labels match the values your workflow will send.',
+          'If the real table uses different option labels or IDs, adjust the column or add a mapping layer before rollout.',
+        ],
+        message: `Detected ${match.optionCount} existing select options. Review option labels and IDs before first live writes.`,
+      });
+    }
+
+    if (!match.rawSemanticType) continue;
+
+    if (match.starterField === 'Due' && match.inferredMode === 'date' && match.rawSemanticType === 'datetime') {
+      warnings.push({
+        kind: 'mode-mismatch',
+        starterField: match.starterField,
+        actualName: match.actualName,
+        actualType: match.actualType,
+        inferredMode: match.inferredMode,
+        rawSemanticType: match.rawSemanticType,
+        reviewAction: 'Check whether the target Bitable column should keep FEISHU_BITABLE_DUE_FIELD_MODE=date or be upgraded to datetime before enabling real writes.',
+        suggestedEnv: 'FEISHU_BITABLE_DUE_FIELD_MODE=datetime',
+        reviewChecklist: [
+          'Confirm whether the column stores date-only values or date-time values in the real table.',
+          'If time-of-day matters, switch the env mode to datetime before first live create-record calls.',
+          'Run one controlled write and compare the stored value in Bitable before rolling out wider.',
+        ],
+        message: 'Normalized type is date, but raw Feishu semantics still say datetime. Review whether FEISHU_BITABLE_DUE_FIELD_MODE should stay date or be upgraded to datetime.',
+      });
+      continue;
+    }
+
+    if (match.starterField === 'LinkedRecords' && match.inferredMode === 'linked_record' && ['single_link', 'duplex_link'].includes(match.rawSemanticType)) {
+      warnings.push({
+        kind: 'link-shape-review',
+        starterField: match.starterField,
+        actualName: match.actualName,
+        actualType: match.actualType,
+        inferredMode: match.inferredMode,
+        rawSemanticType: match.rawSemanticType,
+        reviewAction: 'Check whether the linked-record column is single-link or duplex-link in the real table before enabling real writes.',
+        suggestedEnv: null,
+        reviewChecklist: [
+          'Confirm whether the linked column is single_link or duplex_link in the Feishu table schema.',
+          'Verify that linked record IDs come from the expected target table before first live writes.',
+          'Run one controlled write and confirm the relation shape behaves as expected in Bitable.',
+        ],
+        message: 'Normalized type is linked_record, but raw Feishu semantics still distinguish single_link vs duplex_link. Review linked-table behavior before real writes.',
+      });
+    }
+  }
+
+  return warnings;
+}
+
 function buildDraftData(parsed, absolutePath, workingDirectory) {
   const fields = Array.isArray(parsed.fields) ? parsed.fields : [];
 
@@ -203,6 +350,7 @@ function buildDraftData(parsed, absolutePath, workingDirectory) {
     if (!match) continue;
     usedIndexes.add(match.index);
     const inferredMode = inferMode(starter, match.field.type);
+    const optionLabelSample = pickSelectOptionLabels(match.field.sourceProperty);
     matches.push({
       starterField: starter.starterField,
       envName: starter.envName,
@@ -210,6 +358,13 @@ function buildDraftData(parsed, absolutePath, workingDirectory) {
       actualName: match.field.name,
       actualType: match.field.type,
       inferredMode,
+      ...(typeof match.field.rawSemanticType === 'string' ? { rawSemanticType: match.field.rawSemanticType } : {}),
+      ...(typeof match.field.uiType === 'string' ? { uiType: match.field.uiType } : {}),
+      ...(typeof match.field.dateFormatter === 'string' ? { dateFormatter: match.field.dateFormatter } : {}),
+      ...(typeof match.field.linkedTableId === 'string' ? { linkedTableId: match.field.linkedTableId } : {}),
+      ...(typeof match.field.optionCount === 'number' ? { optionCount: match.field.optionCount } : {}),
+      ...(optionLabelSample.length > 0 ? { optionLabelSample } : {}),
+      ...(match.field.sourceProperty && typeof match.field.sourceProperty === 'object' ? { sourceProperty: match.field.sourceProperty } : {}),
     });
   }
 
@@ -235,9 +390,18 @@ function buildDraftData(parsed, absolutePath, workingDirectory) {
         inferredMode: match.inferredMode,
         envName: match.envName,
         modeEnvName: match.modeEnvName,
+        ...(typeof match.rawSemanticType === 'string' ? { rawSemanticType: match.rawSemanticType } : {}),
+        ...(typeof match.uiType === 'string' ? { uiType: match.uiType } : {}),
+        ...(typeof match.dateFormatter === 'string' ? { dateFormatter: match.dateFormatter } : {}),
+        ...(typeof match.linkedTableId === 'string' ? { linkedTableId: match.linkedTableId } : {}),
+        ...(typeof match.optionCount === 'number' ? { optionCount: match.optionCount } : {}),
+        ...(Array.isArray(match.optionLabelSample) && match.optionLabelSample.length > 0 ? { optionLabelSample: match.optionLabelSample } : {}),
+        ...(match.sourceProperty && typeof match.sourceProperty === 'object' ? { sourceProperty: match.sourceProperty } : {}),
       });
     }
   }
+
+  const reviewWarnings = buildReviewWarnings(matchSummary);
 
   return {
     source: {
@@ -252,6 +416,8 @@ function buildDraftData(parsed, absolutePath, workingDirectory) {
       ...fieldNameConfig,
     },
     matches: matchSummary,
+    reviewWarnings,
+    selectOptionReviewDrafts: buildSelectOptionReviewDrafts(reviewWarnings),
     unmatched,
   };
 }
@@ -284,6 +450,26 @@ function renderEnvDraft(data) {
     const modeNote = match.modeEnvName ? ` | mode=${match.inferredMode}` : '';
     lines.push(`# ${match.starterField} -> ${match.actualName} (${match.actualType})${modeNote}`);
   }
+  if (Array.isArray(data.reviewWarnings) && data.reviewWarnings.length > 0) {
+    lines.push('');
+    lines.push('# Review warnings');
+    for (const warning of data.reviewWarnings) {
+      lines.push(`# - ${warning.actualName}: ${warning.message}`);
+      if (warning.reviewAction) {
+        lines.push(`#   action: ${warning.reviewAction}`);
+      }
+      if (Array.isArray(warning.optionLabelSample) && warning.optionLabelSample.length > 0) {
+        lines.push(`#   option labels: ${warning.optionLabelSample.join(', ')}`);
+      }
+      if (warning.suggestedEnv) {
+        lines.push(`#   suggested env: ${warning.suggestedEnv}`);
+      }
+      if (warning.optionRemapDraft?.entries?.length) {
+        lines.push(`#   option remap draft: ${warning.optionRemapDraft.entries.map((entry) => `${entry.sourceLabel}=>${entry.targetOptionId ?? entry.targetLabel}`).join(', ')}`);
+      }
+    }
+  }
+
   if (data.unmatched.length > 0) {
     lines.push('');
     lines.push('# Unmatched input fields (review manually)');

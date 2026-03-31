@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>feishu-flow-kit /table schema review snapshot（中文）</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b1020;
+        --panel: rgba(15, 23, 42, 0.78);
+        --panel-border: rgba(148, 163, 184, 0.18);
+        --text: #e5eefb;
+        --muted: #9fb0ca;
+        --accent: #8b5cf6;
+        --accent-2: #22c55e;
+        --warn: #f59e0b;
+        --shadow: 0 24px 80px rgba(2, 6, 23, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(139, 92, 246, 0.18), transparent 34%),
+          radial-gradient(circle at top right, rgba(34, 197, 94, 0.14), transparent 28%),
+          linear-gradient(180deg, #0b1020 0%, #111827 100%);
+        color: var(--text);
+      }
+
+      .shell {
+        width: min(1200px, calc(100vw - 40px));
+        margin: 0 auto;
+        padding: 40px 0 56px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+
+      .eyebrow {
+        font-size: 13px;
+        line-height: 1.4;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.08;
+      }
+
+      .lede {
+        max-width: 860px;
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #c9d6ea;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--panel-border);
+        background: rgba(15, 23, 42, 0.62);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+      }
+
+      .svg-frame {
+        padding: 18px;
+        margin-bottom: 24px;
+      }
+
+      .svg-frame img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 18px;
+        background: #0f172a;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .panel h2 {
+        margin: 0 0 10px;
+        font-size: 17px;
+      }
+
+      .panel p,
+      .panel li {
+        color: #c9d6ea;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .panel ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .signal {
+        display: grid;
+        gap: 10px;
+      }
+
+      .signal-item {
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.14);
+      }
+
+      .signal-item strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+
+      .signal-item code {
+        color: #d8b4fe;
+        font-family: "SFMono-Regular", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      .footer-note {
+        margin-top: 20px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(15, 23, 42, 0.62);
+        border: 1px solid var(--panel-border);
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      a {
+        color: #c4b5fd;
+      }
+
+      @media (max-width: 920px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="eyebrow">feishu-flow-kit · /table schema review snapshot · zh-CN</div>
+        <h1>给 schema handoff 用的一张中文 review 单页</h1>
+        <p class="lede">
+          这页把现有的 <code>demo-table-schema-review-page.svg</code> 包进一个更干净的独立页面，方便直接本地打开、截图，或者从 README、issue、setup note 里外链引用，不必先截 markdown 长页。
+        </p>
+        <div class="meta">
+          <span class="pill">raw field-list → normalized schema → mapping draft → env review</span>
+          <span class="pill">baseline + advanced fixture chains</span>
+          <span class="pill">review-first，不是 live schema discovery</span>
+        </div>
+      </section>
+
+      <section class="card svg-frame">
+        <img src="./demo-table-schema-review-page.svg" alt="Table schema review page snapshot" />
+      </section>
+
+      <section class="grid">
+        <article class="card panel">
+          <h2>这页适合拿来干什么</h2>
+          <p>
+            当你只想要一张干净的 review surface，用于 README 链接、setup note、issue 评论或本地截图导出时，用这页最合适。它刻意比完整 handoff demo 更短，也更适合传播。
+          </p>
+          <ul>
+            <li>比完整 handoff demo 更短</li>
+            <li>比长 markdown 截图更便携</li>
+            <li>更适合 review thread、issue 和 repo 资产引用</li>
+          </ul>
+        </article>
+
+        <article class="card panel">
+          <h2>最值得盯的三类信号</h2>
+          <div class="signal">
+            <div class="signal-item">
+              <strong>Select 结构</strong>
+              <span><code>optionCount</code> 说明这列携带了真实 option metadata，不只是退化成纯文本字段。</span>
+            </div>
+            <div class="signal-item">
+              <strong>Date / datetime 漂移</strong>
+              <span><code>rawSemanticType=datetime</code> 加上 <code>dateFormatter</code>，能让 reviewer 快速判断当前 <code>date</code> mode 会不会太弱。</span>
+            </div>
+            <div class="signal-item">
+              <strong>Linked-record relation shape</strong>
+              <span><code>rawSemanticType=duplex_link</code> 加上 <code>linkedTableId</code>，能在第一次 live write 之前把 relation shape 留在 review 面上。</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card panel">
+          <h2>下一步入口</h2>
+          <ul>
+            <li><a href="./table-schema-review-page.md">table-schema-review-page.md</a></li>
+            <li><a href="./table-schema-handoff-demo.md">table-schema-handoff-demo.md</a></li>
+            <li><a href="./table-schema-handoff-review-checklist.md">table-schema-handoff-review-checklist.md</a></li>
+            <li><a href="./setup-guide.md">setup-guide.md</a></li>
+          </ul>
+          <p>
+            如果要在引用前先确认 repo 里的 fixture 还和当前 CLI 行为一致，回到仓库根目录执行 <code>npm run verify:table-schema-handoff</code>。
+          </p>
+        </article>
+      </section>
+
+      <div class="footer-note">
+        这是当前 M5 table / bitable workflow 主线下的一份可发布 repo 资产。后面如果机器上补齐浏览器或截图链路，这页也可以直接作为 PNG 导出的干净浏览器渲染目标，而不必再从 markdown 页面手工截图。
+      </div>
+    </main>
+  </body>
+</html>

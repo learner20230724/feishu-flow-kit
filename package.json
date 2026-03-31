@@ -28,10 +28,15 @@
     "test": "node --import tsx --test",
     "table:mapping-draft": "node ./scripts/generate-table-mapping-env.mjs",
     "table:normalize-feishu-fields": "node ./scripts/normalize-feishu-table-fields.mjs",
+    "table:extract-select-option-review": "node ./scripts/extract-select-option-review.mjs",
+    "table:validate-select-option-override": "node ./scripts/validate-select-option-override.mjs",
+    "docs:export-svg-png": "node ./scripts/export-svg-png.mjs",
+    "docs:export-assets": "node ./scripts/export-doc-assets.mjs",
     "verify:table-schema-handoff": "node ./scripts/verify-table-schema-handoff.mjs",
     "verify:release": "bash ./scripts/verify-release-ready.sh"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^24.6.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.2"

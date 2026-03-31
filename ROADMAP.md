@@ -23,7 +23,6 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 
 ### M2 — Minimal runtime
 - [x] config loader
-- [x] logger
 - [ ] retry helper
 - [x] event type definitions
 - [x] example handler
@@ -47,10 +46,12 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 - [x] table / bitable slash-command workflow (**chosen**)
 - [x] richer table field mapping (date / number / linked record)
 - [ ] richer inline doc formatting (nested styles, auto-link)
-- [x] DX polish (mapping draft CLI now supports env output, file output, structured JSON review artifacts, documented input/sample variants, a raw Feishu field-list normalizer for schema handoff, a fixture-backed handoff demo that shows raw response → normalized schema → mapping draft, and a dedicated verification script that re-checks the committed fixture chain)
+- [x] DX polish (mapping draft CLI now supports env output, file output, structured JSON review artifacts, documented input/sample variants, a raw Feishu field-list normalizer for schema handoff, baseline + advanced fixture-backed handoff demos that show raw response → normalized schema → mapping draft, and a dedicated verification script that re-checks both committed fixture chains)
+- [x] select-option handoff assets (smaller rollout-facing review asset, standalone override sample, minimal override-shape verification, and release-facing review-image / snapshot docs)
 
 Notes:
 - M5 plan doc: `docs/m5-table-workflow-plan.md`
+- Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-Push standalone repo to GitHub (`learner20230724/feishu-flow-kit`) when credentials are available, then continue M5 by widening `/table` field mapping beyond text / single-select / user starter coverage.
+Keep the repo honest as a publishable starter, then continue M5 on the smallest real capability gap: move `/table` schema handoff one step closer to live rollout with config-backed select-option / field mapping validation, instead of widening surface area again.

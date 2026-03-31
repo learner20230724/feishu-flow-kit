@@ -1,0 +1,129 @@
+{
+  "tableName": "Release Ops",
+  "appToken": "app_advanced456",
+  "tableId": "tbl_advanced789",
+  "fields": [
+    {
+      "name": "Task",
+      "type": "text",
+      "sourceTypeId": 1,
+      "sourceFieldId": "fldTitleA01",
+      "uiType": "Text",
+      "isPrimary": true,
+      "sourceProperty": {}
+    },
+    {
+      "name": "Status",
+      "type": "single_select",
+      "sourceTypeId": 3,
+      "sourceFieldId": "fldListA01",
+      "uiType": "SingleSelect",
+      "isPrimary": false,
+      "sourceProperty": {
+        "options": [
+          {
+            "id": "opt_todo",
+            "name": "Todo"
+          },
+          {
+            "id": "opt_doing",
+            "name": "Doing"
+          },
+          {
+            "id": "opt_done",
+            "name": "Done"
+          }
+        ]
+      },
+      "optionCount": 3
+    },
+    {
+      "name": "Notes",
+      "type": "text",
+      "sourceTypeId": 1,
+      "sourceFieldId": "fldDetailsA01",
+      "uiType": "Text",
+      "isPrimary": false,
+      "sourceProperty": {}
+    },
+    {
+      "name": "Owner",
+      "type": "user",
+      "sourceTypeId": 11,
+      "sourceFieldId": "fldOwnerA01",
+      "uiType": "User",
+      "isPrimary": false,
+      "sourceProperty": {}
+    },
+    {
+      "name": "Effort",
+      "type": "number",
+      "sourceTypeId": 2,
+      "sourceFieldId": "fldEstimateA01",
+      "uiType": "Number",
+      "isPrimary": false,
+      "sourceProperty": {
+        "formatter": "0.0"
+      },
+      "numberFormatter": "0.0"
+    },
+    {
+      "name": "Deadline",
+      "type": "date",
+      "sourceTypeId": 5,
+      "sourceFieldId": "fldDueA01",
+      "uiType": "DateTime",
+      "isPrimary": false,
+      "rawSemanticType": "datetime",
+      "sourceProperty": {
+        "date_formatter": "yyyy-MM-dd HH:mm"
+      },
+      "dateFormatter": "yyyy-MM-dd HH:mm"
+    },
+    {
+      "name": "Completed",
+      "type": "checkbox",
+      "sourceTypeId": 7,
+      "sourceFieldId": "fldDoneA01",
+      "uiType": "Checkbox",
+      "isPrimary": false,
+      "sourceProperty": {}
+    },
+    {
+      "name": "Files",
+      "type": "attachment",
+      "sourceTypeId": 17,
+      "sourceFieldId": "fldAttachmentA01",
+      "uiType": "Attachment",
+      "isPrimary": false,
+      "sourceProperty": {}
+    },
+    {
+      "name": "RelatedTasks",
+      "type": "linked_record",
+      "sourceTypeId": 21,
+      "sourceFieldId": "fldLinkedA01",
+      "uiType": "DuplexLink",
+      "isPrimary": false,
+      "rawSemanticType": "duplex_link",
+      "sourceProperty": {
+        "table_id": "tbl_related_release"
+      },
+      "linkedTableId": "tbl_related_release"
+    },
+    {
+      "name": "SourceCommand",
+      "type": "text",
+      "sourceTypeId": 1,
+      "sourceFieldId": "fldSourceA01",
+      "uiType": "Text",
+      "isPrimary": false,
+      "sourceProperty": {}
+    }
+  ],
+  "source": {
+    "inputPath": "examples/feishu-fields-list-response-advanced.json",
+    "itemCount": 10,
+    "format": "data.items"
+  }
+}
