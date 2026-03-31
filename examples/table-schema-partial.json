@@ -1,0 +1,11 @@
+{
+  "tableName": "Backlog Intake",
+  "appToken": "app_partial123",
+  "tableId": "tbl_partial456",
+  "fields": [
+    { "name": "Task", "type": "text" },
+    { "name": "Stage", "type": "single_select" },
+    { "name": "Assignee", "type": "user" },
+    { "name": "ChatCommand", "type": "text" }
+  ]
+}

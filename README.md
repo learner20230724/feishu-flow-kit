@@ -132,6 +132,16 @@ Starter commands available right now:
 - `/table add sprint,urgent flaky webhook tests / owner_open_id=ou_xxx / estimate=5 / due=2026-04-01T09:30:00Z / done=true`
 - `/table add sprint ship follow-up / link_record_id=recA123,recB456`
 
+If you already have a real Bitable field list JSON, you can also draft env mapping directly:
+
+```bash
+npm run table:mapping-draft -- examples/table-schema-sample.json
+npm run table:mapping-draft -- examples/table-schema-partial.json --format json
+npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-draft.json
+```
+
+Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md).
+
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
 - `examples/mock-doc-message-event.json` → `/doc` flow
@@ -142,6 +152,7 @@ Example mock inputs:
 - `examples/table-api-error-field-not-found.json` → fixture-backed missing-column failure sample
 - `examples/table-api-error-type-mismatch.json` → fixture-backed field-type mismatch sample
 - `examples/table-api-error-permission-denied.json` → fixture-backed Bitable write-permission failure sample
+- `examples/table-schema-sample.json` / `examples/table-schema-partial.json` / `examples/table-schema-localized.json` / `examples/table-schema-unmatched.json` → mapping generator input samples for happy-path, partial rollout, localized column names, and unmatched-column review
 
 This is intentionally small, but it proves the repo can move real input through a readable local pipeline.
 
@@ -217,6 +228,7 @@ You can always add deployment pieces later.
 - [Architecture overview](./docs/overview.md)
 - [Table / Bitable field mapping notes](./docs/table-bitable-field-mapping.md)
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
+- [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)

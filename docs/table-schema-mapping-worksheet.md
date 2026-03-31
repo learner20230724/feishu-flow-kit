@@ -4,14 +4,30 @@ This page is a small helper for the moment right before you turn on real Bitable
 
 It does **not** fetch schema for you. It gives you a fast way to inspect a real table, map the repo's starter fields onto it, and produce a clean `.env` snippet without guessing.
 
-If you already have a JSON field list, you can also generate a first-pass env draft with:
+If you already have a JSON field list, you can also generate a first-pass draft with:
 
 ```bash
 npm run table:mapping-draft -- examples/table-schema-sample.json
 ```
 
+And if you want a file you can review or copy into `.env` later:
+
+```bash
+npm run table:mapping-draft -- examples/table-schema-sample.json --out ./.env.table-draft
+```
+
+If you want a machine-readable review artifact instead of `.env` text, use JSON output:
+
+```bash
+npm run table:mapping-draft -- examples/table-schema-sample.json --format json
+npm run table:mapping-draft -- examples/table-schema-sample.json --format json --out ./table-mapping-draft.json
+```
+
+The JSON form keeps inferred modes, field-name mapping, and unmatched columns in a structure that is easier to diff or feed into follow-up scripts.
+
 Use it together with:
 - [Setup guide](./setup-guide.md)
+- [`/table` mapping generator input guide](./table-mapping-generator-inputs.md)
 - [Table / Bitable field mapping notes](./table-bitable-field-mapping.md)
 - [`/table` API error fixture pack](./table-api-error-fixtures.md)
 

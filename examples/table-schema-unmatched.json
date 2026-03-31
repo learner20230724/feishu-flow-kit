@@ -1,0 +1,14 @@
+{
+  "tableName": "Ops Queue",
+  "appToken": "app_unmatched123",
+  "tableId": "tbl_unmatched456",
+  "fields": [
+    { "name": "Task", "type": "text" },
+    { "name": "Stage", "type": "multi_select" },
+    { "name": "Assignee", "type": "user" },
+    { "name": "Severity", "type": "single_select" },
+    { "name": "SLAHours", "type": "number" },
+    { "name": "RunbookURL", "type": "text" },
+    { "name": "ChatCommand", "type": "text" }
+  ]
+}

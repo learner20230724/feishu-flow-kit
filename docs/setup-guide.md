@@ -270,6 +270,18 @@ FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand
 
 This is still manual mapping, not schema discovery. The repo will use the names you configure, but it does not fetch the real table schema first.
 
+If you already exported or copied the target field list into JSON, you can generate a first-pass draft instead of hand-writing every line:
+
+```bash
+npm run table:mapping-draft -- examples/table-schema-sample.json
+npm run table:mapping-draft -- examples/table-schema-partial.json --format json
+npm run table:mapping-draft -- examples/table-schema-unmatched.json --format json --out ./table-mapping-draft.json
+```
+
+Use env output when you want something ready to paste into `.env`. Use JSON output when you want to inspect inferred modes and unmatched fields programmatically before turning on real writes. The expected JSON shape and sample variants are documented in [`/table` mapping generator input guide](./table-mapping-generator-inputs.md).
+
+The generated file is only a draft. Review field names, inferred modes, and any unmatched columns before turning on real writes.
+
 The current repo keeps this write path intentionally small:
 1. parse `/table add ...`
 2. build a local draft with starter fields
@@ -325,6 +337,7 @@ A practical rule for this repo:
 - [Architecture overview](./overview.md)
 - [Table / Bitable field mapping notes](./table-bitable-field-mapping.md)
 - [`/table` schema mapping worksheet](./table-schema-mapping-worksheet.md)
+- [`/table` mapping generator input guide](./table-mapping-generator-inputs.md)
 - [`/table` webhook success / error demo](./table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./troubleshooting-by-api-error-pattern.md)

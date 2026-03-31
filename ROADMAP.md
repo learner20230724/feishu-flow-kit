@@ -45,9 +45,9 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 ### M5 — Next increment (locked)
 - [x] decide the next visible milestone
 - [x] table / bitable slash-command workflow (**chosen**)
-- [ ] richer table field mapping (date / number / linked record)
+- [x] richer table field mapping (date / number / linked record)
 - [ ] richer inline doc formatting (nested styles, auto-link)
-- [ ] DX polish (CLI dry-run flag, better error messages)
+- [x] DX polish (mapping draft CLI now supports env output, file output, structured JSON review artifacts, and documented input/sample variants)
 
 Notes:
 - M5 plan doc: `docs/m5-table-workflow-plan.md`

@@ -1,0 +1,12 @@
+{
+  "tableName": "需求看板",
+  "appToken": "app_localized123",
+  "tableId": "tbl_localized456",
+  "fields": [
+    { "name": "任务名称", "type": "text" },
+    { "name": "阶段", "type": "single_select" },
+    { "name": "负责人", "type": "user" },
+    { "name": "截止时间", "type": "datetime" },
+    { "name": "原始指令", "type": "text" }
+  ]
+}
