@@ -52,6 +52,8 @@
 | Table schema 映射预检 | ✅ | `npm run table:validate-mapping-config` |
 | 环境安装验证脚本 | ✅ | `node scripts/verify-setup.mjs` |
 
+![Webhook 消息生命周期 — 时序图](./docs/assets/webhook-sequence-diagram.svg)
+
 ## 快速上手
 
 **1. 安装**

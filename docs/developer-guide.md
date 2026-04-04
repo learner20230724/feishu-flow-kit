@@ -33,6 +33,8 @@ maybeCreateTableRecord()        ← adapter: creates table record via Feishu API
 
 **Key principle:** The workflow layer is pure business logic — it builds drafts, never makes HTTP calls. HTTP calls are isolated in `*-request.ts` adapters. Feature flags (`enableOutboundReply`, `enableDocCreate`, `enableTableCreate`) gate actual API sends.
 
+![Webhook sequence diagram](./assets/webhook-sequence-diagram.svg)
+
 ---
 
 ## Adding a New Slash Command

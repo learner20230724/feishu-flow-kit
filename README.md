@@ -52,6 +52,8 @@ This project is a cleaner starting point:
 | Table schema mapping preflight | ✅ | `npm run table:validate-mapping-config` |
 | Setup verification script | ✅ | `node scripts/verify-setup.mjs` |
 
+![Webhook message lifecycle — sequence diagram](./docs/assets/webhook-sequence-diagram.svg)
+
 ## Quick Start
 
 **1. Install**
