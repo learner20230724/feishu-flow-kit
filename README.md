@@ -157,6 +157,8 @@ node scripts/create-plugin.mjs my-greeting
 
 See [`docs/plugin-system.md`](./docs/plugin-system.md) for the full architecture guide, lifecycle hook signatures, and plugin authoring reference.
 
+![Plugin commands in Feishu](docs/assets/plugin-commands-demo.png)
+
 ## Demo assets
 
 ![Local webhook to /doc workflow demo](./docs/demo-webhook-doc-flow.svg)

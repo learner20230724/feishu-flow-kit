@@ -150,6 +150,8 @@ node scripts/create-plugin.mjs my-greeting
 
 完整架构指南、生命周期钩子签名和插件编写参考见 [`docs/plugin-system.md`](./docs/plugin-system.md)。
 
+![插件命令演示](docs/assets/plugin-commands-demo.png)
+
 ## Demo 资产
 
 ![本地 webhook → /doc 工作流演示](./docs/demo-webhook-doc-flow.svg)

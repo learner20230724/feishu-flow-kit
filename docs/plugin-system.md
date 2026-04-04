@@ -11,6 +11,12 @@ Plugins are plain JavaScript/TypeScript modules that hook into the message proce
 3. **Post-process events** for side-effects (webhooks, analytics, logging)
 4. **Filter events** before they reach the workflow (e.g. allowlist certain chats)
 
+## Demo
+
+See the plugin system in action — multiple slash commands responding with rich Feishu card UI:
+
+![Plugin commands demo](../assets/plugin-commands-demo.png)
+
 ## Quick Start
 
 ### 1. Write a plugin
