@@ -290,6 +290,37 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution scope, local setup, an
 - [x] write setup guide with real constraints
 - [x] upgrade `/doc` block append from plain paragraphs to starter richer docx blocks
 - [x] add screenshots or demo diagrams
+- [x] `/table` schema-aware record creation — fetches live Bitable schema, maps field names → IDs, transforms payloads before write
+- [x] 18 Bitable field type handlers — text, number, date, datetime, checkbox, single_select, multi_select, user, phone, URL, location, attachment, link, department, contact, cascade, formula, lookup
+- [x] `npm run table:normalize-feishu-fields` — normalize raw Feishu field-list export into typed schema
+- [x] `npm run table:mapping-draft` — generate `FEISHU_BITABLE_*` env mapping from normalized schema
+- [x] `npm run table:validate-mapping-config` — CLI preflight gate comparing env vars against live schema
+- [x] `npm run table:extract-select-option-review` — emit option-label → option-id remap draft for rollout
+- [x] Schema handoff review assets — demo review page, share card, schema review snapshot HTML
+- [x] Configurable field modes via env vars (`FEISHU_BITABLE_*_FIELD_MODE=single_select|multi_select|user|number|date|datetime|checkbox|attachment|linked_record`)
+- [x] Configurable field names via env vars (`FEISHU_BITABLE_TITLE_FIELD_NAME=Task`, etc.)
+
+## Supported Bitable Field Types
+
+| Field | Bitable type ID | Env mode var | Example value |
+|-------|----------------|---------------|---------------|
+| `Title` | — | (required) | `"/table add sprint fix flaky tests / estimate=5"` |
+| `List` | 1 / 3 | `FEISHU_BITABLE_LIST_FIELD_MODE=single_select\|multi_select` | `backlog,urgent` |
+| `Owner` | 11 | `FEISHU_BITABLE_OWNER_FIELD_MODE=user` | `alex` or `ou_xxx` |
+| `Estimate` | 2 / 3 | `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number` | `5` |
+| `Due` | 5 | `FEISHU_BITABLE_DUE_FIELD_MODE=date\|datetime` | `2026-04-01` or `2026-04-01T09:30:00Z` |
+| `Done` | 7 | `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox` | `true` |
+| `Attachment` | 17 | `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment` | `file_v2_xxx,file_v2_yyy` |
+| `LinkedRecords` | 18 | `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record` | `recA123,recB456` |
+| `Details` | 1 | `FEISHU_BITABLE_DETAILS_FIELD_NAME=Context` | extra context text |
+| `Phone` | 13 | (auto) | `+1-555-0100` |
+| `URL` | 15 | (auto) | `https://example.com` |
+| `Location` | 20 | (auto) | free text |
+| `Department` | 1011 | (auto) | dept name |
+| `Contact` | 1019 | (auto) | contact name |
+| `Cascade` | 19 | (auto) | hierarchy path |
+| `Formula` | 4 | (read-only, skipped) | — |
+| `Lookup` | 1005 | (read-only, skipped) | — |
 
 ## Notes on writing and scope
 
