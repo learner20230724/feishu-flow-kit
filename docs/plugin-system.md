@@ -244,6 +244,8 @@ FEISHU_PLUGINS=./plugins/help-plugin.js,./plugins/ping-plugin.js
 ## Writing a Real Plugin
 
 > **📖 Full step-by-step walkthrough:** See [Plugin Example Walkthrough](./plugin-example-walkthrough.md) — builds a complete `/remind` plugin from scratch with card replies, i18n, and database extension patterns.
+>
+> **🔗 Ready-to-copy examples:** Browse [`plugins/examples/`](./plugins/examples/README.md) — a gallery of `/qr` (image API + beforeProcess), `/joke` (async REST + afterProcess), and `/remind` (natural-language parsing + in-memory state) with inline docs.
 
 ### Adding an outbound reply (requires Feishu API credentials)
 
