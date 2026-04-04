@@ -1,0 +1,22 @@
+{
+  "header": {
+    "event_type": "im.message.receive_v1",
+    "create_time": "2026-04-04T10:12:00Z",
+    "tenant_key": "local-dev-tenant"
+  },
+  "event": {
+    "message": {
+      "message_id": "om_05HW1H9B5RS8O6T7S8U9V0W1X2",
+      "chat_id": "oc_11AA22BB33CC44DD55EE",
+      "chat_type": "p2p",
+      "content": "{\"text\":\"/poll Which feature should we ship first?\"}",
+      "create_time": "1743751920"
+    },
+    "sender": {
+      "sender_id": {
+        "open_id": "ou_aa11bb22cc33dd44ee55"
+      },
+      "language": "en"
+    }
+  }
+}

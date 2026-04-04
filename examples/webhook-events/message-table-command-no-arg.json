@@ -1,0 +1,22 @@
+{
+  "header": {
+    "event_type": "im.message.receive_v1",
+    "create_time": "2026-04-04T10:35:00Z",
+    "tenant_key": "local-dev-tenant"
+  },
+  "event": {
+    "message": {
+      "message_id": "om_10HW6M4G0WX3T1Z2A3B4C5D6E7",
+      "chat_id": "oc_11AA22BB33CC44DD55EE",
+      "chat_type": "p2p",
+      "content": "{\"text\":\"/table\"}",
+      "create_time": "1743753300"
+    },
+    "sender": {
+      "sender_id": {
+        "open_id": "ou_aa11bb22cc33dd44ee55"
+      },
+      "language": "en"
+    }
+  }
+}

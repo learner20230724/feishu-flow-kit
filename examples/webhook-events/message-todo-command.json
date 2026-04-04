@@ -1,0 +1,22 @@
+{
+  "header": {
+    "event_type": "im.message.receive_v1",
+    "create_time": "2026-04-04T10:25:00Z",
+    "tenant_key": "local-dev-tenant"
+  },
+  "event": {
+    "message": {
+      "message_id": "om_08HW4K2E8UV1R9X0Y1Z2A3B4C5",
+      "chat_id": "oc_11AA22BB33CC44DD55EE",
+      "chat_type": "p2p",
+      "content": "{\"text\":\"/todo Review PR #42 and leave comments\"}",
+      "create_time": "1743752700"
+    },
+    "sender": {
+      "sender_id": {
+        "open_id": "ou_aa11bb22cc33dd44ee55"
+      },
+      "language": "en"
+    }
+  }
+}
