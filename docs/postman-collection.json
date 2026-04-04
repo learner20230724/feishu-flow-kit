@@ -1,0 +1,305 @@
+{
+  "info": {
+    "_postman_id": "feishu-flow-kit-v1",
+    "name": "Feishu Flow Kit — API Demo",
+    "description": "Postman collection for testing feishu-flow-kit endpoints locally or in production.\n\n## Setup\n\n1. **Import** this file into Postman (File → Import → select JSON)\n2. **Clone the environment** and configure variables below\n3. Run requests in the **Setup First** folder before testing webhooks\n\n## Environment Variables\n\n| Variable | Example | Notes |\n|---|---|---|\n| `base_url` | `http://localhost:8787` | Bot server base |\n| `webhook_path` | `/webhook` | Webhook endpoint path |\n| `app_id` | `cli_xxx` | Feishu app ID |\n| `app_secret` | `xxx` | Feishu app secret |\n| `verification_token` | `xxx` | Feishu event verification token |\n| `encrypt_key` | `xxx` | Encryption key (if enabled) |\n| `feishu_api_base` | `https://open.feishu.cn` | Feishu API base URL |\n| `tenant_access_token` | (auto) | Set by \"Get Tenant Token\" pre-request |\n\n## Notes\n\n- Requests tagged **Auth Required** need a valid `tenant_access_token`\n- Use the ** Feishu API Auth** pre-request script to auto-refresh tokens\n- Message simulation requires a real `event_id` from a prior Feishu event",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8787" },
+    { "key": "webhook_path", "value": "/webhook" },
+    { "key": "app_id", "value": "" },
+    { "key": "app_secret", "value": "" },
+    { "key": "verification_token", "value": "" },
+    { "key": "encrypt_key", "value": "" },
+    { "key": "feishu_api_base", "value": "https://open.feishu.cn" },
+    { "key": "tenant_access_token", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{tenant_access_token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "🛠️ Setup First",
+      "item": [
+        {
+          "name": "Get Tenant Access Token",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Refresh tenant token before each request",
+                  "const baseUrl = pm.environment.get('feishu_api_base') || 'https://open.feishu.cn';",
+                  "const appId = pm.environment.get('app_id');",
+                  "const appSecret = pm.environment.get('app_secret');",
+                  "",
+                  "if (!appId || !appSecret) {",
+                  "  console.log('app_id or app_secret not set — skipping token fetch');",
+                  "  return;",
+                  "}",
+                  "",
+                  "const getToken = () => {",
+                  "  const response = pm.sendRequest({",
+                  "    url: `${baseUrl}/open-apis/auth/v3/tenant_access_token/internal`,",
+                  "    method: 'POST',",
+                  "    header: { 'Content-Type': 'application/json' },",
+                  "    body: {",
+                  "      mode: 'raw',",
+                  "      raw: JSON.stringify({ app_id: appId, app_secret: appSecret })",
+                  "    }",
+                  "  });",
+                  "  return response;",
+                  "};",
+                  "",
+                  "getToken().then(resp => {",
+                  "  if (resp.code === 0 || resp.status === 200) {",
+                  "    const data = resp.json();",
+                  "    if (data.tenant_access_token) {",
+                  "      pm.environment.set('tenant_access_token', data.tenant_access_token);",
+                  "      console.log('Token refreshed:', data.tenant_access_token.slice(0, 10) + '...');",
+                  "    }",
+                  "  } else {",
+                  "    console.warn('Token fetch failed:', resp.status, resp.json());",
+                  "  }",
+                  "}).catch(err => console.warn('Token fetch error:', err));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "name": "Get Tenant Access Token",
+            "request": {
+              "url": "{{feishu_api_base}}/open-apis/auth/v3/tenant_access_token/internal",
+              "method": "POST",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"app_id\": \"{{app_id}}\",\n    \"app_secret\": \"{{app_secret}}\"\n}"
+              },
+              "description": "Fetches a tenant access token from Feishu. This is automatically run before requests that need auth."
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔍 Health & Status",
+      "item": [
+        {
+          "name": "GET /status",
+          "request": {
+            "url": "{{base_url}}/status",
+            "method": "GET",
+            "description": "Returns server health, uptime, event count, and active flags. No auth required.",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "url": "{{base_url}}/status",
+                "method": "GET"
+              },
+              "status": "200 OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n    \"uptimeSeconds\": 3723,\n    \"eventCount\": 147,\n    \"lastEventAt\": \"2026-04-04T15:30:00.000Z\",\n    \"flags\": {\n        \"feishuWebhookVerified\": true,\n        \"pluginsLoaded\": true,\n        \"sentryEnabled\": false\n    },\n    \"requestId\": \"req_01Jx4k7mf9p2qr3zt5bw\""
+            }
+          ]
+        },
+        {
+          "name": "GET / (root)",
+          "request": {
+            "url": "{{base_url}}/",
+            "method": "GET",
+            "description": "Root endpoint. Returns a simple welcome / 404 depending on routing config.",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📡 Webhook Endpoints",
+      "item": [
+        {
+          "name": "GET /webhook (URL Verification)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}{{webhook_path}}?challenge=xxx&verify_token=xxx&type=url_verification",
+              "host": ["{{base_url}}"],
+              "path": ["{{webhook_path}}"],
+              "query": [
+                { "key": "challenge", "value": "test_challenge_string", "description": "Challenge string from Feishu" },
+                { "key": "verify_token", "value": "{{verification_token}}", "description": "Verification token from Feishu" },
+                { "key": "type", "value": "url_verification", "description": "Event type — url_verification for handshake" }
+              ]
+            },
+            "method": "GET",
+            "description": "Feishu URL verification handshake. Bot responds with challenge parameter. Set `challenge`, `verify_token`, and `type=url_verification` as query params.",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "200 — Challenge Response",
+              "originalRequest": {
+                "url": "{{base_url}}{{webhook_path}}?challenge=xxx&verify_token=xxx&type=url_verification",
+                "method": "GET"
+              },
+              "status": "200 OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n    \"challenge\": \"test_challenge_string\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /webhook (Simulate Incoming Message)",
+          "request": {
+            "url": "{{base_url}}{{webhook_path}}",
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"challenge\": \"\",\n    \"encrypt\": \"\",\n    \"type\": \"im.message.receive_v1\",\n    \"schema\": \"2.0\",\n    \"header\": {\n        \"app_id\": \"{{app_id}}\",\n        \"tenant_key\": \"Default\",\n        \"event_id\": \"{{$guid}}\",\n        \"create_time\": \"2026-04-04T15:00:00+0000\",\n        \"event_type\": \"im.message.receive_v1\"\n    },\n    \"event\": {\n        \"sender\": {\n            \"sender_id\": { \"open_id\": \"ou_xxx\", \"union_id\": \"on_xxx\", \"user_id\": \"u_xxx\" },\n            \"sender_type\": \"user\",\n            \"tenant_key\": \"Default\"\n        },\n        \"message\": {\n            \"message_id\": \"om_xxx\",\n            \"root_id\": \"\",\n            \"parent_id\": \"\",\n            \"create_time\": \"1709566200000\",\n            \"chat_id\": \"oc_xxx\",\n            \"chat_type\": \"p2p\",\n            \"message_type\": \"text\",\n            \"content\": \"{\\\"text\\\":\\\"hello\\\"}\"\n        }\n    }\n}"
+            },
+            "description": "Simulates an incoming Feishu message event. Sends to the bot's /webhook endpoint. Message content is `\"hello\"` — bot should reply with a greeting. Use the **Get Tenant Access Token** request first if testing auth-dependent features."
+          },
+          "response": [
+            {
+              "name": "200 — Bot Reply",
+              "status": "200 OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n    \"code\": 0,\n    \"msg\": \"success\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /webhook (Simulate /doc Command)",
+          "request": {
+            "url": "{{base_url}}{{webhook_path}}",
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"encrypt\": \"\",\n    \"type\": \"im.message.receive_v1\",\n    \"schema\": \"2.0\",\n    \"header\": {\n        \"app_id\": \"{{app_id}}\",\n        \"tenant_key\": \"Default\",\n        \"event_id\": \"{{$guid}}\",\n        \"create_time\": \"2026-04-04T15:01:00+0000\",\n        \"event_type\": \"im.message.receive_v1\"\n    },\n    \"event\": {\n        \"sender\": {\n            \"sender_id\": { \"open_id\": \"ou_xxx\", \"union_id\": \"on_xxx\", \"user_id\": \"u_xxx\" },\n            \"sender_type\": \"user\",\n            \"tenant_key\": \"Default\"\n        },\n        \"message\": {\n            \"message_id\": \"om_yyy\",\n            \"root_id\": \"\",\n            \"parent_id\": \"\",\n            \"create_time\": \"1709566260000\",\n            \"chat_id\": \"oc_xxx\",\n            \"chat_type\": \"p2p\",\n            \"message_type\": \"text\",\n            \"content\": \"{\\\"text\\\":\\\"/doc Meeting Notes for Q1\\\"}\"\n        }\n    }\n}"
+            },
+            "description": "Simulates an incoming `/doc` command. Bot should respond with a Feishu doc draft card."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /webhook (Simulate /table Command)",
+          "request": {
+            "url": "{{base_url}}{{webhook_path}}",
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"encrypt\": \"\",\n    \"type\": \"im.message.receive_v1\",\n    \"schema\": \"2.0\",\n    \"header\": {\n        \"app_id\": \"{{app_id}}\",\n        \"tenant_key\": \"Default\",\n        \"event_id\": \"{{$guid}}\",\n        \"create_time\": \"2026-04-04T15:02:00+0000\",\n        \"event_type\": \"im.message.receive_v1\"\n    },\n    \"event\": {\n        \"sender\": {\n            \"sender_id\": { \"open_id\": \"ou_xxx\", \"union_id\": \"on_xxx\", \"user_id\": \"u_xxx\" },\n            \"sender_type\": \"user\",\n            \"tenant_key\": \"Default\"\n        },\n        \"message\": {\n            \"message_id\": \"om_zzz\",\n            \"root_id\": \"\",\n            \"parent_id\": \"\",\n            \"create_time\": \"1709566320000\",\n            \"chat_id\": \"oc_xxx\",\n            \"chat_type\": \"p2p\",\n            \"message_type\": \"text\",\n            \"content\": \"{\\\"text\\\":\\\"/table Task Tracker\\\"}\"\n        }\n    }\n}"
+            },
+            "description": "Simulates an incoming `/table` command. Bot should respond with a bitable table draft card."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /webhook (Simulate /help Command)",
+          "request": {
+            "url": "{{base_url}}{{webhook_path}}",
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"encrypt\": \"\",\n    \"type\": \"im.message.receive_v1\",\n    \"schema\": \"2.0\",\n    \"header\": {\n        \"app_id\": \"{{app_id}}\",\n        \"tenant_key\": \"Default\",\n        \"event_id\": \"{{$guid}}\",\n        \"create_time\": \"2026-04-04T15:03:00+0000\",\n        \"event_type\": \"im.message.receive_v1\"\n    },\n    \"event\": {\n        \"sender\": {\n            \"sender_id\": { \"open_id\": \"ou_xxx\", \"union_id\": \"on_xxx\", \"user_id\": \"u_xxx\" },\n            \"sender_type\": \"user\",\n            \"tenant_key\": \"Default\"\n        },\n        \"message\": {\n            \"message_id\": \"om_aaa\",\n            \"root_id\": \"\",\n            \"parent_id\": \"\",\n            \"create_time\": \"1709566380000\",\n            \"chat_id\": \"oc_xxx\",\n            \"chat_type\": \"p2p\",\n            \"message_type\": \"text\",\n            \"content\": \"{\\\"text\\\":\\\"/help\\\"}\"\n        }\n    }\n}"
+            },
+            "description": "Simulates an incoming `/help` command. Bot should respond with a dynamic list of all available commands."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔑 Feishu API (Auth Required)",
+      "item": [
+        {
+          "name": "Send Message (Reply)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const baseUrl = pm.environment.get('feishu_api_base') || 'https://open.feishu.cn';",
+                  "const appId = pm.environment.get('app_id');",
+                  "const appSecret = pm.environment.get('app_secret');",
+                  "",
+                  "const getToken = () => pm.sendRequest({",
+                  "  url: `${baseUrl}/open-apis/auth/v3/tenant_access_token/internal`,",
+                  "  method: 'POST',",
+                  "  header: { 'Content-Type': 'application/json' },",
+                  "  body: { mode: 'raw', raw: JSON.stringify({ app_id: appId, app_secret: appSecret }) }",
+                  "});",
+                  "",
+                  "getToken().then(resp => {",
+                  "  const data = resp.json();",
+                  "  if (data.tenant_access_token) pm.environment.set('tenant_access_token', data.tenant_access_token);",
+                  "}).catch(console.warn);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "url": "{{feishu_api_base}}/open-apis/im/v1/messages?receive_id_type=open_id",
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tenant_access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"receive_id\": \"ou_xxx\",\n    \"msg_type\": \"text\",\n    \"content\": \"{\\\"text\\\":\\\"Hello from Feishu Flow Kit! 🚀\\\"}\"\n}"
+            },
+            "description": "Sends a message via Feishu IM API. Requires valid tenant_access_token (auto-refreshed by pre-request script). Replace `receive_id` with a real Open ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Document",
+          "request": {
+            "url": "{{feishu_api_base}}/open-apis/docx/v1/documents",
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tenant_access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Meeting Notes — Q1 Planning\"\n}"
+            },
+            "description": "Creates a new Feishu Doc. Requires valid tenant_access_token. The document will be created in the bot's tenant space."
+          },
+          "response": []
+        },
+        {
+          "name": "List Tables (Bitable Apps)",
+          "request": {
+            "url": "{{feishu_api_base}}/open-apis/bitable/v1/apps",
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tenant_access_token}}" }
+            ],
+            "description": "Lists all bitable apps (databases) accessible by the bot. Use to find a table_token for /table testing."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
