@@ -75,6 +75,7 @@ export async function handleWebhookPayload(
   }
 
   const workflow = runMessageWorkflow(event, {
+    lang: event.language,
     bitableListFieldMode: config?.bitableListFieldMode,
     bitableOwnerFieldMode: config?.bitableOwnerFieldMode,
     bitableEstimateFieldMode: config?.bitableEstimateFieldMode,

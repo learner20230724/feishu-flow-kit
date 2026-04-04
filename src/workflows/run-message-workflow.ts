@@ -14,6 +14,7 @@ import {
   type TableRecordDraft,
   type TableRecordFieldValue,
 } from '../adapters/build-table-record-draft.js';
+import { getStrings, type Strings } from '../i18n/index.js';
 
 export interface WorkflowResult {
   ok: boolean;
@@ -29,6 +30,7 @@ export interface WorkflowResult {
 }
 
 export interface WorkflowOptions {
+  lang?: string;
   bitableListFieldMode?: TableListFieldMode;
   bitableOwnerFieldMode?: TableOwnerFieldMode;
   bitableEstimateFieldMode?: TableEstimateFieldMode;
@@ -39,39 +41,39 @@ export interface WorkflowOptions {
   bitableFieldNames?: Partial<TableFieldNames>;
 }
 
-function summarizeTodoRequest(argsText: string) {
+function summarizeTodoRequest(argsText: string, s: Strings) {
   const clean = argsText.replace(/[.。]+$/g, '').trim();
-  const task = clean || 'No task details provided';
+  const task = clean || s.todoRequest('—');
 
   return [
-    'Todo workflow draft',
-    `- request: ${task}`,
-    '- next: extract concrete action items',
-    '- next: assign owner and due time',
-    '- next: push result into a Feishu doc or task system',
+    s.todoWorkflowDraft,
+    `- ${s.todoRequest(clean || '—')}`,
+    s.todoNextExtract,
+    s.todoNextAssign,
+    s.todoNextPush,
   ].join('\n');
 }
 
-function buildDocOutline(argsText: string) {
+function buildDocOutline(argsText: string, s: Strings) {
   const clean = argsText.replace(/[.。]+$/g, '').trim();
-  const topic = clean || 'Untitled note';
+  const topic = clean || s.docTopic('Untitled note');
 
   return [
-    `Doc outline draft: ${topic}`,
+    s.docOutlineDraft(topic),
     '',
-    '# Summary',
-    `- Topic: ${topic}`,
-    '- Goal: capture the request in a format that is easy to paste into a Feishu doc',
+    s.docSummary,
+    s.docTopic(topic),
+    s.docGoal,
     '',
-    '# Key points',
-    '- Context',
-    '- Decisions',
-    '- Risks',
+    s.docKeyPoints,
+    s.docContext,
+    s.docDecisions,
+    s.docRisks,
     '',
-    '# Next actions',
-    '- [ ] Fill the missing details',
-    '- [ ] Assign an owner',
-    '- [ ] Add timeline or due date',
+    s.docNextActions,
+    s.docFillMissing,
+    s.docAssignOwner,
+    s.docAddTimeline,
   ].join('\n');
 }
 
@@ -167,6 +169,7 @@ function stringifyTableFieldValue(value: TableRecordFieldValue) {
 function formatTableDraftReply(
   input: TableCommandDraftInput,
   fields: Record<string, TableRecordFieldValue>,
+  s: Strings,
   listFieldMode: TableListFieldMode,
   ownerFieldMode: TableOwnerFieldMode,
   estimateFieldMode: TableEstimateFieldMode,
@@ -175,50 +178,75 @@ function formatTableDraftReply(
   attachmentFieldMode: TableAttachmentFieldMode,
   linkFieldMode: TableLinkFieldMode,
 ) {
-  const lines: string[] = ['Table workflow draft'];
+  const lines: string[] = [s.tableWorkflowDraft];
 
-  lines.push(`- list: ${input.listName}`);
-  lines.push(`- title: ${input.title}`);
-  if (input.details) lines.push(`- details: ${input.details}`);
-  if (input.owner) lines.push(`- owner: ${input.owner}`);
-  if (input.ownerOpenId) lines.push(`- owner_open_id: ${input.ownerOpenId}`);
-  if (input.estimate) lines.push(`- estimate: ${input.estimate}`);
-  if (input.due) lines.push(`- due: ${input.due}`);
-  if (input.done) lines.push(`- done: ${input.done}`);
-  if (input.attachmentToken) lines.push(`- attachment_token: ${input.attachmentToken}`);
-  if (input.linkRecordId) lines.push(`- link_record_id: ${input.linkRecordId}`);
-  if (listFieldMode === 'single_select') lines.push('- list field mode: single_select');
-  if (listFieldMode === 'multi_select') lines.push('- list field mode: multi_select');
-  if (ownerFieldMode === 'user') lines.push('- owner field mode: user');
-  if (estimateFieldMode === 'number') lines.push('- estimate field mode: number');
-  if (dueFieldMode === 'date') lines.push('- due field mode: date');
-  if (dueFieldMode === 'datetime') lines.push('- due field mode: datetime');
-  if (doneFieldMode === 'checkbox') lines.push('- done field mode: checkbox');
-  if (attachmentFieldMode === 'attachment') lines.push('- attachment field mode: attachment');
-  if (linkFieldMode === 'linked_record') lines.push('- link field mode: linked_record');
+  lines.push(s.list(input.listName));
+  lines.push(s.title(input.title));
+  if (input.details) lines.push(s.details(input.details));
+  if (input.owner) lines.push(s.owner(input.owner));
+  if (input.ownerOpenId) lines.push(s.ownerOpenId(input.ownerOpenId));
+  if (input.estimate) lines.push(s.estimate(input.estimate));
+  if (input.due) lines.push(s.due(input.due));
+  if (input.done) lines.push(s.done(input.done));
+  if (input.attachmentToken) lines.push(s.attachmentToken(input.attachmentToken));
+  if (input.linkRecordId) lines.push(s.linkRecordId(input.linkRecordId));
+  if (listFieldMode === 'single_select') lines.push(s.listFieldMode('single_select'));
+  if (listFieldMode === 'multi_select') lines.push(s.listFieldMode('multi_select'));
+  if (ownerFieldMode === 'user') lines.push(s.ownerFieldMode('user'));
+  if (estimateFieldMode === 'number') lines.push(s.estimateFieldMode('number'));
+  if (dueFieldMode === 'date') lines.push(s.dueFieldMode('date'));
+  if (dueFieldMode === 'datetime') lines.push(s.dueFieldMode('datetime'));
+  if (doneFieldMode === 'checkbox') lines.push(s.doneFieldMode('checkbox'));
+  if (attachmentFieldMode === 'attachment') lines.push(s.attachmentFieldMode('attachment'));
+  if (linkFieldMode === 'linked_record') lines.push(s.linkFieldMode('linked_record'));
 
   lines.push('');
-  lines.push('Draft fields:');
+  lines.push(s.tableDraftFields);
   for (const [key, value] of Object.entries(fields)) {
     lines.push(`- ${key}: ${stringifyTableFieldValue(value)}`);
   }
 
   lines.push('');
-  lines.push('Next: wire the draft into a real Bitable create-record call (opt-in).');
+  lines.push(s.tableNextWire);
 
   return lines.join('\n');
+}
+
+function buildTableUsage(s: Strings) {
+  return [
+    s.tableWorkflowDraft,
+    '',
+    s.tableUsage,
+    s.tableUsageAdd,
+    s.tableUsageAddOpenId,
+    s.tableUsageEstimate,
+    s.tableUsageDue,
+    s.tableUsageDone,
+    s.tableUsageAttachment,
+    s.tableUsageLink,
+    s.tableUsageMultiSelect,
+    '',
+    s.tableExample,
+    s.tableExample1,
+    s.tableExample2,
+    s.tableExample3,
+    s.tableExample4,
+    s.tableExample5,
+    s.tableExample6,
+  ].join('\n');
 }
 
 export function runMessageWorkflow(
   event: FeishuMessageEvent,
   options: WorkflowOptions = {},
 ): WorkflowResult {
+  const s = getStrings(options.lang ?? event.language);
   const command = parseSlashCommand(event.message.text);
 
   if (!command) {
     return {
       ok: true,
-      replyText: 'No slash command found. Event accepted for logging only.',
+      replyText: s.noSlashCommand,
       tags: ['noop'],
     };
   }
@@ -226,13 +254,13 @@ export function runMessageWorkflow(
   if (command.name === 'todo') {
     return {
       ok: true,
-      replyText: summarizeTodoRequest(command.argsText),
+      replyText: summarizeTodoRequest(command.argsText, s),
       tags: ['todo', 'demo'],
     };
   }
 
   if (command.name === 'doc') {
-    const docMarkdown = buildDocOutline(command.argsText);
+    const docMarkdown = buildDocOutline(command.argsText, s);
     const cleanTopic = command.argsText.replace(/[.。]+$/g, '').trim() || 'Untitled note';
 
     return {
@@ -251,27 +279,7 @@ export function runMessageWorkflow(
     if (!input) {
       return {
         ok: true,
-        replyText: [
-          'Table workflow draft',
-          '',
-          'Usage:',
-          '- /table add <list> <title...> / owner=<name>',
-          '- /table add <list> <title...> / owner_open_id=<open_id>',
-          '- /table add <list> <title...> / estimate=<number-or-text>',
-          '- /table add <list> <title...> / due=<YYYY-MM-DD-or-ISO8601>',
-          '- /table add <list> <title...> / done=<true-or-false>',
-          '- /table add <list> <title...> / attachment_token=<file_token-or-comma-separated-file_tokens>',
-          '- /table add <list> <title...> / link_record_id=<record_id-or-comma-separated-record_ids>',
-          '- in multi_select list mode, <list> can be comma-separated like backlog,urgent',
-          '',
-          'Example:',
-          '- /table add backlog item: improve webhook errors / owner=alex / estimate=3',
-          '- /table add backlog improve webhook errors / owner_open_id=ou_xxx',
-          '- /table add sprint fix flaky webhook tests / due=2026-04-01',
-          '- /table add sprint close flaky webhook tests / done=true',
-          '- /table add sprint share demo pack / attachment_token=file_v2_demo123,file_v2_demo456',
-          '- /table add sprint ship follow-up / link_record_id=recA123,recB456',
-        ].join('\n'),
+        replyText: buildTableUsage(s),
         tags: ['table', 'demo', 'usage'],
       };
     }
@@ -299,6 +307,7 @@ export function runMessageWorkflow(
       replyText: formatTableDraftReply(
         input,
         draft.body.fields,
+        s,
         listFieldMode,
         ownerFieldMode,
         estimateFieldMode,
@@ -317,7 +326,7 @@ export function runMessageWorkflow(
 
   return {
     ok: true,
-    replyText: `Command /${command.name} is not implemented yet.`,
+    replyText: s.unimplemented(command.name),
     tags: ['unimplemented'],
   };
 }

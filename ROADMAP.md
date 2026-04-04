@@ -54,7 +54,7 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. M6 is drafted (see below). Current next step: M6.3 i18n (string extraction, bilingual reply) or M6.4 Error resilience (structured logger + retry). M6.1 and M6.2 are done.
+M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. M6 is drafted (see below). Current next step: M6.4 Error resilience (structured logger + retry + /status) or M6.5 v1.0 release checklist. M6.1, M6.2, and M6.3 are done.
 
 ---
 
@@ -75,8 +75,8 @@ M5 is now complete (all items checked). The `/table` schema handoff system cover
 - [x] Test matrix: Node 20 + 22
 
 ### M6.3 — Internationalization (i18n)
-- [ ] Extract all user-facing reply strings into `src/i18n/en.ts` and `src/i18n/zh.ts`
-- [ ] Bot reply language follows `event.source.language` when available, falls back to EN
+- [x] Extract all user-facing reply strings into `src/i18n/en.ts` and `src/i18n/zh.ts`
+- [x] Bot reply language follows `event.source.language` when available, falls back to EN
 - [ ] README / docs already bilingual — keep in sync with new strings
 
 ### M6.4 — Error resilience & observability

@@ -2,6 +2,8 @@ export interface FeishuMessageEvent {
   type: 'message.received';
   timestamp: string;
   tenantKey: string;
+  /** ISO 639-1 language code of the sender, e.g. "en", "zh", "ja". */
+  language?: string;
   message: {
     messageId: string;
     chatId: string;

@@ -18,6 +18,8 @@ interface FeishuWebhookEnvelope {
       sender_id?: {
         open_id?: string;
       };
+      /** ISO 639-1 language code, e.g. "en", "zh", "ja". */
+      language?: string;
     };
   };
 }
@@ -47,6 +49,7 @@ export function adaptWebhookMessageEvent(payload: unknown): FeishuMessageEvent |
     type: 'message.received',
     timestamp: message.create_time || input.header?.create_time || new Date().toISOString(),
     tenantKey: input.header?.tenant_key || 'unknown_tenant',
+    language: input.event?.sender?.language,
     message: {
       messageId: message.message_id,
       chatId: message.chat_id,
