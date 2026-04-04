@@ -110,6 +110,52 @@ test('parseInlineSpans handles strikethrough', () => {
   ]);
 });
 
+test('parseInlineSpans handles underline with __text__ syntax', () => {
+  assert.deepEqual(parseInlineSpans('This is __underlined__ text'), [
+    { text_run: { content: 'This is ' } },
+    { text_run: { content: 'underlined', text_element_style: { underline: true } } },
+    { text_run: { content: ' text' } },
+  ]);
+});
+
+test('parseInlineSpans handles bare URL auto-link', () => {
+  const spans = parseInlineSpans('Visit https://open.feishu.cn now');
+  assert.deepEqual(spans, [
+    { text_run: { content: 'Visit ' } },
+    { text_run: { content: 'https://open.feishu.cn', link: { url: 'https://open.feishu.cn' } } },
+    { text_run: { content: ' now' } },
+  ]);
+});
+
+test('parseInlineSpans handles www auto-link (expanded to https)', () => {
+  const spans = parseInlineSpans('See www.example.com for info');
+  assert.deepEqual(spans, [
+    { text_run: { content: 'See ' } },
+    { text_run: { content: 'www.example.com', link: { url: 'https://www.example.com' } } },
+    { text_run: { content: ' for info' } },
+  ]);
+});
+
+test('parseInlineSpans merges adjacent bold spans into one run', () => {
+  const spans = parseInlineSpans('**bold1** and **bold2**');
+  assert.deepEqual(spans, [
+    { text_run: { content: 'bold1', text_element_style: { bold: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'bold2', text_element_style: { bold: true } } },
+  ]);
+});
+
+test('parseInlineSpans handles mixed underline, auto-link, and explicit link', () => {
+  const spans = parseInlineSpans('__Underlined__ and [docs](https://feishu.cn) and https://example.com');
+  assert.deepEqual(spans, [
+    { text_run: { content: 'Underlined', text_element_style: { underline: true } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'docs', link: { url: 'https://feishu.cn' } } },
+    { text_run: { content: ' and ' } },
+    { text_run: { content: 'https://example.com', link: { url: 'https://example.com' } } },
+  ]);
+});
+
 test('parseInlineSpans handles links', () => {
   assert.deepEqual(parseInlineSpans('See [docs](https://open.feishu.cn) for more'), [
     { text_run: { content: 'See ' } },

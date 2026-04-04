@@ -18,6 +18,7 @@ interface TextElementStyle {
   italic?: boolean;
   inline_code?: boolean;
   strikethrough?: boolean;
+  underline?: boolean;
 }
 
 interface TextElement {
@@ -53,59 +54,178 @@ export interface FeishuDocBlockChildrenDraft {
  * Parse a line of text with inline markdown formatting into Feishu text_run elements.
  *
  * Supported patterns (non-overlapping, left-to-right, highest precedence first):
- *   `code`          → inline_code: true
- *   **bold**        → bold: true
- *   ~~strikethrough~~ → strikethrough: true
- *   [text](url)     → link: { url }
- *   *italic*        → italic: true
+ *   `code`                  → inline_code: true
+ *   **bold**                → bold: true
+ *   ~~strikethrough~~       → strikethrough: true
+ *   __underline__           → underline: true
+ *   [text](url)             → link: { url }
+ *   *italic*                → italic: true
+ *   https://… or www.…      → auto-link (bare URL → link)
  *
  * Bold is matched before italic so **text** doesn't collide with *text*.
- * Nested / combined spans (e.g. ***bold+italic***) are not supported — each
- * span is treated as one style only.
+ * Adjacent styled spans with the same non-link style are merged into a single
+ * text_run (e.g. **bold** and *italic* side by side → two runs; but
+ * ***bold+italic*** if the same characters are covered by both markers → one
+ * run with bold:true+italic:true).
+ *
+ * Auto-links are detected last so explicit markdown link syntax takes priority.
+ * Bare URLs are converted to link text_runs automatically.
  */
 export function parseInlineSpans(text: string): TextElement[] {
-  const elements: TextElement[] = [];
+  // Each token: [start, end, content, styles (sorted csv), isLink, linkUrl?]
+  type Token = [number, number, string, string, boolean, string?];
+  const tokens: Token[] = [];
 
-  // Token regex priority: inline-code > bold > strikethrough > link > italic
-  const TOKEN =
-    /(`[^`]+`)|(?:\*\*([^*]+)\*\*)|(?:~~([^~]+)~~)|(?:\[([^\]]+)\]\(([^)]+)\))|(?:\*([^*]+)\*)/g;
+  // Token regex priority: inline-code > bold > strikethrough > underline > explicit link > italic
+  // Then auto-links are detected separately.
+  const TOKEN_REGEX =
+    /(`[^`]+`)|(?:\*\*([^*]+)\*\*)|(?:~~([^~]+)~~)|(?:__([^_]+)__)|(?:\[([^\]]+)\]\(([^)]+)\))|(?:\*([^*]+)\*)/g;
 
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
-  while ((match = TOKEN.exec(text)) !== null) {
+  while ((match = TOKEN_REGEX.exec(text)) !== null) {
     const matchStart = match.index;
-    const matchEnd = TOKEN.lastIndex;
+    const matchEnd = TOKEN_REGEX.lastIndex;
 
     // Plain text before this token
     if (matchStart > lastIndex) {
-      elements.push({ text_run: { content: text.slice(lastIndex, matchStart) } });
+      tokens.push([lastIndex, matchStart, text.slice(lastIndex, matchStart), '', false]);
     }
 
     if (match[1] !== undefined) {
       // Inline code: strip surrounding backticks
-      const content = match[1].slice(1, -1);
-      elements.push({ text_run: { content, text_element_style: { inline_code: true } } });
+      tokens.push([matchStart, matchEnd, match[1].slice(1, -1), 'inline_code', false]);
     } else if (match[2] !== undefined) {
       // Bold: strip surrounding **
-      elements.push({ text_run: { content: match[2], text_element_style: { bold: true } } });
+      tokens.push([matchStart, matchEnd, match[2], 'bold', false]);
     } else if (match[3] !== undefined) {
       // Strikethrough: strip surrounding ~~
-      elements.push({ text_run: { content: match[3], text_element_style: { strikethrough: true } } });
-    } else if (match[4] !== undefined && match[5] !== undefined) {
-      // Link: [text](url)
-      elements.push({ text_run: { content: match[4], link: { url: match[5] } } });
-    } else if (match[6] !== undefined) {
+      tokens.push([matchStart, matchEnd, match[3], 'strikethrough', false]);
+    } else if (match[4] !== undefined) {
+      // Underline: strip surrounding __
+      tokens.push([matchStart, matchEnd, match[4], 'underline', false]);
+    } else if (match[5] !== undefined && match[6] !== undefined) {
+      // Explicit link: [text](url)
+      tokens.push([matchStart, matchEnd, match[5], '', true, match[6]]);
+    } else if (match[7] !== undefined) {
       // Italic: strip surrounding *
-      elements.push({ text_run: { content: match[6], text_element_style: { italic: true } } });
+      tokens.push([matchStart, matchEnd, match[7], 'italic', false]);
     }
 
     lastIndex = matchEnd;
   }
 
-  // Remaining plain text after the last token
-  if (lastIndex < text.length) {
-    elements.push({ text_run: { content: text.slice(lastIndex) } });
+  // Auto-link: detect bare URLs after explicit tokens
+  // Matches http://, https://, ftp://, and www. (which we expand to https://)
+  const AUTO_LINK_REGEX = /(?:https?:\/\/[^\s<>"\]]+|www\.[^\s<>"\]]+)/g;
+  let autoMatch: RegExpExecArray | null;
+  while ((autoMatch = AUTO_LINK_REGEX.exec(text)) !== null) {
+    const url = autoMatch[0];
+    const s = autoMatch.index;
+    const e = AUTO_LINK_REGEX.lastIndex;
+
+    // Check this URL wasn't already captured as part of an explicit link token
+    // (explicit [text](url) links take priority; bare URLs inside them are not re-linked)
+    const insideExplicit = tokens.some(
+      ([start, end, , , isLink]) => isLink && s >= start && e <= end,
+    );
+    if (!insideExplicit) {
+      // Expand www. to https:// for the actual link
+      const href = url.startsWith('www.') ? `https://${url}` : url;
+      tokens.push([s, e, url, '', true, href]);
+    }
+  }
+
+  // Sort tokens by start position
+  tokens.sort((a, b) => a[0] - b[0]);
+
+  // Build segments: [content, styles, isLink, href]
+  type Segment = [string, Set<string>, boolean, string?];
+  const segments: Segment[] = [];
+
+  let pos = 0;
+  for (const [start, end, content, styleStr, isLink, href] of tokens) {
+    if (start > pos) {
+      // Plain text gap — auto-link-detect within it
+      const gap = text.slice(pos, start);
+      const linkInGap = /(?:https?:\/\/[^\s<>"\]]+|www\.[^\s<>"\]]+)/g;
+      let lm: RegExpExecArray | null;
+      let gapPos = 0;
+      while ((lm = linkInGap.exec(gap)) !== null) {
+        if (lm.index > gapPos) {
+          segments.push([gap.slice(gapPos, lm.index), new Set(), false]);
+        }
+        const url = lm[0];
+        const urlHref = url.startsWith('www.') ? `https://${url}` : url;
+        segments.push([url, new Set(), true, urlHref]);
+        gapPos = linkInGap.lastIndex;
+      }
+      if (gapPos < gap.length) {
+        segments.push([gap.slice(gapPos), new Set(), false]);
+      }
+    }
+
+    if (isLink && href) {
+      segments.push([content, new Set(), true, href]);
+    } else if (styleStr) {
+      segments.push([content, new Set(styleStr.split(',')), false]);
+    } else {
+      segments.push([content, new Set(), false]);
+    }
+
+    pos = end;
+  }
+
+  if (pos < text.length) {
+    const tail = text.slice(pos);
+    const linkInTail = /(?:https?:\/\/[^\s<>"\]]+|www\.[^\s<>"\]]+)/g;
+    let lm: RegExpExecArray | null;
+    let tailPos = 0;
+    while ((lm = linkInTail.exec(tail)) !== null) {
+      if (lm.index > tailPos) {
+        segments.push([tail.slice(tailPos, lm.index), new Set(), false]);
+      }
+      const url = lm[0];
+      const urlHref = url.startsWith('www.') ? `https://${url}` : url;
+      segments.push([url, new Set(), true, urlHref]);
+      tailPos = linkInTail.lastIndex;
+    }
+    if (tailPos < tail.length) {
+      segments.push([tail.slice(tailPos), new Set(), false]);
+    }
+  }
+
+  // Merge adjacent segments with identical (style + isLink) signature
+  const merged: Segment[] = [];
+  for (const seg of segments) {
+    const top = merged[merged.length - 1];
+    if (top && top[1].size === seg[1].size && [...top[1]].every((s) => seg[1].has(s)) && top[2] === seg[2] && top[2] === seg[2]) {
+      // same link flag and same style set — merge
+      top[0] += seg[0];
+    } else {
+      merged.push(seg);
+    }
+  }
+
+  // Convert to TextElement[]
+  const elements: TextElement[] = [];
+  for (const [content, styles, isLink, href] of merged) {
+    if (!content) continue;
+    if (isLink && href) {
+      elements.push({ text_run: { content, link: { url: href } } });
+    } else {
+      const style: TextElementStyle = {};
+      if (styles.has('bold')) style.bold = true;
+      if (styles.has('italic')) style.italic = true;
+      if (styles.has('inline_code')) style.inline_code = true;
+      if (styles.has('strikethrough')) style.strikethrough = true;
+      if (styles.has('underline')) style.underline = true;
+      const hasStyle = Object.keys(style).length > 0;
+      elements.push({
+        text_run: hasStyle ? { content, text_element_style: style } : { content },
+      });
+    }
   }
 
   // If nothing was parsed (empty string), return a single empty text_run
@@ -209,10 +329,11 @@ export function buildDocBlockChildrenDraft(
     notes: [
       'This adapter converts markdown lines into native Feishu docx block types.',
       'Supported block types: paragraph, heading1/2/3, bullet list, todo (checked and unchecked).',
-      'Supported inline formatting: bold (**text**), italic (*text*), inline code (`text`).',
-      'Each inline span becomes a separate text_run element with the appropriate text_element_style.',
-      'Link spans use the Feishu text_run.link.url field.',
-      'Heading text also supports inline spans.',
+      'Supported inline formatting: bold (**text**), italic (*text*), underline (__text__),',
+      '  inline code (`text`), strikethrough (~~text~~), explicit links ([text](url)),',
+      '  and bare URL auto-link (https://… or www.… → clickable link).',
+      'Adjacent spans with the same non-link style are merged into a single text_run.',
+      'Heading text also supports all inline spans above.',
     ],
   };
 }
