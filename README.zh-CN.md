@@ -41,6 +41,7 @@
 | Webhook URL 验证 | ✅ | 自动处理 `url_verification` 挑战 |
 | 签名验证 | ✅ | `x-lark-signature` 检查，含重放攻击时间窗口保护 |
 | Mock 演示（无需凭证） | ✅ | `npm run demo` 本地触发所有路径 |
+| 交互式 ASCII 演示 | ✅ | `node scripts/demo-interactive.mjs` — 终端动画导览 |
 | Docker + GHCR 镜像 | ✅ | `ghcr.io/learner20230724/feishu-flow-kit:latest` |
 | 生产环境部署指南 | ✅ | Traefik + Let's Encrypt，Railway / Render / fly.io |
 | 本地 webhook 测试资产 | ✅ | 10 个真实 `im.message.receive_v1` JSON 样本 |
@@ -203,10 +204,16 @@ node scripts/create-plugin.mjs my-greeting
 
 ## 本地 demo
 
+**交互式 ASCII 演示** — 无需凭证，先看终端动画导览？运行：
+
 ```bash
-npm install
-npm run dev
+node scripts/demo-interactive.mjs        # 正常速度
+node scripts/demo-interactive.mjs --speed=fast   # 快速版
 ```
+
+动画展示服务器启动、webhook 事件到达、`/doc` 命令处理流程、飞书卡片响应全过程。
+
+然后运行真实版本：
 
 默认会以 mock 模式运行，并读取 `examples/mock-message-event.json`。你也可以用 `FEISHU_MOCK_EVENT_PATH` 切换示例输入，例如：
 

@@ -41,6 +41,7 @@ This project is a cleaner starting point:
 | Webhook URL verification | ✅ | Handles `url_verification` challenge automatically |
 | Signature verification | ✅ | `x-lark-signature` check with replay-window guard |
 | Mock demo (no credentials) | ✅ | `npm run demo` fires all paths locally |
+| Interactive ASCII demo | ✅ | `node scripts/demo-interactive.mjs` — animated walkthrough |
 | Docker + GHCR image | ✅ | `ghcr.io/learner20230724/feishu-flow-kit:latest` |
 | Production deploy guide | ✅ | Traefik + Let's Encrypt, Railway / Render / fly.io |
 | Local webhook test assets | ✅ | 10 realistic `im.message.receive_v1` JSON samples |
@@ -210,10 +211,16 @@ Five small static assets are included so the repo has a visible first-screen exp
 
 ## Local demo
 
+**Interactive ASCII demo** — want a visual walkthrough without credentials? Run:
+
 ```bash
-npm install
-npm run dev
+node scripts/demo-interactive.mjs        # normal speed
+node scripts/demo-interactive.mjs --speed=fast   # quick
 ```
+
+This plays an animated terminal demo showing server startup, a webhook event arriving, `/doc` command processing, and the Feishu card response.
+
+Then run the real thing:
 
 By default the project runs in mock mode and loads `examples/mock-message-event.json`. You can switch demo inputs with `FEISHU_MOCK_EVENT_PATH`, for example:
 
