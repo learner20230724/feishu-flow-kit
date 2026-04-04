@@ -27,6 +27,28 @@ This project is a cleaner starting point:
 
 ![Features overview](./docs/assets/features-overview.svg)
 
+## What you get
+
+| Capability | Built-in | Notes |
+|---|---|---|
+| `/doc` — Feishu doc creation | ✅ | Rich block authoring incl. bold/italic/code/links |
+| `/table` — Bitable record creation | ✅ | Schema-aware, 18 field types, env-var field mapping |
+| `/todo` — structured task drafting | ✅ | Text-first, no credentials needed |
+| `/help`, `/ping`, `/poll` plugins | ✅ | Also a full plugin system for custom commands |
+| i18n — EN + ZH auto-detection | ✅ | Respects `event.sender.language` |
+| Retry + resilience | ✅ | 429 / 5xx / Feishu codes auto-retry |
+| `/status` health endpoint | ✅ | `GET /status` returns uptime, event count, flags |
+| Webhook URL verification | ✅ | Handles `url_verification` challenge automatically |
+| Signature verification | ✅ | `x-lark-signature` check with replay-window guard |
+| Mock demo (no credentials) | ✅ | `npm run demo` fires all paths locally |
+| Docker + GHCR image | ✅ | `ghcr.io/learner20230724/feishu-flow-kit:latest` |
+| Production deploy guide | ✅ | Traefik + Let's Encrypt, Railway / Render / fly.io |
+| Local webhook test assets | ✅ | 10 realistic `im.message.receive_v1` JSON samples |
+| Postman collection | ✅ | Import `docs/postman-collection.json` |
+| Plugin scaffolder CLI | ✅ | `node scripts/create-plugin.mjs <name>` |
+| Table schema mapping preflight | ✅ | `npm run table:validate-mapping-config` |
+| Setup verification script | ✅ | `node scripts/verify-setup.mjs` |
+
 ## Quick Start
 
 **1. Install**

@@ -27,6 +27,28 @@
 
 ![功能总览](./docs/assets/features-overview.svg)
 
+## 包含内容
+
+| 功能 | 内置 | 说明 |
+|---|---|---|
+| `/doc` — 创建飞书文档 | ✅ | 丰富的 block 创作，支持粗体/斜体/代码/链接 |
+| `/table` — 创建 Bitable 记录 | ✅ | Schema-aware，支持 18 种字段类型，env 变量字段映射 |
+| `/todo` — 结构化任务草稿 | ✅ | 纯文本，无凭证即可体验 |
+| `/help`、`/ping`、`/poll` 插件 | ✅ | 同时提供完整插件系统，支持自定义命令 |
+| i18n — 中英文自动检测 | ✅ | 根据 `event.sender.language` 自动切换 |
+| 重试 + 容错机制 | ✅ | 自动重试 429 / 5xx / 飞书错误码 |
+| `/status` 健康检查端点 | ✅ | `GET /status` 返回运行时长、事件计数、特性开关 |
+| Webhook URL 验证 | ✅ | 自动处理 `url_verification` 挑战 |
+| 签名验证 | ✅ | `x-lark-signature` 检查，含重放攻击时间窗口保护 |
+| Mock 演示（无需凭证） | ✅ | `npm run demo` 本地触发所有路径 |
+| Docker + GHCR 镜像 | ✅ | `ghcr.io/learner20230724/feishu-flow-kit:latest` |
+| 生产环境部署指南 | ✅ | Traefik + Let's Encrypt，Railway / Render / fly.io |
+| 本地 webhook 测试资产 | ✅ | 10 个真实 `im.message.receive_v1` JSON 样本 |
+| Postman API 测试集 | ✅ | 导入 `docs/postman-collection.json` |
+| 插件脚手架 CLI | ✅ | `node scripts/create-plugin.mjs <name>` |
+| Table schema 映射预检 | ✅ | `npm run table:validate-mapping-config` |
+| 环境安装验证脚本 | ✅ | `node scripts/verify-setup.mjs` |
+
 ## 快速上手
 
 **1. 安装**
