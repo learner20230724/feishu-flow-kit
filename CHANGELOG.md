@@ -8,6 +8,7 @@ This repo intentionally starts small: it aims to be a clean, local-first starter
 
 ### Added
 - **`/table` schema-aware workflow** — draft-first Bitable record creation with full field-type coverage (18 types including text, number, date, checkbox, multi-select, user, location, phone, URL, attachment, cascade, department, contact, link)
+- **`create-table-record-with-schema.ts` adapter** — fetches live Bitable table schema on every create call and maps draft field names to actual field IDs, replacing the name-based draft approach; all 10 starter fields (Title, List, Details, Owner, Estimate, Due, Done, Attachment, LinkedRecords, SourceCommand) now resolve via live schema
 - **`table-mapping-config-preflight` system** — CLI validator (`scripts/validate-table-mapping-config.mjs`), config preflight docs (EN/ZH), advanced env example, and test suite for schema-handoff workflow
 - Schema handoff assets: mapping worksheet, demo scripts, raw field-list normalizer, fixture-backed verification chain, select-option override samples
 - Smoke test script for real Bitable end-to-end validation
