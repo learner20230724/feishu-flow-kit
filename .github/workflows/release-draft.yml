@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+
 jobs:
   release:
     name: Draft GitHub Release
@@ -23,16 +26,21 @@ jobs:
           VERSION="${{ steps.version.outputs.VERSION }}"
           # Remove leading 'v' if present
           VERSION_STR="${VERSION#v}"
-          # Find the section header (## [X.Y.Z] — YYYY-MM-DD) and extract body until next ## or end
-          # Using awk: find the line with the version, then collect lines until next ## or EOF
-          BODY=$(awk -v ver="$VERSION_STR" '
-            /^## \[/[ {
-              if (found) exit;
-              if ($2 == "["ver"]") found=1;
-              next;
+          # Escape VERSION_STR for use in grep pattern (dots are already safe in fixed-string grep)
+          ESCAPED_VER=$(printf '%s' "$VERSION_STR" | sed 's/[^^]/[&]/g; s/\^/^^/g')
+          # Find the version section in CHANGELOG.md and collect lines until the next ## or EOF
+          # Using grep -A to get lines after the match, then stop at next ## section
+          BODY=$(awk -v version="$VERSION_STR" '
+            BEGIN { found=0 }
+            /^## \[/ {
+              # Check if this section matches our version (handles edge cases around version format)
+              if (found) { exit }
+              # Extract version inside [ ] and compare
+              if (index($0, "[" version "]") > 0) { found=1; next }
             }
+            found && /^## / { exit }
             found { print }
-          ' CHANGELOG.md | sed '/^## /d' | sed '/^$/d' | sed 's/^/"/; s/$/"/' | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^"//; s/"$//')
+          ' CHANGELOG.md | grep -v '^$' | head -30 | sed 's/^/• /')
           if [ -z "$BODY" ]; then
             BODY="See CHANGELOG.md for details."
           fi
