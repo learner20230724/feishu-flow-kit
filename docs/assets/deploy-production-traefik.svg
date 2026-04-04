@@ -1,0 +1,179 @@
+<svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <linearGradient id="feishu-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a73e8"/>
+      <stop offset="100%" stop-color="#0d47a1"/>
+    </linearGradient>
+    <linearGradient id="traefik-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="vps-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="acme-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="480" fill="#f8fafc" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="700" fill="#1e293b">Production Deployment — Traefik + HTTPS + Feishu Cloud</text>
+
+  <!-- ==== EXTERNAL INTERNET ZONE ==== -->
+  <rect x="10" y="58" width="880" height="80" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+  <text x="24" y="76" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#1d4ed8">INTERNET</text>
+
+  <!-- Feishu Cloud -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="90" width="160" height="36" rx="6" fill="url(#feishu-grad)"/>
+    <text x="120" y="114" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="600" fill="white">Feishu Cloud</text>
+  </g>
+
+  <!-- ACME Let's Encrypt -->
+  <g filter="url(#shadow)">
+    <rect x="240" y="90" width="180" height="36" rx="6" fill="url(#acme-grad)"/>
+    <text x="330" y="111" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="white">Let's Encrypt</text>
+    <text x="330" y="124" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#dcfce7">ACME CA</text>
+  </g>
+
+  <!-- HTTPS traffic: Feishu → VPS FQDN -->
+  <path d="M 200 108 L 238 108" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrow-blue)"/>
+  <text x="220" y="100" text-anchor="middle" font-family="monospace" font-size="10" fill="#1d4ed8">HTTPS POST</text>
+
+  <!-- ACME challenge: Traefik → Let's Encrypt -->
+  <path d="M 420 108 L 238 108" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-green)"/>
+  <text x="332" y="100" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">ACME challenge</text>
+
+  <!-- ==== VPS ZONE ==== -->
+  <rect x="10" y="158" width="880" height="290" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="24" y="176" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#475569">VPS (your server)</text>
+
+  <!-- Traefik -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="190" width="220" height="230" rx="8" fill="url(#traefik-grad)"/>
+    <text x="150" y="218" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="white">Traefik v3</text>
+    <text x="150" y="235" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#94a3b8">Reverse Proxy &amp; Load Balancer</text>
+
+    <!-- Ports -->
+    <rect x="60" y="248" width="80" height="22" rx="4" fill="#1e3a5f"/>
+    <text x="100" y="263" text-anchor="middle" font-family="monospace" font-size="10" fill="#38bdf8">:80  HTTP</text>
+    <rect x="60" y="274" width="80" height="22" rx="4" fill="#1e3a5f"/>
+    <text x="100" y="289" text-anchor="middle" font-family="monospace" font-size="10" fill="#38bdf8">:443 HTTPS</text>
+    <rect x="160" y="248" width="80" height="22" rx="4" fill="#1e3a5f"/>
+    <text x="200" y="263" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24">:8080 Dashboard</text>
+
+    <!-- TLS badge -->
+    <rect x="60" y="310" width="80" height="18" rx="4" fill="#16a34a"/>
+    <text x="100" y="323" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="700" fill="white">TLS ✓ AUTO</text>
+
+    <!-- ACME provider -->
+    <rect x="160" y="310" width="80" height="18" rx="4" fill="#15803d"/>
+    <text x="200" y="323" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" fill="white">ACME Provider</text>
+
+    <!-- Labels box -->
+    <rect x="60" y="340" width="180" height="64" rx="4" fill="#0f172a" rx="4"/>
+    <text x="72" y="358" font-family="monospace" font-size="9" fill="#38bdf8">Docker Labels:</text>
+    <text x="72" y="372" font-family="monospace" font-size="9" fill="#94a3b8">traefik.http.routers.feishu</text>
+    <text x="72" y="385" font-family="monospace" font-size="9" fill="#94a3b8">  .rule=Host(`vps-fqdn`)</text>
+    <text x="72" y="398" font-family="monospace" font-size="9" fill="#94a3b8">  .tls=true</text>
+  </g>
+
+  <!-- Arrow: Traefik → Bot -->
+  <path d="M 260 305 L 290 305" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="276" y="296" text-anchor="middle" font-family="monospace" font-size="10" fill="#475569">:3000</text>
+
+  <!-- Feishu Bot Container -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="190" width="260" height="230" rx="8" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+
+    <!-- Header -->
+    <rect x="290" y="190" width="260" height="32" rx="8" fill="#6366f1"/>
+    <rect x="290" y="210" width="260" height="12" fill="#6366f1"/>
+    <text x="420" y="211" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="white">feishu-flow-kit</text>
+    <text x="420" y="223" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#c7d2fe">Docker container</text>
+
+    <!-- App logic block -->
+    <rect x="310" y="240" width="220" height="60" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+    <text x="420" y="257" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#5b21b6">App Logic</text>
+    <text x="420" y="271" text-anchor="middle" font-family="monospace" font-size="9" fill="#6d28d9">slash-command parser</text>
+    <text x="420" y="284" text-anchor="middle" font-family="monospace" font-size="9" fill="#6d28d9">workflow dispatcher</text>
+    <text x="420" y="297" text-anchor="middle" font-family="monospace" font-size="9" fill="#6d28d9">retry / error handling</text>
+
+    <!-- Ports -->
+    <rect x="310" y="315" width="100" height="20" rx="4" fill="#ede9fe"/>
+    <text x="360" y="329" text-anchor="middle" font-family="monospace" font-size="9" fill="#7c3aed">PORT=3000</text>
+    <rect x="420" y="315" width="100" height="20" rx="4" fill="#ede9fe"/>
+    <text x="470" y="329" text-anchor="middle" font-family="monospace" font-size="9" fill="#7c3aed">/status ✓</text>
+
+    <!-- Env vars summary -->
+    <rect x="310" y="345" width="220" height="62" rx="4" fill="#fafafa" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="322" y="361" font-family="monospace" font-size="9" fill="#374151">FEISHU_APP_ID</text>
+    <text x="420" y="361" text-anchor="middle" font-family="monospace" font-size="9" fill="#9ca3af">••••</text>
+    <text x="322" y="375" font-family="monospace" font-size="9" fill="#374151">FEISHU_APP_SECRET</text>
+    <text x="420" y="375" text-anchor="middle" font-family="monospace" font-size="9" fill="#9ca3af">••••</text>
+    <text x="322" y="389" font-family="monospace" font-size="9" fill="#374151">VPS_FQDN</text>
+    <text x="420" y="389" text-anchor="middle" font-family="monospace" font-size="9" fill="#22c55e">✓ set</text>
+    <text x="322" y="403" font-family="monospace" font-size="9" fill="#374151">ACME_EMAIL</text>
+    <text x="420" y="403" text-anchor="middle" font-family="monospace" font-size="9" fill="#22c55e">✓ set</text>
+  </g>
+
+  <!-- Arrow: Bot → Feishu API -->
+  <path d="M 550 305 L 580 305" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="566" y="296" text-anchor="middle" font-family="monospace" font-size="10" fill="#1d4ed8">HTTPS API</text>
+
+  <!-- Feishu API box (right side) -->
+  <g filter="url(#shadow)">
+    <rect x="580" y="190" width="280" height="230" rx="8" fill="white" stroke="#bfdbfe" stroke-width="1.5"/>
+    <text x="720" y="218" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1e40af">Feishu Open Platform</text>
+
+    <!-- Endpoints -->
+    <rect x="600" y="235" width="240" height="22" rx="4" fill="#eff6ff"/>
+    <text x="720" y="250" text-anchor="middle" font-family="monospace" font-size="9" fill="#1d4ed8">POST /bot/v6/im/v1/messages</text>
+
+    <rect x="600" y="262" width="240" height="22" rx="4" fill="#eff6ff"/>
+    <text x="720" y="277" text-anchor="middle" font-family="monospace" font-size="9" fill="#1d4ed8">POST /docx/v1/documents</text>
+
+    <rect x="600" y="289" width="240" height="22" rx="4" fill="#eff6ff"/>
+    <text x="720" y="304" text-anchor="middle" font-family="monospace" font-size="9" fill="#1d4ed8">GET  /bitable/v1/apps/{appId}/tables</text>
+
+    <rect x="600" y="316" width="240" height="22" rx="4" fill="#eff6ff"/>
+    <text x="720" y="331" text-anchor="middle" font-family="monospace" font-size="9" fill="#1d4ed8">POST /bitable/v1/apps/{appId}/tables/...</text>
+
+    <!-- Capabilities list -->
+    <rect x="600" y="348" width="240" height="58" rx="4" fill="#fafafa" stroke="#e5e7eb"/>
+    <text x="612" y="364" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="#374151">Supported:</text>
+    <text x="612" y="378" font-family="monospace" font-size="8.5" fill="#6b7280">/table  /doc  /reply  /todo  /help</text>
+    <text x="612" y="392" font-family="system-ui,sans-serif" font-size="8.5" fill="#6b7280">✓ Retry on 429/5xx  ✓ isRetryable</text>
+    <text x="612" y="404" font-family="system-ui,sans-serif" font-size="8.5" fill="#6b7280">✓ /status endpoint  ✓ i18n (EN/ZH)</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="10" y="455" width="880" height="20" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
+  <circle cx="30" cy="465" r="5" fill="#3b82f6"/>
+  <text x="42" y="469" font-family="system-ui,sans-serif" font-size="9" fill="#475569">HTTPS traffic</text>
+  <circle cx="130" cy="465" r="5" fill="#22c55e"/>
+  <text x="142" y="469" font-family="system-ui,sans-serif" font-size="9" fill="#475569">ACME challenge</text>
+  <circle cx="240" cy="465" r="5" fill="#64748b"/>
+  <text x="252" y="469" font-family="system-ui,sans-serif" font-size="9" fill="#475569">Internal Docker network</text>
+  <rect x="355" y="461" width="10" height="8" rx="2" fill="#1a73e8"/>
+  <text x="372" y="469" font-family="system-ui,sans-serif" font-size="9" fill="#475569">Feishu Cloud</text>
+  <rect x="455" y="461" width="10" height="8" rx="2" fill="#6366f1"/>
+  <text x="472" y="469" font-family="system-ui,sans-serif" font-size="9" fill="#475569">Bot container</text>
+</svg>
