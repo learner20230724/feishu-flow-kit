@@ -1,0 +1,53 @@
+name: Release Draft
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Draft GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog body for version
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          # Remove leading 'v' if present
+          VERSION_STR="${VERSION#v}"
+          # Find the section header (## [X.Y.Z] — YYYY-MM-DD) and extract body until next ## or end
+          # Using awk: find the line with the version, then collect lines until next ## or EOF
+          BODY=$(awk -v ver="$VERSION_STR" '
+            /^## \[/[ {
+              if (found) exit;
+              if ($2 == "["ver"]") found=1;
+              next;
+            }
+            found { print }
+          ' CHANGELOG.md | sed '/^## /d' | sed '/^$/d' | sed 's/^/"/; s/$/"/' | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^"//; s/"$//')
+          if [ -z "$BODY" ]; then
+            BODY="See CHANGELOG.md for details."
+          fi
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          name: feishu-flow-kit ${{ steps.version.outputs.VERSION }}
+          body: ${{ steps.changelog.outputs.body }}
+          draft: true
+          prerelease: ${{ contains(steps.version.outputs.VERSION, '-') }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
