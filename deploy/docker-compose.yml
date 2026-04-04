@@ -1,0 +1,80 @@
+# feishu-flow-kit + Traefik — Production Stack
+#
+# This stack runs the bot behind Traefik with automatic HTTPS (Let's Encrypt),
+# so Feishu can reach it at a public URL without you managing certificates.
+#
+# Usage:
+#   cp .env.production.example .env.production
+#   # edit .env.production with your credentials
+#   docker compose -f docker-compose.yml --env-file .env.production up -d
+#
+version: "3.9"
+
+services:
+  traefik:
+    image: traefik:v3.0
+    restart: unless-stopped
+    ports:
+      # HTTP (redirected to HTTPS)
+      - "80:80"
+      # HTTPS (Traefik handles certs)
+      - "443:443"
+    volumes:
+      # Traefik reads .env.production for FQDN and email
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      # Persist Let's Encrypt certificates across restarts
+      - traefik-certs:/letsencrypt
+    environment:
+      # Traefik static config via CLI flags is in command: below
+      TZ: UTC
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=feishu-flow-kit_web
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --providers.file.watch=true
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:?required}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    networks:
+      - feishu-flow-kit_web
+
+  bot:
+    # Points at the GHCR image published by the GitHub Actions workflow.
+    # To build locally instead: image -> build: . (and remove image:)
+    image: ghcr.io/learner20230724/feishu-flow-kit:latest
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      # Override FEISHU_WEBHOOK_URL so it matches the public Traefik URL
+      FEISHU_WEBHOOK_URL: https://${VPS_FQDN:?required}/webhook
+      FEISHU_MOCK_MODE: "false"
+      NODE_ENV: production
+    labels:
+      traefik.enable: true
+      # Route /webhook and /status to this container
+      traefik.http.routers.feishu-bot.rule: PathPrefix(`/webhook`) || PathPrefix(`/status`)
+      traefik.http.routers.feishu-bot.entrypoints: websecure
+      traefik.http.routers.feishu-bot.tls: true
+      traefik.http.routers.feishu-bot.tls.certresolver: letsencrypt
+      traefik.http.routers.feishu-bot.service: feishu-bot-svc
+      traefik.http.services.feishu-bot-svc.loadbalancer.server.port: 8787
+      # Health check so Traefik can detect when the container is ready
+      traefik.http.services.feishu-bot-svc.loadbalancer.healthcheck.path: /status
+      traefik.http.services.feishu-bot-svc.loadbalancer.healthcheck.interval: 10s
+      traefik.http.services.feishu-bot-svc.loadbalancer.healthcheck.timeout: 5s
+    networks:
+      - feishu-flow-kit_web
+
+volumes:
+  traefik-certs:
+    name: feishu-flow-kit_traefik-certs
+
+networks:
+  feishu-flow-kit_web:
+    name: feishu-flow-kit_web
+    driver: bridge

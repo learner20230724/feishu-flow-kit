@@ -1,0 +1,11 @@
+# Traefik dynamic configuration
+# This file is mounted read-only into the traefik container.
+# Router and service definitions are here so they can reference
+# labels set on the bot container (which Traefik discovers via Docker).
+
+http:
+  routers:
+    feishu-bot:
+      # Rule is set via Docker labels on the bot service — no rule needed here.
+      service: feishu-bot-svc
+      tls: {}

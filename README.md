@@ -84,9 +84,7 @@ docker run -d --env-file .env -p 8787:8787 ghcr.io/learner20230724/feishu-flow-k
 curl http://localhost:8787/healthz
 ```
 
-For a full docker-compose setup with a public URL, see the [GHCR deployment guide](./docs/deployment.md#option-5--using-the-ghcr-image-directly).
-# Or with docker-compose (recommended for production)
-docker-compose up -d
+For a full docker-compose setup with Traefik and automatic HTTPS (recommended for production on a VPS), see the [production deployment guide](./deploy/README.md).
 ```
 
 See [`docs/deployment.md`](./docs/deployment.md) for full deployment guides (Railway, Render, fly.io, Ubuntu).
