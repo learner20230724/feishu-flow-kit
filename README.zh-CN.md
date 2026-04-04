@@ -122,6 +122,12 @@ curl http://localhost:8787/healthz
 
 以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` 或 `multi_select`、`FEISHU_BITABLE_OWNER_FIELD_MODE=user`、`FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`、`FEISHU_BITABLE_DUE_FIELD_MODE=date` 或 `datetime`、`FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`，以及 `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`、`FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`，逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。如果你的 Bitable 字段名不是 starter 默认的 `Title / List / Details / ...`，现在也可以直接用 `FEISHU_BITABLE_TITLE_FIELD_NAME=Task`、`FEISHU_BITABLE_LIST_FIELD_NAME=Stage`、`FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand` 这类环境变量做字段名重映射，不用先改代码。
 
+## 实战食谱
+
+> 可直接复制使用的自动化模式，扩展飞书工作流能力。
+
+参见 [`docs/recipes.zh-CN.md`](./docs/recipes.zh-CN.md)，包含七个实战食谱：投票机器人 `/poll`、FAQ 关键词自动回复、每日定时摘要 cron 任务、从模板自动创建文档 `/newdoc`、跨频道转发机器人、调用外部翻译 API 的 `/translate`，以及会议纪要提炼 `/summarize`。
+
 ## Demo 资产
 
 ![本地 webhook → /doc 工作流演示](./docs/demo-webhook-doc-flow.svg)

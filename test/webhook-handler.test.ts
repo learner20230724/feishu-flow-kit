@@ -61,7 +61,7 @@ test('handleWebhookPayload runs workflow for webhook message payloads', async ()
   });
   assert.deepEqual(result.body.outboundReply, {
     attempted: false,
-    skippedReason: 'No outbound reply config provided.',
+    skippedReason: 'FEISHU_ENABLE_OUTBOUND_REPLY is disabled.',
   });
 });
 
@@ -128,7 +128,7 @@ test('handleWebhookPayload returns doc create draft for /doc requests without cr
   });
   assert.deepEqual(result.body.docCreate, {
     attempted: false,
-    skippedReason: 'No doc create config provided.',
+    skippedReason: 'FEISHU_ENABLE_DOC_CREATE is disabled.',
   });
 });
 

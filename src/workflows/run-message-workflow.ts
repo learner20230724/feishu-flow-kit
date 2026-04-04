@@ -1,4 +1,5 @@
 import type { FeishuMessageEvent } from '../types/feishu-event.js';
+import type { PluginContext } from '../core/plugin-system.js';
 import { parseSlashCommand } from '../core/parse-slash-command.js';
 import {
   buildTableRecordDraft,
@@ -236,21 +237,12 @@ function buildTableUsage(s: Strings) {
   ].join('\n');
 }
 
-export function runMessageWorkflow(
+function runBuiltInWorkflow(
+  command: { name: string; argsText: string },
   event: FeishuMessageEvent,
-  options: WorkflowOptions = {},
+  options: WorkflowOptions,
+  s: Strings,
 ): WorkflowResult {
-  const s = getStrings(options.lang ?? event.language);
-  const command = parseSlashCommand(event.message.text);
-
-  if (!command) {
-    return {
-      ok: true,
-      replyText: s.noSlashCommand,
-      tags: ['noop'],
-    };
-  }
-
   if (command.name === 'todo') {
     return {
       ok: true,
@@ -329,4 +321,70 @@ export function runMessageWorkflow(
     replyText: s.unimplemented(command.name),
     tags: ['unimplemented'],
   };
+}
+
+/**
+ * Run the message workflow with optional plugin support.
+ *
+ * @param pluginContext - if provided, plugins are given a chance to handle each
+ *                        command before and after the built-in workflow runs.
+ */
+export function runMessageWorkflow(
+  event: FeishuMessageEvent,
+  options: WorkflowOptions = {},
+  pluginContext?: {
+    beforeProcess?: (event: FeishuMessageEvent) => boolean | void;
+    onCommandResult?: (result: WorkflowResult, event: FeishuMessageEvent) => void;
+    afterProcess?: (event: FeishuMessageEvent, result: WorkflowResult) => void;
+    handleViaPlugin?: (
+      command: { name: string; argsText: string },
+      event: FeishuMessageEvent,
+      options: WorkflowOptions,
+    ) => WorkflowResult | null;
+  },
+): WorkflowResult {
+  const s = getStrings(options.lang ?? event.language);
+  const command = parseSlashCommand(event.message.text);
+
+  if (!command) {
+    return { ok: true, replyText: s.noSlashCommand, tags: ['noop'] };
+  }
+
+  // ── beforeProcess hook ──────────────────────────────────────────────────────
+  if (pluginContext?.beforeProcess) {
+    const proceed = pluginContext.beforeProcess(event);
+    if (proceed === false) {
+      return { ok: true, replyText: '', tags: ['plugin-filtered'] };
+    }
+  }
+
+  // ── Plugin command handler (new commands only) ─────────────────────────────
+  if (pluginContext?.handleViaPlugin) {
+    const pluginResult = pluginContext.handleViaPlugin(command, event, options);
+    if (pluginResult) {
+      // Run onCommandResult hook before returning.
+      if (pluginContext.onCommandResult) {
+        try {
+          pluginContext.onCommandResult(pluginResult, event);
+        } catch {
+          // Hook threw — record and continue with the result as-is.
+        }
+      }
+      return pluginResult;
+    }
+  }
+
+  // ── Built-in commands (todo / doc / table) ────────────────────────────────
+  const result = runBuiltInWorkflow(command, event, options, s);
+
+  // ── onCommandResult hook (transform built-in results) ─────────────────────
+  if (pluginContext?.onCommandResult) {
+    try {
+      pluginContext.onCommandResult(result, event);
+    } catch {
+      // Hook threw — ignore and return the original result.
+    }
+  }
+
+  return result;
 }

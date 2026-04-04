@@ -129,6 +129,12 @@ See [`docs/deployment.md`](./docs/deployment.md) for full deployment guides (Rai
 
 Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` or `multi_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`, `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`, and `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`, or `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`. If your Bitable does not use the starter field names, you can now remap them directly with env vars such as `FEISHU_BITABLE_TITLE_FIELD_NAME=Task`, `FEISHU_BITABLE_LIST_FIELD_NAME=Stage`, or `FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand`.
 
+## Recipes
+
+> Ready-to-use automation patterns for extending the kit.
+
+See [`docs/recipes.md`](./docs/recipes.md) for seven practical recipes including `/poll` voting, FAQ auto-reply, daily summary cron jobs, auto-doc-from-template (`/newdoc`), cross-channel relay bot, `/translate` with external APIs, and meeting-notes summarization (`/summarize`).
+
 ## Demo assets
 
 ![Local webhook to /doc workflow demo](./docs/demo-webhook-doc-flow.svg)

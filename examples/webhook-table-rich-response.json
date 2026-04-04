@@ -73,6 +73,8 @@
     "outboundReply": {
       "attempted": false,
       "skippedReason": "FEISHU_ENABLE_OUTBOUND_REPLY is disabled."
-    }
+    },
+    "loadedPlugins": [],
+    "tenantKey": "tenant_demo"
   }
 }

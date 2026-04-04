@@ -9,6 +9,7 @@ import {
   recordEventProcessed,
   getServerStatus,
 } from '../core/server-status.js';
+import { buildPluginContext, type PluginContext } from '../core/plugin-system.js';
 import { handleWebhookPayload } from './handle-webhook-payload.js';
 import { verifyWebhookSignature } from './verify-webhook-signature.js';
 
@@ -35,7 +36,10 @@ function getJsonBody<T>(body: unknown): T {
   return body as T;
 }
 
-export function startWebhookServer(config: AppConfig & { webhookPort: number }) {
+export function startWebhookServer(
+  config: AppConfig & { webhookPort: number },
+  pluginContext?: PluginContext,
+) {
   // Initialise Sentry if DSN is provided.
   if (process.env.SENTRY_DSN) {
     initSentry({ dsn: process.env.SENTRY_DSN, environment: process.env.NODE_ENV });
@@ -43,6 +47,13 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
 
   const logger = createLogger(config.logLevel);
   recordServerStart();
+
+  if (pluginContext?.plugins?.length) {
+    logger.info('plugins loaded', {
+      names: pluginContext.plugins.map(p => p.name),
+      commands: pluginContext.registry.getCommandNames(),
+    });
+  }
 
   const server = createServer(async (req, res) => {
     // Allocate a request-scoped UUID for correlation across retries/log lines.
@@ -83,7 +94,17 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
         enableDocCreate: config.enableDocCreate,
         enableTableCreate: config.enableTableCreate,
       });
-      writeJson(res, 200, { ok: true, ...status, requestId });
+      const tenants = config.tenants ?? [];
+      const multiTenantMode = tenants.length > 0 ? 'multi-tenant' : 'single-app';
+      const tenantCount = tenants.length > 0 ? tenants.length : 1;
+      writeJson(res, 200, {
+        ok: true,
+        ...status,
+        multiTenantMode,
+        tenantCount,
+        tenantKeys: tenants.length > 0 ? tenants.map(t => t.tenantKey) : undefined,
+        requestId,
+      });
       return;
     }
 
@@ -122,32 +143,7 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
         return;
       }
 
-      const result = await handleWebhookPayload(json, {
-        appId: config.appId,
-        appSecret: config.appSecret,
-        enableOutboundReply: config.enableOutboundReply,
-        enableDocCreate: config.enableDocCreate,
-        enableTableCreate: config.enableTableCreate,
-        bitableAppToken: config.bitableAppToken,
-        bitableTableId: config.bitableTableId,
-        bitableListFieldMode: config.bitableListFieldMode,
-        bitableOwnerFieldMode: config.bitableOwnerFieldMode,
-        bitableEstimateFieldMode: config.bitableEstimateFieldMode,
-        bitableDueFieldMode: config.bitableDueFieldMode,
-        bitableDoneFieldMode: config.bitableDoneFieldMode,
-        bitableAttachmentFieldMode: config.bitableAttachmentFieldMode,
-        bitableLinkFieldMode: config.bitableLinkFieldMode,
-        bitableTitleFieldName: config.bitableTitleFieldName,
-        bitableListFieldName: config.bitableListFieldName,
-        bitableDetailsFieldName: config.bitableDetailsFieldName,
-        bitableOwnerFieldName: config.bitableOwnerFieldName,
-        bitableEstimateFieldName: config.bitableEstimateFieldName,
-        bitableDueFieldName: config.bitableDueFieldName,
-        bitableDoneFieldName: config.bitableDoneFieldName,
-        bitableAttachmentFieldName: config.bitableAttachmentFieldName,
-        bitableLinkedRecordsFieldName: config.bitableLinkedRecordsFieldName,
-        bitableSourceCommandFieldName: config.bitableSourceCommandFieldName,
-      });
+      const result = await handleWebhookPayload(json, config, pluginContext);
 
       recordEventProcessed();
 
@@ -175,12 +171,18 @@ export function startWebhookServer(config: AppConfig & { webhookPort: number }) 
   });
 
   server.listen(config.webhookPort, () => {
+    const tenants = config.tenants ?? [];
+    const mode = tenants.length > 0 ? 'multi-tenant' : 'single-app';
+    const tenantCount = tenants.length > 0 ? tenants.length : 1;
     logger.info('webhook server listening', {
       port: config.webhookPort,
       path: '/webhook',
       healthPath: '/healthz',
       statusPath: '/status',
       sentryEnabled: Boolean(process.env.SENTRY_DSN),
+      mode,
+      tenantCount,
+      plugins: pluginContext?.plugins?.map(p => p.name) ?? [],
     });
   });
 

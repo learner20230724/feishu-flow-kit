@@ -8,6 +8,42 @@ export type TableDoneFieldMode = 'text' | 'checkbox';
 export type TableAttachmentFieldMode = 'text' | 'attachment';
 export type TableLinkFieldMode = 'text' | 'linked_record';
 
+/**
+ * Per-tenant configuration. Each Feishu app (tenant) that sends webhooks to
+ * this server needs a TenantConfig entry so the correct credentials are used
+ * for API calls and the correct feature flags are applied.
+ */
+export interface TenantConfig {
+  /** Feishu's tenant_key, as found in the webhook payload header `header.tenant_key`. */
+  tenantKey: string;
+  appId: string;
+  appSecret: string;
+  /** Per-tenant feature overrides (all optional — fall back to top-level AppConfig). */
+  botName?: string;
+  enableOutboundReply?: boolean;
+  enableDocCreate?: boolean;
+  enableTableCreate?: boolean;
+  bitableAppToken?: string;
+  bitableTableId?: string;
+  bitableListFieldMode?: TableListFieldMode;
+  bitableOwnerFieldMode?: TableOwnerFieldMode;
+  bitableEstimateFieldMode?: TableEstimateFieldMode;
+  bitableDueFieldMode?: TableDueFieldMode;
+  bitableDoneFieldMode?: TableDoneFieldMode;
+  bitableAttachmentFieldMode?: TableAttachmentFieldMode;
+  bitableLinkFieldMode?: TableLinkFieldMode;
+  bitableTitleFieldName?: string;
+  bitableListFieldName?: string;
+  bitableDetailsFieldName?: string;
+  bitableOwnerFieldName?: string;
+  bitableEstimateFieldName?: string;
+  bitableDueFieldName?: string;
+  bitableDoneFieldName?: string;
+  bitableAttachmentFieldName?: string;
+  bitableLinkedRecordsFieldName?: string;
+  bitableSourceCommandFieldName?: string;
+}
+
 export interface AppConfig {
   appId: string;
   appSecret: string;
@@ -18,6 +54,15 @@ export interface AppConfig {
   webhookPort: number;
   webhookSecret: string;
   webhookSignatureToleranceSeconds: number;
+  /** Single-app mode: the singleton tenant used for all webhooks. */
+  singleTenant: TenantConfig | null;
+  /**
+   * Multi-tenant mode: array of TenantConfigs keyed by `tenantKey`.
+   * When set, the webhook server routes each incoming event to the
+   * matching TenantConfig by looking up `header.tenant_key`.
+   */
+  tenants: TenantConfig[];
+  /** Resolved per-tenant settings (built in resolveTenantConfig). */
   enableOutboundReply: boolean;
   enableDocCreate: boolean;
   enableTableCreate: boolean;
@@ -72,7 +117,7 @@ function parsePositiveInteger(
   if (!value) return defaultValue;
   const parsed = Number(value);
   if (!Number.isInteger(parsed) || parsed < 0) {
-    throw new Error(`Invalid ${envName}: ${value}`);
+    throw new Error(`Invalid ${envName}: ${parsed}`);
   }
   return parsed;
 }
@@ -124,13 +169,101 @@ function parseFieldName(value: string | undefined, defaultValue: string) {
   return trimmed || defaultValue;
 }
 
-function validateConfig(config: AppConfig): void {
+/** Raw tenant parsed from FEISHU_TENANTS JSON (before defaults are applied). */
+interface RawTenantEntry {
+  tenantKey: string;
+  appId: string;
+  appSecret: string;
+  botName?: string;
+  enableOutboundReply?: unknown;
+  enableDocCreate?: unknown;
+  enableTableCreate?: unknown;
+  bitableAppToken?: string;
+  bitableTableId?: string;
+  bitableListFieldMode?: string;
+  bitableOwnerFieldMode?: string;
+  bitableEstimateFieldMode?: string;
+  bitableDueFieldMode?: string;
+  bitableDoneFieldMode?: string;
+  bitableAttachmentFieldMode?: string;
+  bitableLinkFieldMode?: string;
+  bitableTitleFieldName?: string;
+  bitableListFieldName?: string;
+  bitableDetailsFieldName?: string;
+  bitableOwnerFieldName?: string;
+  bitableEstimateFieldName?: string;
+  bitableDueFieldName?: string;
+  bitableDoneFieldName?: string;
+  bitableAttachmentFieldName?: string;
+  bitableLinkedRecordsFieldName?: string;
+  bitableSourceCommandFieldName?: string;
+}
+
+function parseTenantsJson(raw: string): RawTenantEntry[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error('FEISHU_TENANTS must be valid JSON — expected an array of tenant objects.');
+  }
+  if (!Array.isArray(parsed)) {
+    throw new Error('FEISHU_TENANTS must be a JSON array of tenant objects.');
+  }
+  return parsed as RawTenantEntry[];
+}
+
+function rawToTenant(raw: RawTenantEntry): TenantConfig {
+  return {
+    tenantKey: raw.tenantKey,
+    appId: raw.appId,
+    appSecret: raw.appSecret,
+    botName: raw.botName,
+    enableOutboundReply:
+      raw.enableOutboundReply !== undefined
+        ? parseBoolean(String(raw.enableOutboundReply), false)
+        : undefined,
+    enableDocCreate:
+      raw.enableDocCreate !== undefined
+        ? parseBoolean(String(raw.enableDocCreate), false)
+        : undefined,
+    enableTableCreate:
+      raw.enableTableCreate !== undefined
+        ? parseBoolean(String(raw.enableTableCreate), false)
+        : undefined,
+    bitableAppToken: raw.bitableAppToken,
+    bitableTableId: raw.bitableTableId,
+    bitableListFieldMode: parseTableListFieldMode(raw.bitableListFieldMode),
+    bitableOwnerFieldMode: parseTableOwnerFieldMode(raw.bitableOwnerFieldMode),
+    bitableEstimateFieldMode: parseTableEstimateFieldMode(raw.bitableEstimateFieldMode),
+    bitableDueFieldMode: parseTableDueFieldMode(raw.bitableDueFieldMode),
+    bitableDoneFieldMode: parseTableDoneFieldMode(raw.bitableDoneFieldMode),
+    bitableAttachmentFieldMode: parseTableAttachmentFieldMode(raw.bitableAttachmentFieldMode),
+    bitableLinkFieldMode: parseTableLinkFieldMode(raw.bitableLinkFieldMode),
+    bitableTitleFieldName: parseFieldName(raw.bitableTitleFieldName, 'Title'),
+    bitableListFieldName: parseFieldName(raw.bitableListFieldName, 'List'),
+    bitableDetailsFieldName: parseFieldName(raw.bitableDetailsFieldName, 'Details'),
+    bitableOwnerFieldName: parseFieldName(raw.bitableOwnerFieldName, 'Owner'),
+    bitableEstimateFieldName: parseFieldName(raw.bitableEstimateFieldName, 'Estimate'),
+    bitableDueFieldName: parseFieldName(raw.bitableDueFieldName, 'Due'),
+    bitableDoneFieldName: parseFieldName(raw.bitableDoneFieldName, 'Done'),
+    bitableAttachmentFieldName: parseFieldName(raw.bitableAttachmentFieldName, 'Attachment'),
+    bitableLinkedRecordsFieldName: parseFieldName(
+      raw.bitableLinkedRecordsFieldName,
+      'LinkedRecords',
+    ),
+    bitableSourceCommandFieldName: parseFieldName(raw.bitableSourceCommandFieldName, 'SourceCommand'),
+  };
+}
+
+function validateSingleTenantConfig(config: AppConfig): void {
   const errors: string[] = [];
 
   if (!config.mockMode) {
     if (!config.appId) errors.push('FEISHU_APP_ID is required in production mode');
     if (!config.appSecret) errors.push('FEISHU_APP_SECRET is required in production mode');
-    if (!config.webhookSecret) errors.push('FEISHU_WEBHOOK_SECRET is required in production mode');
+    if (!config.webhookSecret) {
+      errors.push('FEISHU_WEBHOOK_SECRET is required in production mode');
+    }
   }
 
   if (config.enableTableCreate && !config.mockMode) {
@@ -145,13 +278,52 @@ function validateConfig(config: AppConfig): void {
   if (errors.length > 0) {
     throw new Error(
       `Configuration error:\n  - ${errors.join('\n  - ')}\n` +
-      `Set FEISHU_MOCK_MODE=true to run without Feishu credentials.`,
+        `Set FEISHU_MOCK_MODE=true to run without Feishu credentials.`,
     );
   }
 }
 
+function validateMultiTenantConfig(config: AppConfig): void {
+  const errors: string[] = [];
+
+  if (config.tenants.length === 0) {
+    errors.push('FEISHU_TENANTS is set but contains an empty array — at least one tenant is required.');
+  }
+
+  const tenantKeys = new Set<string>();
+  const appIds = new Set<string>();
+  for (const tenant of config.tenants) {
+    if (!tenant.tenantKey) errors.push('Each tenant must have a tenantKey field.');
+    if (!tenant.appId) errors.push(`Tenant "${tenant.tenantKey ?? '(unknown)'}": appId is required.`);
+    if (!tenant.appSecret) {
+      errors.push(`Tenant "${tenant.tenantKey ?? '(unknown)'}": appSecret is required.`);
+    }
+    if (tenant.tenantKey && tenantKeys.has(tenant.tenantKey)) {
+      errors.push(`Duplicate tenantKey "${tenant.tenantKey}" — each tenant must have a unique tenantKey.`);
+    }
+    if (tenant.appId && appIds.has(tenant.appId)) {
+      errors.push(`Duplicate appId "${tenant.appId}" — each tenant must have a unique appId.`);
+    }
+    tenantKeys.add(tenant.tenantKey);
+    appIds.add(tenant.appId);
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Multi-tenant configuration error:\n  - ${errors.join('\n  - ')}`);
+  }
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
-  const config: AppConfig = {
+  const tenantsEnv = env.FEISHU_TENANTS;
+  const isMultiTenant = tenantsEnv !== undefined && tenantsEnv !== '';
+
+  let rawTenants: RawTenantEntry[] = [];
+  if (isMultiTenant) {
+    rawTenants = parseTenantsJson(tenantsEnv);
+  }
+
+  // Base config (used as defaults in multi-tenant mode).
+  const base: AppConfig = {
     appId: env.FEISHU_APP_ID ?? '',
     appSecret: env.FEISHU_APP_SECRET ?? '',
     botName: env.FEISHU_BOT_NAME ?? 'feishu-flow-kit',
@@ -165,6 +337,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       'FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS',
       300,
     ),
+    singleTenant: null,
+    tenants: [],
     enableOutboundReply: parseBoolean(env.FEISHU_ENABLE_OUTBOUND_REPLY, false),
     enableDocCreate: parseBoolean(env.FEISHU_ENABLE_DOC_CREATE, false),
     enableTableCreate: parseBoolean(env.FEISHU_ENABLE_TABLE_CREATE, false),
@@ -185,10 +359,98 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     bitableDueFieldName: parseFieldName(env.FEISHU_BITABLE_DUE_FIELD_NAME, 'Due'),
     bitableDoneFieldName: parseFieldName(env.FEISHU_BITABLE_DONE_FIELD_NAME, 'Done'),
     bitableAttachmentFieldName: parseFieldName(env.FEISHU_BITABLE_ATTACHMENT_FIELD_NAME, 'Attachment'),
-    bitableLinkedRecordsFieldName: parseFieldName(env.FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME, 'LinkedRecords'),
-    bitableSourceCommandFieldName: parseFieldName(env.FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME, 'SourceCommand'),
+    bitableLinkedRecordsFieldName: parseFieldName(
+      env.FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME,
+      'LinkedRecords',
+    ),
+    bitableSourceCommandFieldName: parseFieldName(
+      env.FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME,
+      'SourceCommand',
+    ),
   };
 
-  validateConfig(config);
-  return config;
+  if (isMultiTenant) {
+    base.tenants = rawTenants.map(rawToTenant);
+    validateMultiTenantConfig(base);
+  } else {
+    // Single-app mode — build a synthetic singleTenant from legacy env vars.
+    base.singleTenant = {
+      tenantKey: env.FEISHU_TENANT_KEY ?? 'default',
+      appId: base.appId,
+      appSecret: base.appSecret,
+      botName: base.botName,
+      enableOutboundReply: base.enableOutboundReply,
+      enableDocCreate: base.enableDocCreate,
+      enableTableCreate: base.enableTableCreate,
+      bitableAppToken: base.bitableAppToken,
+      bitableTableId: base.bitableTableId,
+      bitableListFieldMode: base.bitableListFieldMode,
+      bitableOwnerFieldMode: base.bitableOwnerFieldMode,
+      bitableEstimateFieldMode: base.bitableEstimateFieldMode,
+      bitableDueFieldMode: base.bitableDueFieldMode,
+      bitableDoneFieldMode: base.bitableDoneFieldMode,
+      bitableAttachmentFieldMode: base.bitableAttachmentFieldMode,
+      bitableLinkFieldMode: base.bitableLinkFieldMode,
+      bitableTitleFieldName: base.bitableTitleFieldName,
+      bitableListFieldName: base.bitableListFieldName,
+      bitableDetailsFieldName: base.bitableDetailsFieldName,
+      bitableOwnerFieldName: base.bitableOwnerFieldName,
+      bitableEstimateFieldName: base.bitableEstimateFieldName,
+      bitableDueFieldName: base.bitableDueFieldName,
+      bitableDoneFieldName: base.bitableDoneFieldName,
+      bitableAttachmentFieldName: base.bitableAttachmentFieldName,
+      bitableLinkedRecordsFieldName: base.bitableLinkedRecordsFieldName,
+      bitableSourceCommandFieldName: base.bitableSourceCommandFieldName,
+    };
+    validateSingleTenantConfig(base);
+  }
+
+  return base;
+}
+
+/**
+ * Resolve effective tenant settings by merging a TenantConfig's per-tenant
+ * overrides on top of the base AppConfig defaults. Used by the webhook handler
+ * when processing events in multi-tenant mode.
+ */
+export function resolveTenantConfig(
+  base: AppConfig,
+  tenant: TenantConfig,
+): AppConfig {
+  return {
+    appId: tenant.appId,
+    appSecret: tenant.appSecret,
+    botName: tenant.botName ?? base.botName,
+    mockMode: false,
+    mockEventPath: base.mockEventPath,
+    logLevel: base.logLevel,
+    webhookPort: base.webhookPort,
+    webhookSecret: base.webhookSecret,
+    webhookSignatureToleranceSeconds: base.webhookSignatureToleranceSeconds,
+    singleTenant: null,
+    tenants: [],
+    enableOutboundReply: tenant.enableOutboundReply ?? base.enableOutboundReply,
+    enableDocCreate: tenant.enableDocCreate ?? base.enableDocCreate,
+    enableTableCreate: tenant.enableTableCreate ?? base.enableTableCreate,
+    bitableAppToken: tenant.bitableAppToken ?? base.bitableAppToken,
+    bitableTableId: tenant.bitableTableId ?? base.bitableTableId,
+    bitableListFieldMode: tenant.bitableListFieldMode ?? base.bitableListFieldMode,
+    bitableOwnerFieldMode: tenant.bitableOwnerFieldMode ?? base.bitableOwnerFieldMode,
+    bitableEstimateFieldMode: tenant.bitableEstimateFieldMode ?? base.bitableEstimateFieldMode,
+    bitableDueFieldMode: tenant.bitableDueFieldMode ?? base.bitableDueFieldMode,
+    bitableDoneFieldMode: tenant.bitableDoneFieldMode ?? base.bitableDoneFieldMode,
+    bitableAttachmentFieldMode: tenant.bitableAttachmentFieldMode ?? base.bitableAttachmentFieldMode,
+    bitableLinkFieldMode: tenant.bitableLinkFieldMode ?? base.bitableLinkFieldMode,
+    bitableTitleFieldName: tenant.bitableTitleFieldName ?? base.bitableTitleFieldName,
+    bitableListFieldName: tenant.bitableListFieldName ?? base.bitableListFieldName,
+    bitableDetailsFieldName: tenant.bitableDetailsFieldName ?? base.bitableDetailsFieldName,
+    bitableOwnerFieldName: tenant.bitableOwnerFieldName ?? base.bitableOwnerFieldName,
+    bitableEstimateFieldName: tenant.bitableEstimateFieldName ?? base.bitableEstimateFieldName,
+    bitableDueFieldName: tenant.bitableDueFieldName ?? base.bitableDueFieldName,
+    bitableDoneFieldName: tenant.bitableDoneFieldName ?? base.bitableDoneFieldName,
+    bitableAttachmentFieldName: tenant.bitableAttachmentFieldName ?? base.bitableAttachmentFieldName,
+    bitableLinkedRecordsFieldName: tenant.bitableLinkedRecordsFieldName ?? base.bitableLinkedRecordsFieldName,
+    bitableSourceCommandFieldName:
+      tenant.bitableSourceCommandFieldName ?? base.bitableSourceCommandFieldName,
+  };
 }

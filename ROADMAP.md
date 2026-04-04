@@ -54,7 +54,11 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is complete. M6 is fully done (M6.1–M6.7 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working (multi-platform linux/amd64+arm64 image published to ghcr.io/learner20230724/feishu-flow-kit). Developer guide (M6.7) covers architecture, slash-command extension, adapter patterns, retry, testing, and Docker reference. No pending roadmap items — repo is in a clean, deployable state. Optional future directions: real Feishu workspace E2E testing (needs credentials), plugin system, or multi-tenant real-world usage patterns.
+M5 is complete. M6 is fully done (M6.1–M6.8 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working. Developer guide (M6.7) and multi-tenant guide (M6.8) cover all production patterns.
+
+**Plugin system** (`src/core/plugin-system.ts`, `docs/plugin-system.md`) was implemented as a v1.0.2 enhancement — allows adding new slash commands via `FEISHU_PLUGINS` env var with zero core code changes. Reference plugins in `plugins/` (`/ping`, `/poll`).
+
+No blocking roadmap items. Optional future directions: real Feishu workspace E2E testing (needs credentials), or multi-tenant real-world usage patterns.
 
 ---
 

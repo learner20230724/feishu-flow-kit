@@ -4,12 +4,17 @@ import { buildDocCreateDraft } from './adapters/build-doc-create-draft.js';
 import { loadMockMessageEvent } from './adapters/load-mock-message-event.js';
 import { loadConfig } from './config/load-config.js';
 import { createLogger } from './core/logger.js';
+import { buildPluginContext, loadPlugins } from './core/plugin-system.js';
 import { startWebhookServer } from './server/start-webhook-server.js';
 import { runMessageWorkflow } from './workflows/run-message-workflow.js';
 
 async function main() {
   const config = loadConfig();
   const logger = createLogger(config.logLevel);
+
+  // Load and initialise plugins before the server starts.
+  const rawPlugins = await loadPlugins();
+  const pluginContext = rawPlugins.length > 0 ? buildPluginContext(rawPlugins) : undefined;
 
   logger.info('feishu-flow-kit bootstrap', {
     botName: config.botName,
@@ -107,7 +112,7 @@ async function main() {
   }
 
   logger.info('starting local webhook server');
-  startWebhookServer(config);
+  startWebhookServer(config, pluginContext);
 }
 
 main().catch((error) => {
