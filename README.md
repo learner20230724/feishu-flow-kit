@@ -77,9 +77,14 @@ A containerized image is published to GitHub Container Registry on every release
 # Pull the latest release
 docker pull ghcr.io/learner20230724/feishu-flow-kit:latest
 
-# Run with your .env
-docker run -d --env-file .env -p 3000:3000 ghcr.io/learner20230724/feishu-flow-kit:latest
+# Run with your .env (server listens on port 8787 inside the container)
+docker run -d --env-file .env -p 8787:8787 ghcr.io/learner20230724/feishu-flow-kit:latest
 
+# Verify it's running
+curl http://localhost:8787/healthz
+```
+
+For a full docker-compose setup with a public URL, see the [GHCR deployment guide](./docs/deployment.md#option-5--using-the-ghcr-image-directly).
 # Or with docker-compose (recommended for production)
 docker-compose up -d
 ```

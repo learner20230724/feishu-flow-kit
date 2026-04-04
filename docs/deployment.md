@@ -170,6 +170,101 @@ Go to **Feishu Open Platform → your app → Event Subscriptions → Request UR
 
 ---
 
+## Option 5 — Using the GHCR Image Directly
+
+A containerized image is published to [GitHub Container Registry](https://github.com/learner20230724/feishu-flow-kit/generate) on every `main` push and each `v*` tag. Use this when you want to run the bot without cloning the repo or building locally.
+
+### Image address
+
+```
+ghcr.io/learner20230724/feishu-flow-kit:<tag>
+```
+
+Available tags:
+
+| Tag | When | Use |
+|-----|------|-----|
+| `latest` | every `main` push | bleeding-edge |
+| `v1.0.1`, `v1.0.0` | each git tag | stable releases |
+| `1.0`, `1` | each minor/major tag | stable, auto-updates patch |
+| `<sha>` | every SHA | exact commit |
+
+### Quick local test (mock mode)
+
+No Feishu credentials needed — mock mode runs entirely offline:
+
+```bash
+docker run -d \
+  --name feishu-flow-kit \
+  -p 8787:8787 \
+  -e FEISHU_MOCK_MODE=true \
+  -e PORT=8787 \
+  ghcr.io/learner20230724/feishu-flow-kit:latest
+```
+
+Then visit `http://localhost:8787/healthz` to confirm it's running. In mock mode the bot loads `examples/mock-message-event.json` and responds with draft replies without needing a live Feishu app.
+
+### Self-hosted VPS with docker-compose
+
+On a server with a public IP, create this `docker-compose.yml`:
+
+```yaml
+services:
+  feishu-flow-kit:
+    image: ghcr.io/learner20230724/feishu-flow-kit:latest
+    container_name: feishu-flow-kit
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      FEISHU_APP_ID: ${FEISHU_APP_ID}
+      FEISHU_APP_SECRET: ${FEISHU_APP_SECRET}
+      FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET}
+      FEISHU_WEBHOOK_URL: https://your-domain.example.com/webhook
+      FEISHU_MOCK_MODE: "false"
+      FEISHU_ENABLE_OUTBOUND_REPLY: "true"
+      # FEISHU_BITABLE_APP_TOKEN: your_bitable_token
+      # FEISHU_BITABLE_TABLE_ID: your_table_id
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8787/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+```
+
+```bash
+# Create .env next to docker-compose.yml
+cp .env.example .env
+nano .env   # fill in FEISHU_APP_ID, FEISHU_APP_SECRET, FEISHU_WEBHOOK_SECRET
+
+# Point a domain at your server first (A record → server IP)
+# Then set FEISHU_WEBHOOK_URL=https://your-domain.example.com/webhook
+
+docker compose up -d
+curl https://your-domain.example.com/healthz
+```
+
+Then register `https://your-domain.example.com/webhook` in Feishu Open Platform → your app → Event Subscriptions.
+
+### Updating to a new version
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/learner20230724/feishu-flow-kit:latest
+
+# Restart the container to pick up the new image
+docker compose restart
+```
+
+Or pin to a specific release:
+
+```bash
+docker pull ghcr.io/learner20230724/feishu-flow-kit:v1.0.1
+# Then update docker-compose.yml image line and restart
+```
+
+---
+
 ## Registering the webhook (Feishu side)
 
 Regardless of which host you choose, the Feishu side setup is the same:

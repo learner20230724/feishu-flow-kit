@@ -169,6 +169,101 @@ URL：`https://your-domain.example.com/webhook`
 
 ---
 
+## 方式五 — 直接使用 GHCR 镜像
+
+每次 `main` 分支推送和每个 `v*` 标签都会将容器镜像发布到 [GitHub Container Registry](https://github.com/learner20230724/feishu-flow-kit/generate)。不想 clone 仓库或本地构建时，可直接使用预构建镜像。
+
+### 镜像地址
+
+```
+ghcr.io/learner20230724/feishu-flow-kit:<tag>
+```
+
+可用标签：
+
+| 标签 | 来源 | 用途 |
+|------|------|------|
+| `latest` | 每次 main 推送 | 最新版本 |
+| `v1.0.1`, `v1.0.0` | 每次 git tag | 稳定版 |
+| `1.0`, `1` | 每个 minor/major tag | 稳定版，自动跟随 patch |
+| `<sha>` | 每次提交 | 精确版本 |
+
+### 本地快速测试（mock 模式）
+
+无需飞书凭证，mock 模式完全离线运行：
+
+```bash
+docker run -d \
+  --name feishu-flow-kit \
+  -p 8787:8787 \
+  -e FEISHU_MOCK_MODE=true \
+  -e PORT=8787 \
+  ghcr.io/learner20230724/feishu-flow-kit:latest
+```
+
+访问 `http://localhost:8787/healthz` 确认运行状态。Mock 模式下 bot 加载 `examples/mock-message-event.json`，无需真实飞书应用即可返回草稿回复。
+
+### 自建 VPS（docker-compose）
+
+在有公网 IP 的服务器上，创建以下 `docker-compose.yml`：
+
+```yaml
+services:
+  feishu-flow-kit:
+    image: ghcr.io/learner20230724/feishu-flow-kit:latest
+    container_name: feishu-flow-kit
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      FEISHU_APP_ID: ${FEISHU_APP_ID}
+      FEISHU_APP_SECRET: ${FEISHU_APP_SECRET}
+      FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET}
+      FEISHU_WEBHOOK_URL: https://your-domain.example.com/webhook
+      FEISHU_MOCK_MODE: "false"
+      FEISHU_ENABLE_OUTBOUND_REPLY: "true"
+      # FEISHU_BITABLE_APP_TOKEN: your_bitable_token
+      # FEISHU_BITABLE_TABLE_ID: your_table_id
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8787/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+```
+
+```bash
+# 在 docker-compose.yml 同目录创建 .env
+cp .env.example .env
+nano .env   # 填写 FEISHU_APP_ID、FEISHU_APP_SECRET、FEISHU_WEBHOOK_SECRET
+
+# 先在 DNS 添加 A 记录指向服务器公网 IP
+# 再将 FEISHU_WEBHOOK_URL 设为 https://your-domain.example.com/webhook
+
+docker compose up -d
+curl https://your-domain.example.com/healthz
+```
+
+然后在飞书开放平台 → 你的应用 → 事件订阅注册 `https://your-domain.example.com/webhook`。
+
+### 更新到新版本
+
+```bash
+# 拉取最新镜像
+docker pull ghcr.io/learner20230724/feishu-flow-kit:latest
+
+# 重启容器以使用新镜像
+docker compose restart
+```
+
+或固定到指定版本：
+
+```bash
+docker pull ghcr.io/learner20230724/feishu-flow-kit:v1.0.1
+# 更新 docker-compose.yml 的 image 行后重启
+```
+
+---
+
 ## 飞书侧注册（通用）
 
 不管选择哪种部署方式，飞书侧的配置流程一致：

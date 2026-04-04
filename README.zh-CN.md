@@ -71,12 +71,14 @@ npm start            # 生产环境
 # 拉取最新版本
 docker pull ghcr.io/learner20230724/feishu-flow-kit:latest
 
-# 使用 .env 运行
-docker run -d --env-file .env -p 3000:3000 ghcr.io/learner20230724/feishu-flow-kit:latest
+# 使用 .env 运行（容器内部端口 8787）
+docker run -d --env-file .env -p 8787:8787 ghcr.io/learner20230724/feishu-flow-kit:latest
 
-# 推荐使用 docker-compose（生产环境）
-docker-compose up -d
+# 确认运行状态
+curl http://localhost:8787/healthz
 ```
+
+生产环境完整 docker-compose 配置（含公网域名、反向代理）见[部署指南](./docs/deployment.zh-CN.md#方式五--直接使用-ghcr-镜像)。
 
 完整部署指南（Railway、Render、fly.io、Ubuntu）参见 [`docs/deployment.zh-CN.md`](./docs/deployment.zh-CN.md)。
 
