@@ -23,7 +23,7 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 
 ### M2 — Minimal runtime
 - [x] config loader
-- [ ] retry helper
+- [x] retry helper (implemented in M6.4 — `src/core/retry.ts` with exponential backoff)
 - [x] event type definitions
 - [x] example handler
 
