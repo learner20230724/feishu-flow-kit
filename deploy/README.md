@@ -105,6 +105,84 @@ docker compose -f docker-compose.yml logs bot
 docker compose -f docker-compose.yml logs traefik
 ```
 
+## Monitoring & Observability
+
+### `/status` endpoint
+
+`GET /status` returns a JSON snapshot of the bot's runtime state — useful for health checks and alerting:
+
+```json
+{
+  "uptimeSeconds": 3847,
+  "eventCount": 142,
+  "lastEventAt": "2026-04-04T12:30:00.000Z",
+  "flags": {
+    "FEISHU_APP_ID": "cli_xxxxxxxx",
+    "NODE_ENV": "production"
+  },
+  "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+}
+```
+
+**Cron monitoring example** — poll every 5 minutes and alert if `lastEventAt` is stale:
+
+```bash
+# Quick health check (exit 0 = healthy, non-zero = unhealthy)
+STATUS=$(curl -sf https://your-vps.example.com/status)
+echo "$STATUS" | python3 -c "
+import sys, json, datetime
+d = json.load(sys.stdin)
+last = datetime.datetime.fromisoformat(d['lastEventAt'].replace('Z','+00:00'))
+age = (datetime.datetime.now(datetime.timezone.utc) - last).total_seconds()
+print(f'OK — last event {age:.0f}s ago' if age < 600 else f'ALERT — no events for {age:.0f}s')
+sys.exit(0 if age < 600 else 1)
+"
+```
+
+### Structured logs
+
+All bot log lines include a `requestId` field (UUID) that ties a single Feishu event through the entire processing pipeline. Filter by `requestId` to get every log line for one event:
+
+```bash
+# Tail bot logs and filter by a specific requestId
+docker compose -f docker-compose.yml logs -f bot | grep "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+# Count events processed per minute (useful for traffic spike detection)
+docker compose -f docker-compose.yml logs bot --since 1h 2>/dev/null \
+  | grep "event processed" | wc -l
+```
+
+**Log level control** — set `LOG_LEVEL=debug|info|warn|error` in `.env.production` to adjust verbosity.
+
+### Retries & resilience
+
+The bot retries Feishu API errors (HTTP 429 and 5xx, plus Feishu codes `99991661`/`99991663`) with exponential back-off automatically. A `requestId` that appears only in bot logs with retrying messages — but never succeeds — indicates a permanent Feishu API failure for that event.
+
+### Optional: Sentry error tracking
+
+```bash
+# In .env.production, add your Sentry DSN to enable error tracking:
+SENTRY_DSN=https://examplePublicKey@o0.ingest.sentry.io/0
+```
+
+Without `SENTRY_DSN` set, the Sentry integration is a no-op stub (zero overhead). With it, unhandled exceptions and failed retries are sent to Sentry automatically.
+
+### Useful monitoring commands
+
+```bash
+# Resource usage
+docker stats --no-stream
+
+# Restart count (high number = crash looping)
+docker inspect feishu-flow-kit_bot --format '{{.RestartCount}}'
+
+# Traefik TLS certificates status
+docker compose -f docker-compose.yml exec traefik traefik healthcheck
+
+# Verify TLS is active
+curl -sv https://your-vps.example.com/status 2>&1 | grep "SSL certificate verify\|TLS handshake"
+```
+
 ## Troubleshooting
 
 **Feishu reports "Verification failed"**
