@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="300" rx="16" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="15" font-weight="700" fill="#f1f5f9" letter-spacing="0.5">✨ What you get with feishu-flow-kit</text>
+
+  <!-- Row 1 -->
+  <!-- Card 1: Webhook Server -->
+  <rect x="16" y="56" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="16" y="56" width="196" height="4" rx="2" fill="#3b82f6"/>
+  <text x="114" y="86" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#93c5fd">🪝 Webhook Server</text>
+  <text x="114" y="106" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Express + Signature</text>
+  <text x="114" y="122" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Verification Ready</text>
+  <text x="114" y="148" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#475569">/status · /webhook · healthz</text>
+
+  <!-- Card 2: Slash Commands -->
+  <rect x="224" y="56" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="224" y="56" width="196" height="4" rx="2" fill="#8b5cf6"/>
+  <text x="322" y="86" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#c4b5fd">⚡ Slash Commands</text>
+  <text x="322" y="106" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">/doc · /table · /todo</text>
+  <text x="322" y="122" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">+ Plugin Commands</text>
+  <text x="322" y="148" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#475569">Extensible via FEISHU_PLUGINS</text>
+
+  <!-- Card 3: Feishu API Adapters -->
+  <rect x="432" y="56" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="432" y="56" width="196" height="4" rx="2" fill="#10b981"/>
+  <text x="530" y="86" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#6ee7b7">📄 Feishu API</text>
+  <text x="530" y="106" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Docs · Bitable · Messages</text>
+  <text x="530" y="122" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Draft → Live in one env var</text>
+  <text x="530" y="148" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#475569">Schema-aware table creation</text>
+
+  <!-- Card 4: Plugin Ecosystem -->
+  <rect x="640" y="56" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="640" y="56" width="196" height="4" rx="2" fill="#f59e0b"/>
+  <text x="738" y="86" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#fcd34d">🧩 Plugin System</text>
+  <text x="738" y="106" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">5 Lifecycle Hooks</text>
+  <text x="738" y="122" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">CLI Scaffolder + npm pkg</text>
+  <text x="738" y="148" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#475569">help · ping · poll · template</text>
+
+  <!-- Row 2 -->
+  <!-- Card 5: i18n -->
+  <rect x="16" y="176" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="16" y="176" width="196" height="4" rx="2" fill="#ec4899"/>
+  <text x="114" y="206" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#f9a8d4">🌐 i18n Support</text>
+  <text x="114" y="226" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">English + 中文</text>
+  <text x="114" y="242" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Auto-detect from</text>
+  <text x="114" y="258" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">sender.language</text>
+
+  <!-- Card 6: Error Resilience -->
+  <rect x="224" y="176" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="224" y="176" width="196" height="4" rx="2" fill="#f97316"/>
+  <text x="322" y="206" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#fdba74">🛡️ Error Resilience</text>
+  <text x="322" y="226" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Exponential Backoff</text>
+  <text x="322" y="242" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">429 · 5xx · Feishu codes</text>
+  <text x="322" y="258" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#475569">Optional Sentry integration</text>
+
+  <!-- Card 7: Docker + GHCR -->
+  <rect x="432" y="176" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="432" y="176" width="196" height="4" rx="2" fill="#06b6d4"/>
+  <text x="530" y="206" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#67e8f9">🐳 Docker + GHCR</text>
+  <text x="530" y="226" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Multi-arch (amd64 + arm64)</text>
+  <text x="530" y="242" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">Auto-published on release</text>
+  <text x="530" y="258" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#475569">docker-compose + Traefik</text>
+
+  <!-- Card 8: Local Demo -->
+  <rect x="640" y="176" width="196" height="108" rx="10" fill="url(#card)" stroke="#334155" stroke-width="1"/>
+  <rect x="640" y="176" width="196" height="4" rx="2" fill="#84cc16"/>
+  <text x="738" y="206" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#bef264">🎮 Local Demo</text>
+  <text x="738" y="226" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">npm run demo</text>
+  <text x="738" y="242" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#64748b">8 realistic payloads</text>
+  <text x="738" y="258" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#475569">No credentials needed</text>
+
+  <!-- Version badge -->
+  <rect x="780" y="16" width="104" height="22" rx="11" fill="#1e40af"/>
+  <text x="832" y="31" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#e0e7ff">v1.0.2 · MIT</text>
+</svg>

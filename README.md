@@ -25,6 +25,8 @@ This project is a cleaner starting point:
 - lightweight AI-assisted internal tools
 - local demos that can later be deployed properly
 
+![Features overview](./docs/assets/features-overview.svg)
+
 ## Quick Start
 
 **1. Install**

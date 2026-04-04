@@ -25,6 +25,8 @@
 - 轻量 AI 内部工具
 - 先本地演示、后续再正式部署的 demo
 
+![功能总览](./docs/assets/features-overview.svg)
+
 ## 快速上手
 
 **1. 安装**
