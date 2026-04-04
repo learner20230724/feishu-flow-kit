@@ -161,6 +161,20 @@ Creates a Feishu interactive card poll.
 
 Outputs the raw Feishu card JSON draft (for use with `FEISHU_ENABLE_OUTBOUND_REPLY=true`).
 
+### `/help` (`plugins/help-plugin.ts`)
+
+Dynamically lists all available commands — both built-in (`/doc`, `/table`, `/todo`) and any registered via plugins. Adding a new plugin automatically extends `/help` with no extra work.
+
+```
+/help
+```
+
+No `FEISHU_PLUGINS` entry required — `/help` is loaded automatically when the plugin system is initialised. If you want to control load order, add it explicitly:
+
+```
+FEISHU_PLUGINS=./plugins/help-plugin.js,./plugins/ping-plugin.js
+```
+
 ---
 
 ## Writing a Real Plugin
@@ -226,8 +240,9 @@ export const plugin: FeishuPlugin = {
 ```
 feishu-flow-kit/
 ├── plugins/
-│   ├── ping-plugin.ts      # /ping command (reference implementation)
-│   └── poll-plugin.ts      # /poll command (reference implementation)
+│   ├── help-plugin.ts      # /help command — lists all registered commands
+│   ├── ping-plugin.ts       # /ping command (reference implementation)
+│   └── poll-plugin.ts       # /poll command (reference implementation)
 └── src/
     └── core/
         └── plugin-system.ts  # PluginRegistry, loadPlugins, FeishuPlugin interface

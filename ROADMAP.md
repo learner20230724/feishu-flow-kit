@@ -56,7 +56,7 @@ Notes:
 ## Current next step
 M5 is complete. M6 is fully done (M6.1–M6.8 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working. Developer guide (M6.7) and multi-tenant guide (M6.8) cover all production patterns.
 
-**Plugin system** (`src/core/plugin-system.ts`, `docs/plugin-system.md`) was implemented as a v1.0.2 enhancement — allows adding new slash commands via `FEISHU_PLUGINS` env var with zero core code changes. Reference plugins in `plugins/` (`/ping`, `/poll`).
+**Plugin system** (`src/core/plugin-system.ts`, `docs/plugin-system.md`) was implemented as a v1.0.2 enhancement — allows adding new slash commands via `FEISHU_PLUGINS` env var with zero core code changes. Reference plugins in `plugins/` (`/help`, `/ping`, `/poll`). `/help` dynamically lists all registered commands (built-in + plugin).
 
 No blocking roadmap items. Optional future directions: real Feishu workspace E2E testing (needs credentials), or multi-tenant real-world usage patterns.
 
