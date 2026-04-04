@@ -124,8 +124,34 @@ function parseFieldName(value: string | undefined, defaultValue: string) {
   return trimmed || defaultValue;
 }
 
+function validateConfig(config: AppConfig): void {
+  const errors: string[] = [];
+
+  if (!config.mockMode) {
+    if (!config.appId) errors.push('FEISHU_APP_ID is required in production mode');
+    if (!config.appSecret) errors.push('FEISHU_APP_SECRET is required in production mode');
+    if (!config.webhookSecret) errors.push('FEISHU_WEBHOOK_SECRET is required in production mode');
+  }
+
+  if (config.enableTableCreate && !config.mockMode) {
+    if (!config.bitableAppToken) {
+      errors.push('FEISHU_BITABLE_APP_TOKEN is required when FEISHU_ENABLE_TABLE_CREATE=true');
+    }
+    if (!config.bitableTableId) {
+      errors.push('FEISHU_BITABLE_TABLE_ID is required when FEISHU_ENABLE_TABLE_CREATE=true');
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(
+      `Configuration error:\n  - ${errors.join('\n  - ')}\n` +
+      `Set FEISHU_MOCK_MODE=true to run without Feishu credentials.`,
+    );
+  }
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
-  return {
+  const config: AppConfig = {
     appId: env.FEISHU_APP_ID ?? '',
     appSecret: env.FEISHU_APP_SECRET ?? '',
     botName: env.FEISHU_BOT_NAME ?? 'feishu-flow-kit',
@@ -162,4 +188,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     bitableLinkedRecordsFieldName: parseFieldName(env.FEISHU_BITABLE_LINKED_RECORDS_FIELD_NAME, 'LinkedRecords'),
     bitableSourceCommandFieldName: parseFieldName(env.FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME, 'SourceCommand'),
   };
+
+  validateConfig(config);
+  return config;
 }

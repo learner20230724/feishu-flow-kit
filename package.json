@@ -24,6 +24,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx src/index.ts",
+    "build": "tsc",
     "check": "tsc --noEmit",
     "test": "node --import tsx --test",
     "table:mapping-draft": "node ./scripts/generate-table-mapping-env.mjs",
