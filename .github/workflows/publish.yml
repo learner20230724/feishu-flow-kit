@@ -2,19 +2,21 @@ name: Publish Docker Image
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     tags:
       - 'v*'
   pull_request:
-    branches: [main]
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +32,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -41,7 +43,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=sha,prefix=
+            type=sha
 
       - name: Build and push
         id: build
@@ -54,5 +56,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Image digest
-        run: 'echo "Published image digest: ${{ steps.build.outputs.digest }}"'
+      - name: Show image digest
+        run: echo "digest=${{ steps.build.outputs.digest }}"
