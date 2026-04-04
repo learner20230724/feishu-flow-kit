@@ -45,7 +45,7 @@ Build a clean starter kit for Feishu-centered automations and workflow tools tha
 - [x] decide the next visible milestone
 - [x] table / bitable slash-command workflow (**chosen**)
 - [x] richer table field mapping (date / number / linked record)
-- [ ] richer inline doc formatting (nested styles, auto-link)
+- [x] richer inline doc formatting (nested styles, auto-link)
 - [x] DX polish (mapping draft CLI now supports env output, file output, structured JSON review artifacts, documented input/sample variants, a raw Feishu field-list normalizer for schema handoff, baseline + advanced fixture-backed handoff demos that show raw response → normalized schema → mapping draft, and a dedicated verification script that re-checks both committed fixture chains)
 - [x] select-option handoff assets (smaller rollout-facing review asset, standalone override sample, minimal override-shape verification, and release-facing review-image / snapshot docs)
 
