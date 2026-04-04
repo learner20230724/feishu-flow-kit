@@ -1,13 +1,9 @@
 import type { AppConfig } from '../config/load-config.js';
 import type { TableRecordDraft } from './build-table-record-draft.js';
 import {
-  fetchTenantAccessToken,
-  InMemoryFeishuTenantAccessTokenCache,
-} from './fetch-tenant-access-token.js';
-import {
-  sendTableRecordRequest,
-  type SendTableRecordRequestResult,
-} from './send-table-record-request.js';
+  createTableRecordWithSchema,
+  type CreateTableRecordWithSchemaResult,
+} from './create-table-record-with-schema.js';
 
 type TableCreateConfig = Pick<
   AppConfig,
@@ -17,10 +13,8 @@ type TableCreateConfig = Pick<
 export interface MaybeCreateTableRecordResult {
   attempted: boolean;
   skippedReason?: string;
-  response?: SendTableRecordRequestResult;
+  response?: CreateTableRecordWithSchemaResult;
 }
-
-const tenantAccessTokenCache = new InMemoryFeishuTenantAccessTokenCache();
 
 export async function maybeCreateTableRecord(
   config: TableCreateConfig,
@@ -42,20 +36,17 @@ export async function maybeCreateTableRecord(
     };
   }
 
-  const tokenResult = await fetchTenantAccessToken({
-    appId: config.appId,
-    appSecret: config.appSecret,
-    fetchImpl,
-    cache: tenantAccessTokenCache,
-  });
-
-  const response = await sendTableRecordRequest({
-    tenantAccessToken: tokenResult.token,
-    draft,
-    appToken: config.bitableAppToken,
-    tableId: config.bitableTableId,
-    fetchImpl,
-  });
+  // Use schema-aware creation: fetches live Bitable schema and maps field names → field IDs
+  const response = await createTableRecordWithSchema(
+    {
+      appId: config.appId,
+      appSecret: config.appSecret,
+      appToken: config.bitableAppToken,
+      tableId: config.bitableTableId,
+      draft,
+      fetchImpl,
+    },
+  );
 
   return {
     attempted: true,

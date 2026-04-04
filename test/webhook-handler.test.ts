@@ -285,6 +285,29 @@ test('handleWebhookPayload creates a Feishu table record when table create is en
       );
     }
 
+    if (url.includes('/bitable/v1/apps/app_demo_token/tables/tbl_demo_id/fields')) {
+      return new Response(
+        JSON.stringify({
+          code: 0,
+          data: {
+            items: [
+              { field_id: 'fld_title', field_name: 'Title', type: 1 },
+              { field_id: 'fld_list', field_name: 'List', type: 3 },
+              { field_id: 'fld_source', field_name: 'SourceCommand', type: 1 },
+              { field_id: 'fld_details', field_name: 'Details', type: 1 },
+              { field_id: 'fld_owner', field_name: 'Owner', type: 1 },
+            ],
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    }
+
     if (url.includes('/bitable/v1/apps/app_demo_token/tables/tbl_demo_id/records')) {
       return new Response(
         JSON.stringify({
@@ -357,10 +380,11 @@ test('handleWebhookPayload creates a Feishu table record when table create is en
     );
 
     assert.equal(result.statusCode, 200);
-    assert.equal(requests.length, 2);
+    assert.equal(requests.length, 3);
     assert.match(requests[0].url, /tenant_access_token/);
-    assert.match(requests[1].url, /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records/);
-    assert.match(requests[1].body, /"List":\{"name":"backlog"\}/);
+    assert.match(requests[1].url, /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/fields/);
+    assert.match(requests[2].url, /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records/);
+    assert.match(requests[2].body, /"fld_list":\{"name":"backlog"\}/);
     assert.equal(result.body.tableCreate.attempted, true);
     assert.equal(result.body.tableCreate.response.recordId, 'rec_demo_1');
     assert.deepEqual(result.body.tableRecordDraft.body.fields, {

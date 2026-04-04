@@ -579,6 +579,29 @@ test('maybeCreateTableRecord fetches a token and creates a bitable record when e
         );
       }
 
+      if (url.includes('/bitable/v1/apps/app_demo_token/tables/tbl_demo_id/fields')) {
+        return new Response(
+          JSON.stringify({
+            code: 0,
+            data: {
+              items: [
+                { field_id: 'fld_title', field_name: 'Title', type: 1 },
+                { field_id: 'fld_list', field_name: 'List', type: 3 },
+                { field_id: 'fld_source', field_name: 'SourceCommand', type: 1 },
+                { field_id: 'fld_details', field_name: 'Details', type: 1 },
+                { field_id: 'fld_owner', field_name: 'Owner', type: 1 },
+              ],
+            },
+          }),
+          {
+            status: 200,
+            headers: {
+              'content-type': 'application/json',
+            },
+          },
+        );
+      }
+
       return new Response(
         JSON.stringify({
           code: 0,
@@ -598,9 +621,10 @@ test('maybeCreateTableRecord fetches a token and creates a bitable record when e
     },
   );
 
-  assert.equal(requests.length, 2);
+  assert.equal(requests.length, 3);
   assert.match(requests[0]?.url ?? '', /tenant_access_token/);
-  assert.match(requests[1]?.url ?? '', /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records$/);
+  assert.match(requests[1]?.url ?? '', /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/fields/);
+  assert.match(requests[2]?.url ?? '', /\/bitable\/v1\/apps\/app_demo_token\/tables\/tbl_demo_id\/records$/);
   assert.equal(result.attempted, true);
   assert.equal(result.response?.recordId, 'rec_demo_1');
 });
