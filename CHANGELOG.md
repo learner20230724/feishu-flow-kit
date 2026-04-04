@@ -10,6 +10,11 @@ This repo intentionally starts small: it aims to be a clean, local-first starter
 - **GHCR Docker publish workflow** — full rewrite fixing YAML parsing, permissions, checkout/buildx steps, and digest output; switched to manual `docker login` using `GITHUB_TOKEN` for reliable GHCR authentication
 - **Docker documentation** — `Dockerfile` multi-stage build instructions, `docker-compose.yml` with healthcheck, deployment guide (Railway/Render/fly.io/Ubuntu), and Docker usage section added to README (EN/ZH)
 
+## [1.0.2] — 2026-04-04
+
+### Fixed
+- **GHCR Docker workflow two critical bugs** — (1) invalid `github.repository.toLowerCase()` expression replaced with valid `github.event.repository.name`; (2) missing `package.json` COPY directive in Dockerfile build stage caused ENOENT on `npm run build`; workflow now verified working with multi-platform linux/amd64+arm64 GHCR image published successfully
+
 ## Unreleased
 
 ### Added

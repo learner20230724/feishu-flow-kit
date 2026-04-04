@@ -54,7 +54,7 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is complete. M6 is fully done (M6.1–M6.6 all checked). feishu-flow-kit v1.0.1 is the current release, with GHCR Docker publish workflow tested and documented. No pending roadmap items — repo is in a clean, deployable state. Optional future directions: real Feishu workspace E2E testing, multi-tenant support, or plugin system.
+M5 is complete. M6 is fully done (M6.1–M6.6 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working (multi-platform linux/amd64+arm64 image published to ghcr.io/learner20230724/feishu-flow-kit). No pending roadmap items — repo is in a clean, deployable state. Optional future directions: real Feishu workspace E2E testing, multi-tenant support, or plugin system.
 
 ---
 
