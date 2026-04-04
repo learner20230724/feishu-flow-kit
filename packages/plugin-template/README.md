@@ -151,6 +151,11 @@ Example `package.json` for a published plugin:
 }
 ```
 
+## See also
+
+- **[Plugin Example Walkthrough](../../docs/plugin-example-walkthrough.md)** — builds a complete `/remind` plugin from scratch with card replies, i18n patterns, and database extension examples
+- **[Plugin System Architecture](../../docs/plugin-system.md)** — lifecycle hooks, error isolation, command registry
+
 ## License
 
 MIT — same as [feishu-flow-kit](https://github.com/learner20230724/feishu-flow-kit).
