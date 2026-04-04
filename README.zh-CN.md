@@ -298,6 +298,7 @@ npm test
 
 - [Setup guide](./docs/setup-guide.md)
 - [Architecture overview](./docs/overview.md)
+- [部署指南](./docs/deployment.zh-CN.md) — Railway / Render / fly.io / 手动 Ubuntu
 - [`/table` 字段映射说明](./docs/table-bitable-field-mapping.md)
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)

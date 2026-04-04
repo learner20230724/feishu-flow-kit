@@ -65,7 +65,7 @@ M5 is now complete (all items checked). The `/table` schema handoff system cover
 ### M6.1 — Deployment guide
 - [x] Docker image (`Dockerfile`) with multi-stage build
 - [x] `docker-compose.yml` for local full-stack mock
-- [ ] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu) — see docs/deployment.md
+- [x] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu) — see docs/deployment.md
 - [x] Health-check endpoint (`GET /healthz`) — done
 - [x] Environment-variable validation on startup (fail-fast with clear messages) — done
 

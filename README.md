@@ -306,6 +306,7 @@ You can always add deployment pieces later.
 
 - [Setup guide](./docs/setup-guide.md)
 - [Architecture overview](./docs/overview.md)
+- [Deployment guide](./docs/deployment.md) — Railway, Render, fly.io, and manual Ubuntu
 - [Table / Bitable field mapping notes](./docs/table-bitable-field-mapping.md)
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
