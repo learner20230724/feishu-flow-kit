@@ -63,6 +63,23 @@ npm start            # 生产环境
 
 如需接入你自己的多维表格，参见 [`docs/table-bitable-field-mapping.md`](./docs/table-bitable-field-mapping.md) 中的字段映射指南。
 
+## Docker
+
+镜像发布在 GitHub Container Registry，每次 release 和 `main` push 自动构建：
+
+```bash
+# 拉取最新版本
+docker pull ghcr.io/learner20230724/feishu-flow-kit:latest
+
+# 使用 .env 运行
+docker run -d --env-file .env -p 3000:3000 ghcr.io/learner20230724/feishu-flow-kit:latest
+
+# 推荐使用 docker-compose（生产环境）
+docker-compose up -d
+```
+
+完整部署指南（Railway、Render、fly.io、Ubuntu）参见 [`docs/deployment.zh-CN.md`](./docs/deployment.zh-CN.md)。
+
 ## MVP 目标
 
 - 小而易懂的项目结构

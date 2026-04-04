@@ -69,6 +69,23 @@ To enable real Feishu API calls (not just drafts), set `FEISHU_ENABLE_OUTBOUND_R
 
 For `/table` with your own Bitable, see the field mapping guide in [`docs/table-bitable-field-mapping.md`](./docs/table-bitable-field-mapping.md).
 
+## Docker
+
+A containerized image is published to GitHub Container Registry on every release and `main` push.
+
+```bash
+# Pull the latest release
+docker pull ghcr.io/learner20230724/feishu-flow-kit:latest
+
+# Run with your .env
+docker run -d --env-file .env -p 3000:3000 ghcr.io/learner20230724/feishu-flow-kit:latest
+
+# Or with docker-compose (recommended for production)
+docker-compose up -d
+```
+
+See [`docs/deployment.md`](./docs/deployment.md) for full deployment guides (Railway, Render, fly.io, Ubuntu).
+
 ## MVP goals
 
 - a small, understandable project structure
