@@ -61,6 +61,35 @@ docker-compose down && docker-compose up -d
 
 The plugin registers `/hello` alongside the built-in `/todo`, `/doc`, and `/table` commands.
 
+### 4. Use the plugin template (recommended)
+
+The fastest way to start a new plugin:
+
+```bash
+# Scaffold a new plugin from the built-in template
+node scripts/create-plugin.mjs my-github-notify
+```
+
+This creates `plugins/my-github-notify/` with:
+- `plugins/template/index.ts` — entry point (updated with your plugin name)
+- `plugins/template/plugin.ts` — your logic, with all lifecycle hooks documented
+- `plugins/template/.env.example` — document your plugin's env vars
+- `plugins/template/README.md` — per-plugin usage guide
+
+The scaffolder also appends the new plugin path to `FEISHU_PLUGINS` in your `.env`.
+
+```bash
+# Dry-run to preview what would be created
+node scripts/create-plugin.mjs my-github-notify --dry-run
+```
+
+The template demonstrates all three response patterns:
+- **`/greeting [name]`** — Feishu interactive card reply
+- **`/greeting doc [name]`** — Feishu Doc creation draft
+- **`onCommandResult` / `afterProcess`** hooks — intercepting and post-processing
+
+See `plugins/template/README.md` for full details.
+
 ---
 
 ## Architecture
@@ -240,13 +269,22 @@ export const plugin: FeishuPlugin = {
 ```
 feishu-flow-kit/
 ├── plugins/
-│   ├── help-plugin.ts      # /help command — lists all registered commands
-│   ├── ping-plugin.ts       # /ping command (reference implementation)
-│   └── poll-plugin.ts       # /poll command (reference implementation)
+│   ├── help-plugin.ts       # /help command — lists all registered commands
+│   ├── ping-plugin.ts        # /ping command (reference implementation)
+│   ├── poll-plugin.ts        # /poll command (reference implementation)
+│   └── template/             # ⭐ Plugin template + scaffolder target
+│       ├── index.ts          # Entry point (export plugin)
+│       ├── plugin.ts         # Full implementation with all lifecycle hooks
+│       ├── .env.example      # Document your plugin's env vars
+│       └── README.md         # Per-plugin usage guide
+├── scripts/
+│   └── create-plugin.mjs     # CLI scaffolder: node scripts/create-plugin.mjs <name>
 └── src/
     └── core/
-        └── plugin-system.ts  # PluginRegistry, loadPlugins, FeishuPlugin interface
+        └── plugin-system.ts   # PluginRegistry, loadPlugins, FeishuPlugin interface
 ```
+
+To scaffold a new plugin: `node scripts/create-plugin.mjs <plugin-name>`
 
 ---
 

@@ -58,7 +58,9 @@ M5 is complete. M6 is fully done (M6.1–M6.8 all checked). feishu-flow-kit v1.0
 
 **Plugin system** (`src/core/plugin-system.ts`, `docs/plugin-system.md`) was implemented as a v1.0.2 enhancement — allows adding new slash commands via `FEISHU_PLUGINS` env var with zero core code changes. Reference plugins in `plugins/` (`/help`, `/ping`, `/poll`). `/help` dynamically lists all registered commands (built-in + plugin).
 
-No blocking roadmap items. Optional future directions: real Feishu workspace E2E testing (needs credentials), or multi-tenant real-world usage patterns.
+**Plugin ecosystem scaffolding** (M6.9): `plugins/template/` (complete plugin template with all lifecycle hooks), `scripts/create-plugin.mjs` (CLI scaffolder: `node scripts/create-plugin.mjs <name>`), `plugins/template/README.md`.
+
+No blocking roadmap items. Optional future directions: real Feishu workspace E2E testing (needs credentials), publish `@feishu/plugin-template` npm package, or multi-tenant real-world usage patterns.
 
 ---
 
@@ -116,6 +118,12 @@ No blocking roadmap items. Optional future directions: real Feishu workspace E2E
 ### M6.8 — Multi-tenant deployment guide
 - [x] Multi-tenant section in deploy/README.md (Docker Compose stack, FEISHU_TENANTS example)
 - [x] Multi-tenant example in deploy/.env.production.example
+
+### M6.9 — Plugin ecosystem scaffolding
+- [x] `plugins/template/` directory — complete plugin template with all lifecycle hooks documented
+- [x] `scripts/create-plugin.mjs` — CLI scaffolder: `node scripts/create-plugin.mjs <name>` generates a new plugin from the template
+- [x] `plugins/template/README.md` — per-plugin usage guide
+- [x] `docs/plugin-system.md` updated with template + scaffolder documentation
 
 ### M6.6 — GHCR Docker publish workflow (post-v1.0.0 fixes)
 - [x] Full rewrite of `.github/workflows/publish.yml` — fix YAML parsing of `}}`, permissions, checkout/buildx steps, digest output
