@@ -54,7 +54,7 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is complete. M6 is fully done (M6.1–M6.6 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working (multi-platform linux/amd64+arm64 image published to ghcr.io/learner20230724/feishu-flow-kit). No pending roadmap items — repo is in a clean, deployable state. Optional future directions: real Feishu workspace E2E testing, multi-tenant support, or plugin system.
+M5 is complete. M6 is fully done (M6.1–M6.7 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working (multi-platform linux/amd64+arm64 image published to ghcr.io/learner20230724/feishu-flow-kit). Developer guide (M6.7) covers architecture, slash-command extension, adapter patterns, retry, testing, and Docker reference. No pending roadmap items — repo is in a clean, deployable state. Optional future directions: real Feishu workspace E2E testing, multi-tenant support, or plugin system.
 
 ---
 
@@ -63,6 +63,12 @@ M5 is complete. M6 is fully done (M6.1–M6.6 all checked). feishu-flow-kit v1.0
 > **Goal:** Close the gap between "working starter kit" and "deployable v1.0 project" — covering deployment, CI, internationalization, and error-resilience.
 
 ### M6.1 — Deployment guide
+- [x] Docker image (`Dockerfile`) with multi-stage build
+- [x] `docker-compose.yml` for local full-stack mock
+- [x] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu) — see docs/deployment.md
+- [x] Health-check endpoint (`GET /healthz`) — done
+- [x] Environment-variable validation on startup (fail-fast with clear messages) — done
+- [x] Developer guide (EN + ZH): architecture overview, adding slash commands, adapter patterns, retry/resilience, testing, project structure, Docker reference — see docs/developer-guide.md
 - [x] Docker image (`Dockerfile`) with multi-stage build
 - [x] `docker-compose.yml` for local full-stack mock
 - [x] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu) — see docs/deployment.md
@@ -91,6 +97,16 @@ M5 is complete. M6 is fully done (M6.1–M6.6 all checked). feishu-flow-kit v1.0
 - [x] Create GitHub Release with full asset list
 - [x] Update repo description + topics on GitHub
 - [x] Verify all README links and screenshots are current
+
+### M6.7 — Developer guide (EN + ZH)
+- [x] Architecture overview and request flow diagram
+- [x] How to add a new slash command (4-step walkthrough with code examples)
+- [x] Adapter pattern: draft builders / maybe adapters / request adapters
+- [x] Retry & resilience: withRetry usage + Feishu error codes
+- [x] Configuration and feature flag patterns
+- [x] Testing guide: loadMockMessageEvent, vi.mock, coverage
+- [x] Full project structure reference
+- [x] Docker usage quick reference
 
 ### M6.6 — GHCR Docker publish workflow (post-v1.0.0 fixes)
 - [x] Full rewrite of `.github/workflows/publish.yml` — fix YAML parsing of `}}`, permissions, checkout/buildx steps, digest output
