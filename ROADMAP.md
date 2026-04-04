@@ -54,7 +54,7 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. M6 is drafted (see below). Recommended first M6 items: M6.2 GitHub Actions CI (small, high-value) or M6.1 Deployment guide (Dockerfile).
+M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. M6 is drafted (see below). Current next step: M6.3 i18n (string extraction, bilingual reply) or M6.4 Error resilience (structured logger + retry). M6.1 and M6.2 are done.
 
 ---
 
@@ -63,14 +63,14 @@ M5 is now complete (all items checked). The `/table` schema handoff system cover
 > **Goal:** Close the gap between "working starter kit" and "deployable v1.0 project" — covering deployment, CI, internationalization, and error-resilience.
 
 ### M6.1 — Deployment guide
-- [ ] Docker image (`Dockerfile`) with multi-stage build
-- [ ] `docker-compose.yml` for local full-stack mock
-- [ ] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu)
-- [ ] Health-check endpoint (`GET /health`)
-- [ ] Environment-variable validation on startup (fail-fast with clear messages)
+- [x] Docker image (`Dockerfile`) with multi-stage build
+- [x] `docker-compose.yml` for local full-stack mock
+- [ ] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu) — see docs/deployment.md
+- [x] Health-check endpoint (`GET /healthz`) — done
+- [x] Environment-variable validation on startup (fail-fast with clear messages) — done
 
 ### M6.2 — GitHub Actions CI
-- [ ] `test.yml` — run `npm test` + `npm run typecheck` on every PR and push to `main`
+- [x] `test.yml` — run `npm test` + `npm run typecheck` on every PR and push to `main`
 - [ ] `lint.yml` — run ESLint (if configured), otherwise skip
 - [ ] Test matrix: Node 20 + 22
 
