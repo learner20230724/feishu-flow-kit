@@ -2,6 +2,8 @@ import type { LogLevel } from '../config/load-config.js';
 
 type LogMethod = 'debug' | 'info' | 'warn' | 'error';
 
+export type Logger = ReturnType<typeof createLogger>;
+
 const priority: Record<LogLevel, number> = {
   debug: 10,
   info: 20,

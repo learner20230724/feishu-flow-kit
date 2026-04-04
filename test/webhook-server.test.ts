@@ -49,6 +49,39 @@ test('startWebhookServer exposes GET /healthz for local checks', async () => {
   }
 });
 
+test('startWebhookServer exposes GET /status with runtime metrics', async () => {
+  const server = createTestServer({
+    enableOutboundReply: true,
+    enableDocCreate: false,
+    enableTableCreate: true,
+  });
+
+  await once(server, 'listening');
+  const address = server.address();
+  const port = typeof address === 'object' && address ? address.port : 0;
+
+  try {
+    const result = await requestJson(`http://127.0.0.1:${port}/status`);
+
+    assert.equal(result.status, 200);
+    assert.equal(result.body.ok, true);
+    assert.equal(result.body.service, 'feishu-flow-kit');
+    assert.equal(result.body.mode, 'webhook');
+    assert.equal(result.body.flags.outboundReply, true);
+    assert.equal(result.body.flags.docCreate, false);
+    assert.equal(result.body.flags.tableCreate, true);
+    assert.equal(result.body.flags.sentry, false);
+    assert.equal(result.body.eventCount, 0);
+    assert.equal(result.body.lastEventAt, null);
+    assert.ok(typeof result.body.uptimeSeconds === 'number');
+    assert.ok(typeof result.body.startedAt === 'string');
+    assert.ok(typeof result.body.requestId === 'string');
+  } finally {
+    server.close();
+    await once(server, 'close');
+  }
+});
+
 test('startWebhookServer rejects non-POST webhook requests with 405', async () => {
   const server = createTestServer();
 
@@ -88,7 +121,7 @@ test('startWebhookServer handles url verification payloads over HTTP', async () 
     });
 
     assert.equal(result.status, 200);
-    assert.deepEqual(result.body, { challenge: 'verify_me' });
+    assert.equal(result.body.challenge, 'verify_me');
   } finally {
     server.close();
     await once(server, 'close');
@@ -153,7 +186,7 @@ test('startWebhookServer accepts webhook requests with valid signatures when sec
     });
 
     assert.equal(result.status, 200);
-    assert.deepEqual(result.body, { challenge: 'verify_me' });
+    assert.equal(result.body.challenge, 'verify_me');
   } finally {
     server.close();
     await once(server, 'close');

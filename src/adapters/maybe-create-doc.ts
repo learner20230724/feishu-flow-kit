@@ -1,4 +1,5 @@
 import type { AppConfig } from '../config/load-config.js';
+import type { RetryOptions } from '../core/retry.js';
 import {
   buildDocBlockChildrenDraft,
   type FeishuDocBlockChildrenDraft,
@@ -42,6 +43,7 @@ export async function maybeCreateDoc(
   config: DocCreateConfig,
   draft: FeishuDocCreateDraft,
   fetchImpl?: typeof fetch,
+  retryOpts?: RetryOptions,
 ): Promise<MaybeCreateDocResult> {
   if (!config.enableDocCreate) {
     return {
@@ -61,6 +63,7 @@ export async function maybeCreateDoc(
     tenantAccessToken: tokenResult.token,
     draft,
     fetchImpl,
+    retry: retryOpts,
   });
 
   let blockAppend: MaybeCreateDocBlockAppendResult | undefined;
@@ -74,6 +77,7 @@ export async function maybeCreateDoc(
         tenantAccessToken: tokenResult.token,
         draft: blockAppendDraft,
         fetchImpl,
+        retry: retryOpts,
       }),
     };
   } else {

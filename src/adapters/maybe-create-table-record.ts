@@ -1,4 +1,5 @@
 import type { AppConfig } from '../config/load-config.js';
+import type { RetryOptions } from '../core/retry.js';
 import type { TableRecordDraft } from './build-table-record-draft.js';
 import {
   createTableRecordWithSchema,
@@ -20,6 +21,7 @@ export async function maybeCreateTableRecord(
   config: TableCreateConfig,
   draft: TableRecordDraft,
   fetchImpl?: typeof fetch,
+  retryOpts?: RetryOptions,
 ): Promise<MaybeCreateTableRecordResult> {
   if (!config.enableTableCreate) {
     return {
@@ -36,7 +38,6 @@ export async function maybeCreateTableRecord(
     };
   }
 
-  // Use schema-aware creation: fetches live Bitable schema and maps field names → field IDs
   const response = await createTableRecordWithSchema(
     {
       appId: config.appId,
@@ -45,6 +46,7 @@ export async function maybeCreateTableRecord(
       tableId: config.bitableTableId,
       draft,
       fetchImpl,
+      retry: retryOpts,
     },
   );
 

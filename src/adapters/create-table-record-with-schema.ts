@@ -1,3 +1,4 @@
+import type { RetryOptions } from '../core/retry.js';
 import { fetchTenantAccessToken, InMemoryFeishuTenantAccessTokenCache } from './fetch-tenant-access-token.js';
 import { sendTableRecordRequest } from './send-table-record-request.js';
 import type { TableRecordDraft, TableRecordFieldValue } from './build-table-record-draft.js';
@@ -19,6 +20,7 @@ export interface CreateTableRecordWithSchemaOptions {
   tableId: string;
   draft: TableRecordDraft;
   fetchImpl?: typeof fetch;
+  retry?: RetryOptions;
 }
 
 export interface CreateTableRecordWithSchemaResult {
@@ -228,7 +230,7 @@ const tenantAccessTokenCache = new InMemoryFeishuTenantAccessTokenCache();
 export async function createTableRecordWithSchema(
   options: CreateTableRecordWithSchemaOptions,
 ): Promise<CreateTableRecordWithSchemaResult> {
-  const { appId, appSecret, appToken, tableId, draft, fetchImpl } = options;
+  const { appId, appSecret, appToken, tableId, draft, fetchImpl, retry } = options;
 
   // 1. Get tenant access token
   const tokenResult = await fetchTenantAccessToken({
@@ -254,6 +256,7 @@ export async function createTableRecordWithSchema(
     appToken,
     tableId,
     fetchImpl,
+    retry,
   });
 
   return {

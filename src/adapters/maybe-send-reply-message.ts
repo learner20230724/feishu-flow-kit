@@ -1,4 +1,5 @@
 import type { AppConfig } from '../config/load-config.js';
+import type { RetryOptions } from '../core/retry.js';
 import type { FeishuReplyMessageDraft } from './build-reply-message-draft.js';
 import {
   fetchTenantAccessToken,
@@ -20,6 +21,7 @@ export async function maybeSendReplyMessage(
   config: OutboundReplyConfig,
   draft: FeishuReplyMessageDraft,
   fetchImpl?: typeof fetch,
+  retryOpts?: RetryOptions,
 ): Promise<MaybeSendReplyMessageResult> {
   if (!config.enableOutboundReply) {
     return {
@@ -40,6 +42,7 @@ export async function maybeSendReplyMessage(
       tenantAccessToken: tokenResult.token,
       draft,
       fetchImpl,
+      retry: retryOpts,
     },
   );
 
