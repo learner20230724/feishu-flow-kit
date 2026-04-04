@@ -134,6 +134,12 @@ plugin.onCommandResult(result)      ← per event, mutate reply/tags
 plugin.afterProcess(event, result)  ← per event, side-effects only
 ```
 
+**Visual lifecycle diagram:**
+
+![Plugin lifecycle architecture diagram](../assets/plugin-lifecycle-diagram.png)
+
+> 🔗 **Interactive CLI walkthrough:** See [Plugin Scaffolder Walkthrough](./plugin-scaffolder-walkthrough.md) — shows exactly what `node scripts/create-plugin.mjs <name>` produces, with full generated file contents.
+
 ### Plugin Interface
 
 ```typescript

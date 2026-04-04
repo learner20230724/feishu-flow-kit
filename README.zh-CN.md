@@ -148,7 +148,9 @@ node scripts/create-plugin.mjs my-greeting
 # → 创建 plugins/my-greeting/，含 index.ts、plugin.ts、.env.example、README.md
 ```
 
-完整架构指南、生命周期钩子签名和插件编写参考见 [`docs/plugin-system.md`](./docs/plugin-system.md)。
+完整架构指南、生命周期钩子签名和插件编写参考见 [`docs/plugin-system.md`](./docs/plugin-system.md)。完整 CLI 脚手架演示见 [`docs/plugin-scaffolder-walkthrough.md`](./docs/plugin-scaffolder-walkthrough.md) — 展示脚手架生成的每个文件。
+
+![插件生命周期架构图](docs/assets/plugin-lifecycle-diagram.png)
 
 ![插件命令演示](docs/assets/plugin-commands-demo.png)
 

@@ -155,7 +155,9 @@ node scripts/create-plugin.mjs my-greeting
 # → creates plugins/my-greeting/ with index.ts, plugin.ts, .env.example, README.md
 ```
 
-See [`docs/plugin-system.md`](./docs/plugin-system.md) for the full architecture guide, lifecycle hook signatures, and plugin authoring reference.
+See [`docs/plugin-system.md`](./docs/plugin-system.md) for the full architecture guide, lifecycle hook signatures, and plugin authoring reference. For a complete CLI walkthrough, see [`docs/plugin-scaffolder-walkthrough.md`](./docs/plugin-scaffolder-walkthrough.md) — shows every file the scaffolder generates.
+
+![Plugin lifecycle architecture](docs/assets/plugin-lifecycle-diagram.png)
 
 ![Plugin commands in Feishu](docs/assets/plugin-commands-demo.png)
 
