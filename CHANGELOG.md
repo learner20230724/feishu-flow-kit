@@ -6,9 +6,14 @@ This repo intentionally starts small: it aims to be a clean, local-first starter
 
 ## Unreleased
 
+### Added
+- **`/table` schema-aware workflow** — draft-first Bitable record creation with full field-type coverage (18 types including text, number, date, checkbox, multi-select, user, location, phone, URL, attachment, cascade, department, contact, link)
+- **`table-mapping-config-preflight` system** — CLI validator (`scripts/validate-table-mapping-config.mjs`), config preflight docs (EN/ZH), advanced env example, and test suite for schema-handoff workflow
+- Schema handoff assets: mapping worksheet, demo scripts, raw field-list normalizer, fixture-backed verification chain, select-option override samples
+- Smoke test script for real Bitable end-to-end validation
+
 ### Planned
 - More `/doc` workflow coverage (richer spans, more block types, better DX)
-- A second workflow example (table / bitable automation)
 
 ## 0.1.0 — 2026-03-29
 
