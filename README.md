@@ -153,7 +153,17 @@ npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.js
 npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.json --out ./table-schema-from-feishu.json
 npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 npm run table:extract-select-option-review -- examples/feishu-fields-mapping-draft-advanced.json --format override
+npm run table:validate-mapping-config -- ./table-schema-from-feishu.json
 ```
+
+The mapping preflight accepts defaults from `process.env`, but it is usually more useful to point it at the exact rollout env you plan to ship:
+
+```bash
+npm run table:validate-mapping-config -- examples/feishu-fields-normalized-schema-advanced.json --env-file examples/table-mapping-advanced.env
+npm run table:validate-mapping-config -- examples/feishu-fields-normalized-schema-advanced.json --env-file examples/table-mapping-advanced.env --strict-raw
+```
+
+Use the normal mode when you want a softer review gate that still surfaces raw-semantic drift like `datetime`→`date` or `DuplexLink`→`linked_record` as warnings. Add `--strict-raw` when you want release or CI to fail on those drifts instead of only printing them.
 
 The repo also includes two full handoff fixture chains you can inspect directly:
 - `examples/feishu-fields-list-response.json` / `examples/feishu-fields-normalized-schema.json` / `examples/feishu-fields-mapping-draft.json` → baseline raw-response-to-review-artifact chain
@@ -165,7 +175,7 @@ And if you want to quickly confirm that the committed handoff artifacts still ma
 npm run verify:table-schema-handoff
 ```
 
-Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The JSON draft now also includes a small `reviewWarnings` section for the handoff signals most likely to cause real-table surprises: select option-set review, raw-vs-normalized datetime drift, and linked-record relation-shape review. Each warning carries `reviewAction`, `suggestedEnv`, and `reviewChecklist` hints so the reviewer can see the next move without opening a separate note, and the select-option warning now also carries a tiny `optionLabelSample` plus a trimmed `sourcePropertyExcerpt` so reviewers can spot likely label drift without reopening the raw export. For the select case specifically, the same JSON draft now also emits `selectOptionReviewDrafts`, a smaller rollout-ready subset you can paste into setup notes or a lightweight override layer without filtering the whole warning list yourself; its `optionRemapDraft` now also includes a tiny `overrideExample` label→option-id map so the rollout asset is directly copyable instead of only reviewable. Env output now renders the same warning block once with inline action hints and select label samples. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md), the end-to-end review path is shown in [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md), the smaller select rollout asset is split out in [`/table` select-option handoff asset](./docs/table-select-option-handoff.md), the intended minimal override contract now lives in [`/table` select-option override schema draft](./docs/table-select-option-override-schema.md), there is now also a compact [`/table` schema review page](./docs/table-schema-review-page.md) for quoteable review snippets and quick `.env` decisions, and the manual review gate is written down in [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md).
+Use the default env output when you want something easy to paste into `.env`. Use `--format json` when you want to review matches structurally, feed the result into another script, or keep unmatched fields in a machine-readable draft. The JSON draft now also includes a small `reviewWarnings` section for the handoff signals most likely to cause real-table surprises: select option-set review, raw-vs-normalized datetime drift, and linked-record relation-shape review. Each warning carries `reviewAction`, `suggestedEnv`, and `reviewChecklist` hints so the reviewer can see the next move without opening a separate note, and the select-option warning now also carries a tiny `optionLabelSample` plus a trimmed `sourcePropertyExcerpt` so reviewers can spot likely label drift without reopening the raw export. For the select case specifically, the same JSON draft now also emits `selectOptionReviewDrafts`, a smaller rollout-ready subset you can paste into setup notes or a lightweight override layer without filtering the whole warning list yourself; its `optionRemapDraft` now also includes a tiny `overrideExample` label→option-id map so the rollout asset is directly copyable instead of only reviewable. Env output now renders the same warning block once with inline action hints and select label samples. The input shape and sample variants are documented in [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md), the end-to-end review path is shown in [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md), the smaller select rollout asset is split out in [`/table` select-option handoff asset](./docs/table-select-option-handoff.md), the intended minimal override contract now lives in [`/table` select-option override schema draft](./docs/table-select-option-override-schema.md), there is now also a compact [`/table` schema review page](./docs/table-schema-review-page.md) for quoteable review snippets and quick `.env` decisions, a dedicated [`/table` mapping config preflight`](./docs/table-mapping-config-preflight.md) page for rollout-time env/schema validation, and the manual review gate is written down in [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md).
 
 Example mock inputs:
 - `examples/mock-message-event.json` → `/todo` flow
@@ -257,6 +267,7 @@ You can always add deployment pieces later.
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
 - [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)
 - [`/table` schema review page](./docs/table-schema-review-page.md)
+- [`/table` mapping config preflight](./docs/table-mapping-config-preflight.md)
 - [`/table` select-option handoff asset](./docs/table-select-option-handoff.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)

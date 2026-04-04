@@ -70,6 +70,11 @@ npm run -s table:validate-select-option-override -- examples/table-select-option
 
 green "select-option override assets ok"
 
+section "Config-backed table mapping preflight"
+npm run -s table:validate-mapping-config -- examples/feishu-fields-normalized-schema-advanced.json --env-file examples/table-mapping-advanced.env
+
+green "config-backed table mapping preflight ok"
+
 section "npm pack (dry-run)"
 PACK_OUT="$(npm pack --dry-run 2>/dev/null | sed -n '1,200p')"
 echo "$PACK_OUT"

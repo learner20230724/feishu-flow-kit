@@ -122,7 +122,6 @@ If your Bitable uses these exact names and text-like field types, the starter pa
 The current `/table` write path is already wider than the original text-only starter, but it still does **not** yet handle things like:
 
 - automatic schema discovery from the target Bitable table
-- preflight validation that compares your configured field-name overrides against the real schema before `create-record`
 - automatic coercion for arbitrary field types beyond the current starter modes
 - option discovery or auto-create for select fields
 - localized field-name lookup without explicit env var remapping
@@ -131,12 +130,23 @@ The current `/table` write path is already wider than the original text-only sta
 It also does not currently:
 
 - fetch table schema before writing
-- validate field existence before calling `create-record`
 - coerce values into different field payload shapes beyond the current starter modes
 - auto-create missing fields
 - reconcile localized field names automatically (manual field-name overrides are supported, schema discovery is not)
 
 That is deliberate. The current milestone is about a visible, understandable starter path, not a general Bitable ORM.
+
+What the repo can do now is a smaller, config-backed preflight check: once you already have a normalized field-list export, `npm run table:validate-mapping-config -- <schema.json>` compares your current `FEISHU_BITABLE_*` env values against that schema before you try real writes. It is intentionally local-first and explicit — no live schema fetch, no hidden network step — but it closes the most immediate gap between handoff docs and rollout-time mistakes.
+
+A ready-to-run example is included:
+
+```bash
+npm run table:validate-mapping-config -- examples/feishu-fields-normalized-schema-advanced.json --env-file examples/table-mapping-advanced.env
+```
+
+By default the validator accepts raw-semantic drift such as a normalized `date` field whose original Feishu metadata still says `datetime`, but it prints a warning so you notice it before rollout. If you want to turn those warnings into a hard gate for release or preflight CI, add `--strict-raw`.
+
+If you want the rollout-time validator behavior written down in one place instead of spread across this page and the README, use [`/table` mapping config preflight](./table-mapping-config-preflight.md).
 
 ---
 

@@ -2,7 +2,7 @@
 
 Use this before publishing `feishu-flow-kit` as a public repo or cutting a visible snapshot tag.
 
-Last verified locally: 2026-03-30 16:14 UTC.
+Last verified locally: 2026-04-01 09:35 UTC.
 
 ## 1. Repo hygiene
 
@@ -35,6 +35,7 @@ Last verified locally: 2026-03-30 16:14 UTC.
 - [x] `npm test`
 - [x] `npm run table:validate-select-option-override -- examples/table-select-option-override-sample.json`
 - [x] `npm run table:validate-select-option-override -- examples/table-select-option-override-bundle-sample.json --field List`
+- [x] `npm run table:validate-mapping-config -- examples/feishu-fields-normalized-schema-advanced.json --env-file examples/table-mapping-advanced.env`
 - [x] no knowingly broken demo path remains in docs
 - [x] `npm run verify:release` provides a one-command local pre-publish sanity check
 

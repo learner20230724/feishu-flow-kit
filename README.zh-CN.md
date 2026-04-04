@@ -154,6 +154,15 @@ npm run table:normalize-feishu-fields -- examples/feishu-fields-list-response.js
 npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 ```
 
+如果你要校验的是一份准备真实 rollout 的 `.env`，更推荐直接把目标 env 文件一起带上：
+
+```bash
+npm run table:validate-mapping-config -- examples/feishu-fields-normalized-schema-advanced.json --env-file examples/table-mapping-advanced.env
+npm run table:validate-mapping-config -- examples/feishu-fields-normalized-schema-advanced.json --env-file examples/table-mapping-advanced.env --strict-raw
+```
+
+默认模式适合做较温和的 preflight gate：像 `datetime`→`date`、`DuplexLink`→`linked_record` 这类 raw-semantic drift 会被保留成 warning，而不是直接失败。如果你希望 release 或 CI 在这些语义漂移上直接卡住，就加 `--strict-raw`。
+
 仓库里也附带了两条完整的 handoff fixture chain，可直接复查：
 - `examples/feishu-fields-list-response.json` / `examples/feishu-fields-normalized-schema.json` / `examples/feishu-fields-mapping-draft.json` → baseline 样例链路
 - `examples/feishu-fields-list-response-advanced.json` / `examples/feishu-fields-normalized-schema-advanced.json` / `examples/feishu-fields-mapping-draft-advanced.json` → advanced raw-fidelity 样例链路，并补了一段可直接复用到 setup notes、PR review、schema handoff comments 的短 excerpt，专门把 `optionCount`、`datetime` formatter 漂移、`DuplexLink` relation shape 摘出来
@@ -164,7 +173,7 @@ npm run table:mapping-draft -- ./table-schema-from-feishu.json --format json
 npm run verify:table-schema-handoff
 ```
 
-默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。现在 JSON draft 里也会额外给出一个很小的 `reviewWarnings` 区块，专门把 raw-vs-normalized 语义漂移显式标出来，避免像 raw `datetime` / `single_link` 这种信息在 handoff 里悄悄被折叠成通用的 `date` / `linked_record`。而对 select 列这类更常需要单独 rollout note 的场景，现在同一份 JSON 也会额外给出 `selectOptionReviewDrafts`，把 option label sample、精简后的 raw excerpt，以及 label→option-id remap draft 单独收出来，后续复用时不用自己再从完整 warning 列表里筛；其中 `optionRemapDraft` 现在还多了一段很小的 `overrideExample` label→option-id map，让这份 rollout 资产更接近可直接复制，而不只是可审查。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)，完整审查路径见 [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)，现在也把更小的 select rollout 资产单独拆成了 [`/table` select-option handoff asset](./docs/table-select-option-handoff.md)，并新增了 [`/table` select-option override schema draft](./docs/table-select-option-override-schema.md) 作为后续实现层可对齐的最小约定；另外还补了一页更适合引用和快速做 `.env` 决策的英文 [`/table` schema review page](./docs/table-schema-review-page.md) 与中文版 [`/table` schema review 页面](./docs/table-schema-review-page.zh-CN.md)，人工复核清单见 [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md)。
+默认输出适合直接拷进 `.env`。如果你想把匹配结果接进别的脚本、保留结构化审查记录，或者明确看到 unmatched 字段，改用 `--format json` 更合适。现在 JSON draft 里也会额外给出一个很小的 `reviewWarnings` 区块，专门把 raw-vs-normalized 语义漂移显式标出来，避免像 raw `datetime` / `single_link` 这种信息在 handoff 里悄悄被折叠成通用的 `date` / `linked_record`。而对 select 列这类更常需要单独 rollout note 的场景，现在同一份 JSON 也会额外给出 `selectOptionReviewDrafts`，把 option label sample、精简后的 raw excerpt，以及 label→option-id remap draft 单独收出来，后续复用时不用自己再从完整 warning 列表里筛；其中 `optionRemapDraft` 现在还多了一段很小的 `overrideExample` label→option-id map，让这份 rollout 资产更接近可直接复制，而不只是可审查。输入 JSON 的约定和 sample variants 已单独写在 [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)，完整审查路径见 [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)，现在也把更小的 select rollout 资产单独拆成了 [`/table` select-option handoff asset](./docs/table-select-option-handoff.md)，并新增了 [`/table` select-option override schema draft](./docs/table-select-option-override-schema.md) 作为后续实现层可对齐的最小约定；另外还补了一页更适合引用和快速做 `.env` 决策的英文 [`/table` schema review page](./docs/table-schema-review-page.md) 与中文版 [`/table` schema review 页面](./docs/table-schema-review-page.zh-CN.md)，也新增了一页专门讲 rollout 前 env/schema 校验的 [`/table` mapping config preflight`](./docs/table-mapping-config-preflight.zh-CN.md)，人工复核清单见 [`/table` schema handoff review checklist](./docs/table-schema-handoff-review-checklist.md)。
 
 当前 mock 输入示例：
 - `examples/mock-message-event.json` → `/todo` 流程
@@ -257,6 +266,7 @@ npm test
 - [`/table` schema handoff demo](./docs/table-schema-handoff-demo.md)
 - [`/table` schema review page](./docs/table-schema-review-page.md)
 - [`/table` schema review 页面（中文）`](./docs/table-schema-review-page.zh-CN.md)
+- [`/table` mapping config preflight（配置预检）`](./docs/table-mapping-config-preflight.zh-CN.md)
 - [`/table` select-option handoff 资产`](./docs/table-select-option-handoff.md)
 - [`/table` webhook 成功 / 失败示例](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)

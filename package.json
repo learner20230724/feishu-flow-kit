@@ -30,6 +30,7 @@
     "table:normalize-feishu-fields": "node ./scripts/normalize-feishu-table-fields.mjs",
     "table:extract-select-option-review": "node ./scripts/extract-select-option-review.mjs",
     "table:validate-select-option-override": "node ./scripts/validate-select-option-override.mjs",
+    "table:validate-mapping-config": "node ./scripts/validate-table-mapping-config.mjs",
     "docs:export-svg-png": "node ./scripts/export-svg-png.mjs",
     "docs:export-assets": "node ./scripts/export-doc-assets.mjs",
     "verify:table-schema-handoff": "node ./scripts/verify-table-schema-handoff.mjs",
