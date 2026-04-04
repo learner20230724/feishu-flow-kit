@@ -183,6 +183,41 @@ docker compose -f docker-compose.yml exec traefik traefik healthcheck
 curl -sv https://your-vps.example.com/status 2>&1 | grep "SSL certificate verify\|TLS handshake"
 ```
 
+## Multi-Tenant Deployment
+
+For running multiple Feishu organizations (tenants) from a single bot deployment, add the `FEISHU_TENANTS` JSON array to `.env.production` instead of the single-app variables:
+
+```bash
+# .env.production — multi-tenant example
+VPS_FQDN=your-vps.example.com
+ACME_EMAIL=admin@example.com
+
+FEISHU_TENANTS='[
+  {
+    "tenantKey": "tenant_alice",
+    "appId": "cli_aaaaa",
+    "appSecret": "secret_a",
+    "botName": "Alice Workflow Bot",
+    "enableOutboundReply": true,
+    "enableTableCreate": true,
+    "bitableAppToken": "xxx",
+    "bitableTableId": "yyy"
+  },
+  {
+    "tenantKey": "tenant_bob",
+    "appId": "cli_bbbbb",
+    "appSecret": "secret_b",
+    "botName": "Bob Automation Bot",
+    "enableOutboundReply": false,
+    "enableDocCreate": true
+  }
+]'
+```
+
+Each Feishu app registered in `FEISHU_TENANTS` must have its webhook URL pointing to the same `https://your-vps.example.com/webhook`. The bot routes events to the correct tenant config automatically using the `tenant_key` in each webhook payload header.
+
+See the [Developer Guide](../docs/developer-guide.md#multi-tenant-support) for full details on tenant routing, per-tenant feature overrides, and runtime tenant addition.
+
 ## Troubleshooting
 
 **Feishu reports "Verification failed"**

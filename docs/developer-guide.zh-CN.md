@@ -201,6 +201,93 @@ MY_FEATURE_URL: string = '',
 
 ---
 
+## 多租户支持
+
+套件支持两种部署模式：
+
+| 模式 | 环境变量 | 适用场景 |
+|------|----------|----------|
+| **单应用** | `FEISHU_APP_ID`, `FEISHU_APP_SECRET` | 一个机器人，一个飞书组织 |
+| **多租户** | `FEISHU_TENANTS`（JSON 数组） | 一个部署，服务多个飞书组织 |
+
+### 单应用模式（默认）
+
+无需特殊配置。设置常规凭证后，机器人处理来自单个飞书应用的事件：
+
+```bash
+FEISHU_APP_ID=cli_xxxxx
+FEISHU_APP_SECRET=yyyyy
+FEISHU_WEBHOOK_SECRET=zzzzz
+FEISHU_ENABLE_OUTBOUND_REPLY=true
+```
+
+### 多租户模式
+
+将 `FEISHU_TENANTS` 设置为 JSON 数组，每个条目对应一个飞书组织（一个应用）：
+
+```bash
+FEISHU_TENANTS='[
+  {
+    "tenantKey": "tenant_alice",
+    "appId": "cli_aaaaa",
+    "appSecret": "secret_a",
+    "botName": "Alice Bot",
+    "enableOutboundReply": true,
+    "enableTableCreate": true,
+    "bitableAppToken": "xxx",
+    "bitableTableId": "yyy"
+  },
+  {
+    "tenantKey": "tenant_bob",
+    "appId": "cli_bbbbb",
+    "appSecret": "secret_b",
+    "botName": "Bob Bot",
+    "enableOutboundReply": false,
+    "enableDocCreate": true
+  }
+]'
+```
+
+**`tenantKey`** 必须与飞书在 webhook 负载头中发送的 `tenant_key` 值匹配（`header.tenant_key`）。可在飞书开放平台 → 应用 → 凭证 → Tenant Key 中查看。
+
+### 租户路由原理
+
+当 webhook 到达时，服务器：
+
+1. 从 `payload.header.tenant_key` 提取 `tenant_key`（`extractTenantKey()`）
+2. 在 `config.tenants` 中查找匹配的 `TenantConfig`（`resolveTenantFromKey()`）
+3. 将每个租户的覆盖配置与基础默认配置合并（`resolveTenantConfig()`）
+4. 使用解析后的 `appId`/`appSecret` 执行所有飞书 API 调用
+
+如果没有任何租户匹配，机器人返回 HTTP 403 并附带错误信息——不会处理该事件。
+
+### 每个租户的功能覆盖
+
+每个功能开关和 Bitable 字段设置都可以按租户覆盖：
+
+```json
+{
+  "tenantKey": "tenant_alice",
+  "appId": "cli_xxxxx",
+  "appSecret": "secret_yyyyy",
+  "enableOutboundReply": true,
+  "enableDocCreate": false,
+  "enableTableCreate": true,
+  "bitableAppToken": "app_token_alice",
+  "bitableTableId": "tbl_alice",
+  "bitableListFieldMode": "multi_select",
+  "bitableDueFieldMode": "date"
+}
+```
+
+未在租户上设置的字段从基础配置（或其默认值）继承。
+
+### 运行时新增租户
+
+由于配置在启动时加载，新增租户需要重启服务。对于生产环境中不停机的租户添加，将 `FEISHU_TENANTS` 指向从 ConfigMap 或 secrets volume 挂载的文件，然后执行 `docker restart` 即可。
+
+---
+
 ## 测试
 
 运行所有测试：
@@ -267,7 +354,9 @@ docs/
 ├── deployment.md            # 部署指南（英文）
 ├── deployment.zh-CN.md      # 部署指南（中文）
 ├── developer-guide.md       # 英文版（本文件）
-└── developer-guide.zh-CN.md # 中文版
+├── developer-guide.zh-CN.md # 中文版
+├── recipes.md               # 实战食谱（英文）
+└── recipes.zh-CN.md         # 实战食谱（中文）
 ```
 
 ---

@@ -201,6 +201,91 @@ Feature flags are the preferred way to add optional integrations — they let th
 
 ---
 
+## Multi-Tenant Support
+
+The kit supports two deployment modes:
+
+| Mode | Env vars | Use case |
+|------|----------|----------|
+| **Single-app** | `FEISHU_APP_ID`, `FEISHU_APP_SECRET` | One bot, one Feishu organization |
+| **Multi-tenant** | `FEISHU_TENANTS` (JSON array) | One deployment, many Feishu orgs |
+
+### Single-app mode (default)
+
+No special configuration needed. Set the regular credentials and the bot handles events from a single Feishu app:
+
+```bash
+FEISHU_APP_ID=cli_xxxxx
+FEISHU_APP_SECRET=yyyyy
+FEISHU_WEBHOOK_SECRET=zzzzz
+FEISHU_ENABLE_OUTBOUND_REPLY=true
+```
+
+### Multi-tenant mode
+
+Set `FEISHU_TENANTS` as a JSON array — each entry is one Feishu org (one app):
+
+```bash
+FEISHU_TENANTS='[
+  {
+    "tenantKey": "tenant_alice",
+    "appId": "cli_aaaaa",
+    "appSecret": "secret_a",
+    "botName": "Alice Bot",
+    "enableOutboundReply": true,
+    "enableTableCreate": true,
+    "bitableAppToken": "xxx",
+    "bitableTableId": "yyy"
+  },
+  {
+    "tenantKey": "tenant_bob",
+    "appId": "cli_bbbbb",
+    "appSecret": "secret_b",
+    "botName": "Bob Bot",
+    "enableOutboundReply": false,
+    "enableDocCreate": true
+  }
+]'
+```
+
+**`tenantKey`** must match the `tenant_key` value that Feishu sends in the webhook payload header (`header.tenant_key`). Find it in Feishu Open Platform → App → Credentials → Tenant Key.
+
+### How tenant routing works
+
+When a webhook arrives, the server:
+
+1. Extracts `tenant_key` from `payload.header.tenant_key` (`extractTenantKey()`)
+2. Looks up the matching `TenantConfig` in `config.tenants` (`resolveTenantFromKey()`)
+3. Merges per-tenant overrides on top of base defaults (`resolveTenantConfig()`)
+4. Uses the resolved `appId`/`appSecret` for all Feishu API calls
+
+If no tenant matches, the bot returns HTTP 403 with an error message — no event is processed.
+
+### Per-tenant feature overrides
+
+Every feature flag and Bitable field setting can be overridden per tenant:
+
+```json
+{
+  "tenantKey": "tenant_alice",
+  "appId": "cli_xxxxx",
+  "appSecret": "secret_yyyyy",
+  "enableOutboundReply": true,
+  "enableDocCreate": false,
+  "enableTableCreate": true,
+  "bitableAppToken": "app_token_alice",
+  "bitableTableId": "tbl_alice",
+  "bitableListFieldMode": "multi_select",
+  "bitableDueFieldMode": "date"
+}
+```
+
+Fields not set on a tenant inherit from the base config (or their defaults).
+
+### Adding a new tenant at runtime
+
+Since config is loaded on startup, adding a new tenant requires a restart. For zero-downtime tenant addition in production, point `FEISHU_TENANTS` at a file mounted from a ConfigMap or secrets volume, then `docker restart` the container.
+
 ## Testing
 
 Run all tests:
@@ -267,7 +352,9 @@ docs/
 ├── deployment.md            # Deployment guide (EN)
 ├── deployment.zh-CN.md      # Deployment guide (ZH)
 ├── developer-guide.md       # This file
-└── developer-guide.zh-CN.md # Chinese version
+├── developer-guide.zh-CN.md # Chinese version
+├── recipes.md               # Practical automation recipes (EN)
+└── recipes.zh-CN.md         # Automation recipes (ZH)
 ```
 
 ---
