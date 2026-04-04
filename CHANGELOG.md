@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This repo intentionally starts small: it aims to be a clean, local-first starter kit for practical Feishu automations (webhook/event handling + a few opinionated workflows).
 
+## [1.0.1] — 2026-04-04
+
+### Fixed
+- **GHCR Docker publish workflow** — full rewrite fixing YAML parsing, permissions, checkout/buildx steps, and digest output; switched to manual `docker login` using `GITHUB_TOKEN` for reliable GHCR authentication
+- **Docker documentation** — `Dockerfile` multi-stage build instructions, `docker-compose.yml` with healthcheck, deployment guide (Railway/Render/fly.io/Ubuntu), and Docker usage section added to README (EN/ZH)
+
 ## Unreleased
 
 ### Added
