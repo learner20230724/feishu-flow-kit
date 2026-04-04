@@ -71,8 +71,8 @@ M5 is now complete (all items checked). The `/table` schema handoff system cover
 
 ### M6.2 — GitHub Actions CI
 - [x] `test.yml` — run `npm test` + `npm run typecheck` on every PR and push to `main`
-- [ ] `lint.yml` — run ESLint (if configured), otherwise skip
-- [ ] Test matrix: Node 20 + 22
+- [x] `lint.yml` — run ESLint (if configured), otherwise skip
+- [x] Test matrix: Node 20 + 22
 
 ### M6.3 — Internationalization (i18n)
 - [ ] Extract all user-facing reply strings into `src/i18n/en.ts` and `src/i18n/zh.ts`

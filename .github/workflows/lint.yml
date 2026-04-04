@@ -1,0 +1,40 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Find ESLint config
+        id: has_eslint
+        run: |
+          if [ -f eslint.config.js ] || [ -f eslint.config.mjs ] || [ -f .eslintrc.js ] || [ -f .eslintrc.cjs ] || [ -f .eslintrc.json ] || [ -f .eslintrc.yaml ] || [ -f .eslintrc.yml ]; then
+            echo "found=true" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Run ESLint
+        if: steps.has_eslint.outputs.found == 'true'
+        run: npm run lint
+
+      - name: Skip ESLint
+        if: steps.has_eslint.outputs.found == 'false'
+        run: echo "No ESLint config found — skipping"
