@@ -1,0 +1,49 @@
+{
+  "name": "@feishu/plugin-template",
+  "version": "1.0.0",
+  "description": "Official starter template for building a feishu-flow-kit plugin. Copy and customize to create your own /command plugins.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./plugin": {
+      "import": "./dist/plugin.js",
+      "types": "./dist/plugin.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "feishu",
+    "lark",
+    "plugin",
+    "feishu-flow-kit",
+    "automation",
+    "slash-command"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/learner20230724/feishu-flow-kit.git",
+    "directory": "packages/plugin-template"
+  },
+  "bugs": {
+    "url": "https://github.com/learner20230724/feishu-flow-kit/issues"
+  },
+  "peerDependencies": {
+    "feishu-flow-kit": ">=1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}

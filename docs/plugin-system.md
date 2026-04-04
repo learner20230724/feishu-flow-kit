@@ -88,6 +88,24 @@ The template demonstrates all three response patterns:
 - **`/greeting doc [name]`** — Feishu Doc creation draft
 - **`onCommandResult` / `afterProcess`** hooks — intercepting and post-processing
 
+### 5. Or install the plugin template as an npm package
+
+If you prefer to develop your plugin as a standalone npm package (publishable separately, decoupled from the main feishu-flow-kit repo):
+
+```bash
+npm install @feishu/plugin-template
+```
+
+Then add the dist path to `FEISHU_PLUGINS`:
+
+```env
+FEISHU_PLUGINS=./node_modules/@feishu/plugin-template/dist/index.js
+```
+
+Build with `npm run build` inside the plugin directory. The package re-exports all `FeishuPlugin` types so your IDE gets full completions. Published plugins using this template can be installed with a single `npm install` — users don't need to copy any files.
+
+> **Publishing your own plugin:** Set a `name` in your `package.json` (e.g. `@yourname/feishu-github-notify`), run `npm run build && npm publish`, and tell your users to add the npm package path to their `FEISHU_PLUGINS`.
+
 See `plugins/template/README.md` for full details.
 
 ---
