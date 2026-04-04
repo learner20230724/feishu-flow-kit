@@ -6,6 +6,8 @@ A local-first starter kit for building practical Feishu automations and AI workf
 
 > English | [简体中文](./README.zh-CN.md)
 
+![Social preview](./docs/assets/social-preview.png)
+
 ## Why this exists
 
 Most Feishu automation examples are either too narrow, too tied to one internal setup, or too heavy for people who just want to test a workflow quickly.
