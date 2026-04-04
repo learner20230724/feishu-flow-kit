@@ -1,6 +1,6 @@
 {
   "name": "feishu-flow-kit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Local-first starter kit for practical Feishu automations and AI workflows.",
   "type": "module",
   "keywords": [
