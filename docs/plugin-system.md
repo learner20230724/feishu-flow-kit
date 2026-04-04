@@ -190,6 +190,9 @@ Creates a Feishu interactive card poll.
 
 Outputs the raw Feishu card JSON draft (for use with `FEISHU_ENABLE_OUTBOUND_REPLY=true`).
 
+> **What it looks like in Feishu:** The `/poll` command renders as an interactive Feishu card with radio-button options:
+> ![Poll card preview](../assets/poll-card-mockup.png)
+
 ### `/help` (`plugins/help-plugin.ts`)
 
 Dynamically lists all available commands — both built-in (`/doc`, `/table`, `/todo`) and any registered via plugins. Adding a new plugin automatically extends `/help` with no extra work.
