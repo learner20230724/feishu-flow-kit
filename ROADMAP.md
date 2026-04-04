@@ -54,4 +54,4 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-Keep the repo honest as a publishable starter, then continue M5 on the smallest real capability gap: move `/table` schema handoff one step closer to live rollout with config-backed select-option / field mapping validation, instead of widening surface area again.
+M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. The next step is to define M6 or shift to a polish/maintenance posture before a v1.0 release.

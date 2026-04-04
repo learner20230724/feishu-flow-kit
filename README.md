@@ -25,6 +25,50 @@ This project is a cleaner starting point:
 - lightweight AI-assisted internal tools
 - local demos that can later be deployed properly
 
+## Quick Start
+
+**1. Install**
+```bash
+git clone https://github.com/learner20230724/feishu-flow-kit.git
+cd feishu-flow-kit
+npm install
+```
+
+**2. Create a Feishu app** at [open.feishu.cn/app](https://open.feishu.cn/app) with:
+- Enable **Bot** capability
+- Add **Permissions**: `im:message`, `docx:document`, `bitable:app`
+- Under Event Subscriptions, enable `im.message.receive_v1`
+- Set Request URL to your server (e.g. `https://your-host.com/webhook`)
+
+**3. Configure** — copy `.env.example` to `.env` and fill in:
+
+```bash
+cp .env.example .env
+# Edit .env with your Feishu app credentials
+```
+
+Key variables:
+| Variable | Where to find it |
+|---|---|
+| `FEISHU_APP_ID` | Feishu app console → Credentials → App ID |
+| `FEISHU_APP_SECRET` | Feishu app console → Credentials → App Secret |
+| `FEISHU_VERIFICATION_TOKEN` | Settings → Event Subscriptions → Verification Token |
+| `FEISHU_ENCRYPT_KEY` | Settings → Event Subscriptions → Encrypt Key (optional) |
+
+**4. Run**
+```bash
+npm run dev          # local dev with mock events
+npm start            # production (set FEISHU_* vars first)
+```
+
+Try these commands once your server is running:
+- `/doc weekly launch review` → creates a Feishu doc with starter blocks
+- `/table add backlog improve webhook errors / owner=alex` → drafts a Bitable record
+
+To enable real Feishu API calls (not just drafts), set `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, and/or `FEISHU_ENABLE_TABLE_CREATE=true` in `.env`.
+
+For `/table` with your own Bitable, see the field mapping guide in [`docs/table-bitable-field-mapping.md`](./docs/table-bitable-field-mapping.md).
+
 ## MVP goals
 
 - a small, understandable project structure

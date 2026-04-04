@@ -25,6 +25,44 @@
 - 轻量 AI 内部工具
 - 先本地演示、后续再正式部署的 demo
 
+## 快速上手
+
+**1. 安装**
+```bash
+git clone https://github.com/learner20230724/feishu-flow-kit.git
+cd feishu-flow-kit
+npm install
+```
+
+**2. 创建飞书应用** 在 [open.feishu.cn/app](https://open.feishu.cn/app) 创建应用并开启：
+- 开启 **机器人** 能力
+- 添加 **权限**：`im:message`、`docx:document`、`bitable:app`
+- 在"事件订阅"中启用 `im.message.receive_v1`
+- 将请求网址设置为你的服务器地址（例如 `https://your-host.com/webhook`）
+
+**3. 配置** — 复制 `.env.example` 为 `.env` 并填入以下变量：
+
+| 变量 | 获取位置 |
+|---|---|
+| `FEISHU_APP_ID` | 应用控制台 → 凭证与基础信息 → App ID |
+| `FEISHU_APP_SECRET` | 应用控制台 → 凭证与基础信息 → App Secret |
+| `FEISHU_VERIFICATION_TOKEN` | 应用控制台 → 事件订阅 → 验证令牌 |
+| `FEISHU_ENCRYPT_KEY` | 应用控制台 → 事件订阅 → 加密密钥（可选） |
+
+**4. 运行**
+```bash
+npm run dev          # 本地开发（使用 mock 事件）
+npm start            # 生产环境
+```
+
+服务运行后可尝试以下命令：
+- `/doc weekly launch review` → 创建飞书文档并填充初始块
+- `/table add backlog improve webhook errors / owner=alex` → 生成多维表格记录草稿
+
+要开启真实的飞书 API 调用（而非仅生成草稿），在 `.env` 中设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 和/或 `FEISHU_ENABLE_TABLE_CREATE=true`。
+
+如需接入你自己的多维表格，参见 [`docs/table-bitable-field-mapping.md`](./docs/table-bitable-field-mapping.md) 中的字段映射指南。
+
 ## MVP 目标
 
 - 小而易懂的项目结构
