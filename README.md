@@ -125,33 +125,9 @@ See [`docs/deployment.md`](./docs/deployment.md) for full deployment guides (Rai
 
 ## How it works
 
-```
-Feishu message event
-        │
-        ▼
-┌───────────────────┐
-│   POST /webhook   │  ← url_verification / im.message.receive_v1
-│   (local server)  │
-└────────┬──────────┘
-         │ adapt raw payload
-         ▼
-┌───────────────────┐
-│  slash-command    │  ← /todo ...  /doc ...  /table ...
-│     parser        │
-└────────┬──────────┘
-         │ route to workflow
-    ┌────┴──────────┬────┐
-    ▼               ▼    ▼
- /todo            /doc  /table
-  flow             flow   flow
-    │               │      │
-    │          create Feishu doc
-    │          + append body blocks
-    │                      │
-    ▼               ▼      ▼
- draft reply JSON   doc draft   bitable create-record draft
-  (+ optional outbound Feishu reply)
-```
+![Architecture diagram](./docs/assets/architecture-diagram.svg)
+
+> **Flow:** Feishu message event → POST /webhook → adapt payload → slash-command parser → `/todo` / `/doc` / `/table` workflow → draft reply (always printed in mock mode; live API calls when feature flags are enabled).
 
 Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REPLY=true`, `FEISHU_ENABLE_DOC_CREATE=true`, or `FEISHU_ENABLE_TABLE_CREATE=true` to switch selected paths from draft mode to real Feishu API calls. For `/table`, you can also widen field mapping incrementally with `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` or `multi_select`, `FEISHU_BITABLE_OWNER_FIELD_MODE=user`, `FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`, `FEISHU_BITABLE_DUE_FIELD_MODE=date` or `datetime`, `FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`, and `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`, or `FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`. If your Bitable does not use the starter field names, you can now remap them directly with env vars such as `FEISHU_BITABLE_TITLE_FIELD_NAME=Task`, `FEISHU_BITABLE_LIST_FIELD_NAME=Stage`, or `FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand`.
 

@@ -1,0 +1,163 @@
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#6366f1" flood-opacity="0.15"/>
+    </filter>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <linearGradient id="feishu" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00a1ab"/>
+      <stop offset="100%" stop-color="#00c5cc"/>
+    </linearGradient>
+    <linearGradient id="indigo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" rx="16" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#1e293b">feishu-flow-kit — Architecture Overview</text>
+
+  <!-- ── FEISHU CLOUD ── -->
+  <rect x="20" y="55" width="160" height="60" rx="10" fill="url(#feishu)" filter="url(#shadow)"/>
+  <text x="100" y="77" text-anchor="middle" font-size="11" font-weight="700" fill="white">Feishu Cloud</text>
+  <text x="100" y="93" text-anchor="middle" font-size="10" fill="#e0f7f8">im.message.receive_v1</text>
+  <text x="100" y="107" text-anchor="middle" font-size="10" fill="#e0f7f8">+ url_verification</text>
+
+  <!-- Arrow: Feishu → Webhook Server -->
+  <line x1="180" y1="85" x2="270" y2="85" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="225" y="78" text-anchor="middle" font-size="9" fill="#6366f1">POST /webhook</text>
+
+  <!-- ── WEBHOOK SERVER ── -->
+  <rect x="275" y="55" width="220" height="100" rx="10" fill="white" stroke="#6366f1" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="275" y="55" width="220" height="22" rx="10" fill="url(#indigo)"/>
+  <rect x="275" y="65" width="220" height="12" fill="url(#indigo)"/>
+  <text x="385" y="70" text-anchor="middle" font-size="10" font-weight="700" fill="white">POST /webhook — start-webhook-server.ts</text>
+
+  <!-- URL verification block -->
+  <rect x="285" y="84" width="200" height="22" rx="5" fill="#ede9fe"/>
+  <text x="385" y="98" text-anchor="middle" font-size="9" fill="#6366f1">① url_verification → challenge token</text>
+
+  <!-- Message event block -->
+  <rect x="285" y="112" width="200" height="35" rx="5" fill="#eef2ff"/>
+  <text x="385" y="125" text-anchor="middle" font-size="9" fill="#4f46e5">② im.message.receive_v1</text>
+  <text x="385" y="138" text-anchor="middle" font-size="9" fill="#6366b8">→ adaptWebhookMessageEvent()</text>
+
+  <!-- Arrow: Webhook Server → Slash Command Parser -->
+  <line x1="385" y1="155" x2="385" y2="190" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="400" y="176" font-size="9" fill="#6366f1">parsed command</text>
+
+  <!-- ── SLASH COMMAND PARSER ── -->
+  <rect x="275" y="195" width="220" height="55" rx="10" fill="white" stroke="#a78bfa" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="275" y="195" width="220" height="22" rx="10" fill="#8b5cf6"/>
+  <rect x="275" y="205" width="220" height="12" fill="#8b5cf6"/>
+  <text x="385" y="210" text-anchor="middle" font-size="10" font-weight="700" fill="white">Slash Command Parser</text>
+  <text x="385" y="230" text-anchor="middle" font-size="9" fill="#6d28d9">parseSlashCommand(commandText)</text>
+  <text x="385" y="243" text-anchor="middle" font-size="9" fill="#6d28d9">→ { cmd: '/todo' | '/doc' | '/table', args }</text>
+
+  <!-- ── BRANCHING ── -->
+  <!-- Arrow: Parser → /todo -->
+  <line x1="275" y1="222" x2="200" y2="222" stroke="#6366f1" stroke-width="1.5"/>
+  <line x1="200" y1="222" x2="200" y2="290" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="230" y="218" font-size="9" fill="#6366f1">/todo</text>
+
+  <!-- Arrow: Parser → /doc -->
+  <line x1="385" y1="250" x2="385" y2="290" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="398" y="274" font-size="9" fill="#6366f1">/doc</text>
+
+  <!-- Arrow: Parser → /table -->
+  <line x1="495" y1="222" x2="570" y2="222" stroke="#6366f1" stroke-width="1.5"/>
+  <line x1="570" y1="222" x2="570" y2="290" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="530" y="218" font-size="9" fill="#6366f1">/table</text>
+
+  <!-- Branch labels -->
+  <text x="188" y="285" text-anchor="middle" font-size="8" fill="#94a3b8">run-todo-</text>
+  <text x="188" y="295" text-anchor="middle" font-size="8" fill="#94a3b8">workflow</text>
+  <text x="573" y="285" text-anchor="middle" font-size="8" fill="#94a3b8">run-table-</text>
+  <text x="573" y="295" text-anchor="middle" font-size="8" fill="#94a3b8">workflow</text>
+
+  <!-- ── /todo WORKFLOW ── -->
+  <rect x="130" y="295" width="115" height="80" rx="8" fill="white" stroke="#10b981" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="130" y="295" width="115" height="20" rx="8" fill="url(#green)"/>
+  <rect x="130" y="303" width="115" height="12" fill="url(#green)"/>
+  <text x="187" y="308" text-anchor="middle" font-size="9" font-weight="600" fill="white">/todo workflow</text>
+  <text x="187" y="323" text-anchor="middle" font-size="8" fill="#065f46">buildTodoDraft()</text>
+  <text x="187" y="335" text-anchor="middle" font-size="8" fill="#065f46">→ draft reply JSON</text>
+  <text x="187" y="347" text-anchor="middle" font-size="8" fill="#065f46">FEISHU_ENABLE_</text>
+  <text x="187" y="357" text-anchor="middle" font-size="8" fill="#065f46">OUTBOUND_REPLY?</text>
+
+  <!-- ── /doc WORKFLOW ── -->
+  <rect x="315" y="295" width="140" height="80" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="315" y="295" width="140" height="20" rx="8" fill="url(#amber)"/>
+  <rect x="315" y="303" width="140" height="12" fill="url(#amber)"/>
+  <text x="385" y="308" text-anchor="middle" font-size="9" font-weight="600" fill="white">/doc workflow</text>
+  <text x="385" y="323" text-anchor="middle" font-size="8" fill="#92400e">buildDocDraft()</text>
+  <text x="385" y="335" text-anchor="middle" font-size="8" fill="#92400e">→ Feishu doc blocks</text>
+  <text x="385" y="347" text-anchor="middle" font-size="8" fill="#92400e">send-doc-create-</text>
+  <text x="385" y="357" text-anchor="middle" font-size="8" fill="#92400e">request() if enabled</text>
+
+  <!-- ── /table WORKFLOW ── -->
+  <rect x="510" y="295" width="120" height="80" rx="8" fill="white" stroke="#6366f1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="510" y="295" width="120" height="20" rx="8" fill="url(#indigo)"/>
+  <rect x="510" y="303" width="120" height="12" fill="url(#indigo)"/>
+  <text x="570" y="308" text-anchor="middle" font-size="9" font-weight="600" fill="white">/table workflow</text>
+  <text x="570" y="323" text-anchor="middle" font-size="8" fill="#4338ca">buildTableDraft()</text>
+  <text x="570" y="335" text-anchor="middle" font-size="8" fill="#4338ca">→ Bitable record</text>
+  <text x="570" y="347" text-anchor="middle" font-size="8" fill="#4338ca">schema-aware +</text>
+  <text x="570" y="357" text-anchor="middle" font-size="8" fill="#4338ca">field mapping</text>
+
+  <!-- ── ARROW DOWN TO DRAFT ── -->
+  <line x1="187" y1="375" x2="187" y2="415" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="385" y1="375" x2="385" y2="415" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="570" y1="375" x2="570" y2="415" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ── DRAFT REPLY ── -->
+  <rect x="95" y="420" width="710" height="82" rx="10" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="95" y="420" width="710" height="20" rx="10" fill="#f1f5f9"/>
+  <rect x="95" y="428" width="710" height="12" fill="#f1f5f9"/>
+  <text x="450" y="433" text-anchor="middle" font-size="9" font-weight="700" fill="#475569">Draft Reply (always printed in mock mode)</text>
+
+  <!-- Three columns in draft box -->
+  <rect x="108" y="447" width="200" height="48" rx="6" fill="#d1fae5"/>
+  <text x="208" y="462" text-anchor="middle" font-size="8" font-weight="600" fill="#065f46">/todo → reply JSON</text>
+  <text x="208" y="474" text-anchor="middle" font-size="8" fill="#047857">sendReplyMessage()</text>
+  <text x="208" y="486" text-anchor="middle" font-size="8" fill="#10b981">✅ if OUTBOUND_REPLY=true</text>
+
+  <rect x="325" y="447" width="200" height="48" rx="6" fill="#fef3c7"/>
+  <text x="425" y="462" text-anchor="middle" font-size="8" font-weight="600" fill="#92400e">/doc → doc block children</text>
+  <text x="425" y="474" text-anchor="middle" font-size="8" fill="#b45309">createDoc() + appendBlocks()</text>
+  <text x="425" y="486" text-anchor="middle" font-size="8" fill="#f59e0b">✅ if DOC_CREATE=true</text>
+
+  <rect x="542" y="447" width="250" height="48" rx="6" fill="#e0e7ff"/>
+  <text x="667" y="462" text-anchor="middle" font-size="8" font-weight="600" fill="#4338ca">/table → Bitable record</text>
+  <text x="667" y="474" text-anchor="middle" font-size="8" fill="#6366f1">createTableRecordWithSchema()</text>
+  <text x="667" y="486" text-anchor="middle" font-size="8" fill="#818cf8">✅ if TABLE_CREATE=true</text>
+
+  <!-- Legend -->
+  <rect x="20" y="420" width="65" height="82" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="52" y="434" text-anchor="middle" font-size="8" font-weight="700" fill="#64748b">LEGEND</text>
+  <rect x="28" y="441" width="10" height="10" rx="2" fill="url(#feishu)"/>
+  <text x="42" y="450" font-size="8" fill="#475569">Feishu</text>
+  <rect x="28" y="456" width="10" height="10" rx="2" fill="url(#indigo)"/>
+  <text x="42" y="465" font-size="8" fill="#475569">Adapter</text>
+  <rect x="28" y="471" width="10" height="10" rx="2" fill="url(#green)"/>
+  <text x="42" y="480" font-size="8" fill="#475569">/todo</text>
+  <rect x="28" y="486" width="10" height="10" rx="2" fill="url(#amber)"/>
+  <text x="42" y="495" font-size="8" fill="#475569">/doc</text>
+</svg>

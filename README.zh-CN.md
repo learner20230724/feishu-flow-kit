@@ -116,33 +116,9 @@ curl http://localhost:8787/healthz
 
 ## 运行原理
 
-```
-Feishu 消息事件
-        │
-        ▼
-┌───────────────────┐
-│   POST /webhook   │  ← url_verification / im.message.receive_v1
-│   （本地服务）     │
-└────────┬──────────┘
-         │ 适配原始 payload
-         ▼
-┌───────────────────┐
-│  slash-command    │  ← /todo ...  /doc ...  /table ...
-│     解析器        │
-└────────┬──────────┘
-         │ 路由到 workflow
-    ┌────┴──────────┬────┐
-    ▼               ▼    ▼
- /todo            /doc  /table
-  流程             流程   流程
-    │               │      │
-    │          创建 Feishu 文档
-    │          + 追加正文 blocks
-    │                      │
-    ▼               ▼      ▼
- draft reply JSON   doc draft   bitable create-record draft
-  （可选：真实发送 Feishu 回复）
-```
+![架构图](./docs/assets/architecture-diagram.svg)
+
+> **流程：** Feishu 消息事件 → POST /webhook → 适配 payload → slash-command 解析器 → `/todo` / `/doc` / `/table` 工作流 → draft 回复（mock 模式下始终打印；开启功能开关后切换为真实 Feishu API 调用）。
 
 以上全部可在本地用 mock 事件跑通。设置 `FEISHU_ENABLE_OUTBOUND_REPLY=true`、`FEISHU_ENABLE_DOC_CREATE=true` 或 `FEISHU_ENABLE_TABLE_CREATE=true`，即可把对应路径从 draft 模式切到真实 Feishu API 调用。对于 `/table`，还可以用 `FEISHU_BITABLE_LIST_FIELD_MODE=single_select` 或 `multi_select`、`FEISHU_BITABLE_OWNER_FIELD_MODE=user`、`FEISHU_BITABLE_ESTIMATE_FIELD_MODE=number`、`FEISHU_BITABLE_DUE_FIELD_MODE=date` 或 `datetime`、`FEISHU_BITABLE_DONE_FIELD_MODE=checkbox`，以及 `FEISHU_BITABLE_ATTACHMENT_FIELD_MODE=attachment`、`FEISHU_BITABLE_LINK_FIELD_MODE=linked_record`，逐步把字段映射从 text 扩到更贴近真实 Bitable 的 payload。如果你的 Bitable 字段名不是 starter 默认的 `Title / List / Details / ...`，现在也可以直接用 `FEISHU_BITABLE_TITLE_FIELD_NAME=Task`、`FEISHU_BITABLE_LIST_FIELD_NAME=Stage`、`FEISHU_BITABLE_SOURCE_COMMAND_FIELD_NAME=ChatCommand` 这类环境变量做字段名重映射，不用先改代码。
 
