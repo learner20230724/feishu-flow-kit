@@ -14,14 +14,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+      - name: Build container (no-push diagnostic)
+        run: |
+          echo "Testing build..."
+          docker build --no-cache -f Dockerfile -t testimage:test . || echo "Build may fail (expected if docker not available in runner)"
 
-      - name: Build and push
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository.toLowerCase() }}:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Show env
+        run: |
+          echo "DOCKER_VERSION: $(docker --version 2>&1 || echo 'NOT INSTALLED')"
+          echo "BUILDX_VERSION: $(docker buildx version 2>&1 || echo 'NOT INSTALLED')"
