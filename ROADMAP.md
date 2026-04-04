@@ -54,4 +54,45 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. The next step is to define M6 or shift to a polish/maintenance posture before a v1.0 release.
+M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. M6 is drafted (see below). Recommended first M6 items: M6.2 GitHub Actions CI (small, high-value) or M6.1 Deployment guide (Dockerfile).
+
+---
+
+## M6 — Production hardening & v1.0 launch pad
+
+> **Goal:** Close the gap between "working starter kit" and "deployable v1.0 project" — covering deployment, CI, internationalization, and error-resilience.
+
+### M6.1 — Deployment guide
+- [ ] Docker image (`Dockerfile`) with multi-stage build
+- [ ] `docker-compose.yml` for local full-stack mock
+- [ ] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu)
+- [ ] Health-check endpoint (`GET /health`)
+- [ ] Environment-variable validation on startup (fail-fast with clear messages)
+
+### M6.2 — GitHub Actions CI
+- [ ] `test.yml` — run `npm test` + `npm run typecheck` on every PR and push to `main`
+- [ ] `lint.yml` — run ESLint (if configured), otherwise skip
+- [ ] Test matrix: Node 20 + 22
+
+### M6.3 — Internationalization (i18n)
+- [ ] Extract all user-facing reply strings into `src/i18n/en.ts` and `src/i18n/zh.ts`
+- [ ] Bot reply language follows `event.source.language` when available, falls back to EN
+- [ ] README / docs already bilingual — keep in sync with new strings
+
+### M6.4 — Error resilience & observability
+- [ ] Structured logger ( Pino or `console.log` JSON mode in production)
+- [ ] Per-API retry with exponential back-off (separate from existing retry helper — make it webhook-request-aware)
+- [ ] Sentry / error-tracking config stub for easy opt-in
+- [ ] `GET /status` endpoint: uptime, env-mode flags, last event timestamp
+
+### M6.5 — v1.0 release checklist
+- [ ] Bump `package.json` version to `1.0.0`
+- [ ] Write `CHANGELOG.md` v1.0.0 entry
+- [ ] Create GitHub Release with full asset list
+- [ ] Update repo description + topics on GitHub
+- [ ] Verify all README links and screenshots are current
+
+### Notes
+- M6 is designed to be parallelizable where possible (e.g. Docker and CI can be done independently)
+- No new user-facing features — only hardening and DX improvements
+- Target: v1.0 should be "deploy to Railway in 10 minutes" capable
