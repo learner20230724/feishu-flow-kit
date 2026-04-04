@@ -354,6 +354,7 @@ You can always add deployment pieces later.
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
+- [Troubleshooting FAQ](./docs/troubleshooting.md) — webhook, auth, Docker, plugins, ngrok, and debug tips
 - [GitHub repo metadata](./docs/github-repo-meta.md)
 - [Publishing to GitHub (no-browser)](./docs/publish-to-github.md)
 

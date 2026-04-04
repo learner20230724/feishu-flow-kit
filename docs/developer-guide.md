@@ -406,3 +406,24 @@ Validate required env vars in `load-config.ts`. The server should crash immediat
 
 ### Use `loadMockMessageEvent()` for tests
 Don't hand-craft raw webhook payloads — use the fixture loader to get a properly typed `FeishuMessageEvent`.
+
+## Troubleshooting
+
+See [Troubleshooting FAQ](../docs/troubleshooting.md) for common issues including webhook setup, authentication errors, Docker problems, plugin loading, and debug tips.
+
+Key commands:
+
+```bash
+# Check if the server is responding
+curl https://your-domain/status
+
+# Enable verbose logging
+LOG_LEVEL=debug npm start
+
+# Test a webhook event locally
+bash ./scripts/test-webhook-local.sh all
+
+# Check plugin loading (look for "Plugin system loaded" in startup logs)
+npm start 2>&1 | grep plugin
+```
+
