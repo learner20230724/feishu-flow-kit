@@ -54,7 +54,7 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is now complete (all items checked). The `/table` schema handoff system covers draft-first workflow, config-backed field mapping, CLI validation, and select-option override assets. M6 is drafted (see below). Current next step: M6.5 v1.0 release checklist. M6.1, M6.2, M6.3, and M6.4 are done.
+M5 is complete. M6 is fully done (M6.1–M6.6 all checked). feishu-flow-kit v1.0.1 is the current release, with GHCR Docker publish workflow tested and documented. No pending roadmap items — repo is in a clean, deployable state. Optional future directions: real Feishu workspace E2E testing, multi-tenant support, or plugin system.
 
 ---
 
@@ -91,6 +91,12 @@ M5 is now complete (all items checked). The `/table` schema handoff system cover
 - [x] Create GitHub Release with full asset list
 - [x] Update repo description + topics on GitHub
 - [x] Verify all README links and screenshots are current
+
+### M6.6 — GHCR Docker publish workflow (post-v1.0.0 fixes)
+- [x] Full rewrite of `.github/workflows/publish.yml` — fix YAML parsing of `}}`, permissions, checkout/buildx steps, digest output
+- [x] Switch to manual `docker login` via `GITHUB_TOKEN` for reliable GHCR authentication
+- [x] Docker documentation: multi-stage Dockerfile, `docker-compose.yml` with healthcheck, deployment guide (Railway/Render/fly.io/Ubuntu), Docker usage section in README (EN/ZH)
+- [x] v1.0.1 patch release with CHANGELOG entry
 
 ### Notes
 - M6 is designed to be parallelizable where possible (e.g. Docker and CI can be done independently)
