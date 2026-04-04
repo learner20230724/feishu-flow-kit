@@ -111,6 +111,8 @@ curl http://localhost:8787/healthz
     server/
     types/
   examples/
+  plugins/          # 插件模板（help-plugin、ping-plugin、poll-plugin、template/）
+  scripts/          # 开发工具（create-plugin.mjs、validate-table-mapping-config.mjs）
   docs/
 ```
 
@@ -127,6 +129,26 @@ curl http://localhost:8787/healthz
 > 可直接复制使用的自动化模式，扩展飞书工作流能力。
 
 参见 [`docs/recipes.zh-CN.md`](./docs/recipes.zh-CN.md)，包含七个实战食谱：投票机器人 `/poll`、FAQ 关键词自动回复、每日定时摘要 cron 任务、从模板自动创建文档 `/newdoc`、跨频道转发机器人、调用外部翻译 API 的 `/translate`，以及会议纪要提炼 `/summarize`。
+
+## 插件系统
+
+> 可扩展的斜杠命令 — 放入插件后立即可用。
+
+插件从 `FEISHU_PLUGINS`（逗号分隔的模块标识符）加载，通过五个生命周期钩子运行：`register`、`beforeProcess`、`handle`、`onCommandResult`、`afterProcess`。内置插件（`/help`、`/ping`、`/poll`）随仓库附带；自定义插件放在 `plugins/<name>/` 下。
+
+```bash
+# 启用内置和自定义插件
+FEISHU_PLUGINS=./plugins/help-plugin,./plugins/ping-plugin,./plugins/poll-plugin,my-custom-plugin
+```
+
+**快速上手：**
+```bash
+# 脚手架生成新插件
+node scripts/create-plugin.mjs my-greeting
+# → 创建 plugins/my-greeting/，含 index.ts、plugin.ts、.env.example、README.md
+```
+
+完整架构指南、生命周期钩子签名和插件编写参考见 [`docs/plugin-system.md`](./docs/plugin-system.md)。
 
 ## Demo 资产
 

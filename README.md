@@ -118,6 +118,8 @@ See [`docs/deployment.md`](./docs/deployment.md) for full deployment guides (Rai
     server/
     types/
   examples/
+  plugins/          # plugin templates (help-plugin, ping-plugin, poll-plugin, template/)
+  scripts/          # dev tooling (create-plugin.mjs, validate-table-mapping-config.mjs)
   docs/
 ```
 
@@ -134,6 +136,26 @@ Everything above runs locally with mock events. Flip `FEISHU_ENABLE_OUTBOUND_REP
 > Ready-to-use automation patterns for extending the kit.
 
 See [`docs/recipes.md`](./docs/recipes.md) for seven practical recipes including `/poll` voting, FAQ auto-reply, daily summary cron jobs, auto-doc-from-template (`/newdoc`), cross-channel relay bot, `/translate` with external APIs, and meeting-notes summarization (`/summarize`).
+
+## Plugin system
+
+> Extensible slash commands — drop in a plugin, it becomes available immediately.
+
+Plugins are loaded from `FEISHU_PLUGINS` (comma-separated module specifiers) and run via five lifecycle hooks: `register`, `beforeProcess`, `handle`, `onCommandResult`, `afterProcess`. Built-in plugins (`/help`, `/ping`, `/poll`) ship with the repo; custom plugins go in `plugins/<name>/`.
+
+```bash
+# Enable built-in and custom plugins
+FEISHU_PLUGINS=./plugins/help-plugin,./plugins/ping-plugin,./plugins/poll-plugin,my-custom-plugin
+```
+
+**Quick start:**
+```bash
+# Scaffold a new plugin
+node scripts/create-plugin.mjs my-greeting
+# → creates plugins/my-greeting/ with index.ts, plugin.ts, .env.example, README.md
+```
+
+See [`docs/plugin-system.md`](./docs/plugin-system.md) for the full architecture guide, lifecycle hook signatures, and plugin authoring reference.
 
 ## Demo assets
 
