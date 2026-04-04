@@ -49,7 +49,16 @@ npm install
 | `FEISHU_VERIFICATION_TOKEN` | 应用控制台 → 事件订阅 → 验证令牌 |
 | `FEISHU_ENCRYPT_KEY` | 应用控制台 → 事件订阅 → 加密密钥（可选） |
 
-**4. 运行**
+**4. 无需凭证，立即体验**
+```bash
+npm run demo         # 触发所有内置 + 插件命令的 mock 载荷
+npm run demo:plugins # 同上，同时测试插件命令（/help、/ping、/poll）
+```
+> demo 脚本会启动服务器、POST 8 个模拟 webhook 载荷
+>（`/hello`、`/doc`、`/table`、`/todo`、`/help`、`/ping`、`/poll`、URL 验证），
+> 并打印服务器对每个载荷的响应——全程无需飞书应用或 ngrok。
+
+**5. 正式运行**
 ```bash
 npm run dev          # 本地开发（使用 mock 事件）
 npm start            # 生产环境
@@ -148,7 +157,7 @@ node scripts/create-plugin.mjs my-greeting
 # → 创建 plugins/my-greeting/，含 index.ts、plugin.ts、.env.example、README.md
 ```
 
-完整架构指南、生命周期钩子签名和插件编写参考见 [`docs/plugin-system.md`](./docs/plugin-system.md)。完整 CLI 脚手架演示见 [`docs/plugin-scaffolder-walkthrough.md`](./docs/plugin-scaffolder-walkthrough.md) — 展示脚手架生成的每个文件。
+完整架构指南、生命周期钩子签名和插件编写参考见 [`docs/plugin-system.md`](./docs/plugin-system.md)。完整 CLI 脚手架演示见 [`docs/plugin-scaffolder-walkthrough.md`](./docs/plugin-scaffolder-walkthrough.md) — 展示脚手架生成的每个文件。快速命令查询见 [`docs/commands-reference.md`](./docs/commands-reference.md) — 所有内置命令和插件命令的完整示例。
 
 ![插件生命周期架构图](docs/assets/plugin-lifecycle-diagram.png)
 

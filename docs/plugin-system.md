@@ -17,6 +17,8 @@ See the plugin system in action — multiple slash commands responding with rich
 
 ![Plugin commands demo](../assets/plugin-commands-demo.png)
 
+> **See also:** The [Commands Reference](./commands-reference.md) for a complete list of all built-in commands with examples.
+
 ## Quick Start
 
 ### 1. Write a plugin

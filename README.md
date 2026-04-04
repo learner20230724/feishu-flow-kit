@@ -55,7 +55,16 @@ Key variables:
 | `FEISHU_VERIFICATION_TOKEN` | Settings → Event Subscriptions → Verification Token |
 | `FEISHU_ENCRYPT_KEY` | Settings → Event Subscriptions → Encrypt Key (optional) |
 
-**4. Run**
+**4. Try it now — no credentials needed**
+```bash
+npm run demo         # fires all built-in + plugin commands with mock payloads
+npm run demo:plugins # same, but also tests plugin commands (/help, /ping, /poll)
+```
+> The demo spins up the server, POSTs 8 realistic webhook payloads
+> (`/hello`, `/doc`, `/table`, `/todo`, `/help`, `/ping`, `/poll`, URL verification),
+> and prints the server's response to each — all without any Feishu app or ngrok.
+
+**5. Run for real**
 ```bash
 npm run dev          # local dev with mock events
 npm start            # production (set FEISHU_* vars first)
@@ -155,7 +164,7 @@ node scripts/create-plugin.mjs my-greeting
 # → creates plugins/my-greeting/ with index.ts, plugin.ts, .env.example, README.md
 ```
 
-See [`docs/plugin-system.md`](./docs/plugin-system.md) for the full architecture guide, lifecycle hook signatures, and plugin authoring reference. For a complete CLI walkthrough, see [`docs/plugin-scaffolder-walkthrough.md`](./docs/plugin-scaffolder-walkthrough.md) — shows every file the scaffolder generates.
+See [`docs/plugin-system.md`](./docs/plugin-system.md) for the full architecture guide, lifecycle hook signatures, and plugin authoring reference. For a complete CLI walkthrough, see [`docs/plugin-scaffolder-walkthrough.md`](./docs/plugin-scaffolder-walkthrough.md) — shows every file the scaffolder generates. For a quick command lookup, see [`docs/commands-reference.md`](./docs/commands-reference.md) — every built-in and plugin command with examples.
 
 ![Plugin lifecycle architecture](docs/assets/plugin-lifecycle-diagram.png)
 
