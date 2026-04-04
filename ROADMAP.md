@@ -86,11 +86,11 @@ M5 is now complete (all items checked). The `/table` schema handoff system cover
 - [x] `GET /status` endpoint: uptime, env-mode flags, last event timestamp
 
 ### M6.5 — v1.0 release checklist
-- [ ] Bump `package.json` version to `1.0.0`
-- [ ] Write `CHANGELOG.md` v1.0.0 entry
-- [ ] Create GitHub Release with full asset list
-- [ ] Update repo description + topics on GitHub
-- [ ] Verify all README links and screenshots are current
+- [x] Bump `package.json` version to `1.0.0`
+- [x] Write `CHANGELOG.md` v1.0.0 entry
+- [x] Create GitHub Release with full asset list
+- [x] Update repo description + topics on GitHub
+- [x] Verify all README links and screenshots are current
 
 ### Notes
 - M6 is designed to be parallelizable where possible (e.g. Docker and CI can be done independently)

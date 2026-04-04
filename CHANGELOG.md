@@ -7,11 +7,30 @@ This repo intentionally starts small: it aims to be a clean, local-first starter
 ## Unreleased
 
 ### Added
-- **`/table` schema-aware workflow** — draft-first Bitable record creation with full field-type coverage (18 types including text, number, date, checkbox, multi-select, user, location, phone, URL, attachment, cascade, department, contact, link)
-- **`create-table-record-with-schema.ts` adapter** — fetches live Bitable table schema on every create call and maps draft field names to actual field IDs, replacing the name-based draft approach; all 10 starter fields (Title, List, Details, Owner, Estimate, Due, Done, Attachment, LinkedRecords, SourceCommand) now resolve via live schema
-- **`table-mapping-config-preflight` system** — CLI validator (`scripts/validate-table-mapping-config.mjs`), config preflight docs (EN/ZH), advanced env example, and test suite for schema-handoff workflow
+- See `## [1.0.0]` below for the v1.0 release contents
+
+## [1.0.0] — 2026-04-04
+
+### Added
+- **`/table` schema-aware workflow** — draft-first Bitable record creation with full field-type coverage (18 types: text, number, date, checkbox, multi-select, single-select, user, location, phone, URL, attachment, cascade, department, contact, link, and more)
+- **`create-table-record-with-schema.ts` adapter** — fetches live Bitable table schema on every create call and maps draft field names to actual field IDs; all 10 starter fields now resolve via live schema
+- **`table-mapping-config-preflight` system** — CLI validator, config preflight docs (EN/ZH), advanced env example, and test suite for schema-handoff workflow
 - Schema handoff assets: mapping worksheet, demo scripts, raw field-list normalizer, fixture-backed verification chain, select-option override samples
 - Smoke test script for real Bitable end-to-end validation
+- Multi-stage Dockerfile + `docker-compose.yml` with healthcheck and fail-fast config validation
+- GitHub Actions CI matrix (Node 20 + 22) and dedicated lint workflow
+- Full i18n system (EN/ZH) — all user-facing reply strings extracted and language-aware
+- Error resilience: exponential-backoff retry (`withRetry`), Sentry integration, `/status` debug endpoint with request-id tracing
+- **`/doc` richer inline formatting** — underline spans, bare-URL auto-linking, adjacent styled-span merging
+- Repo description, topics, and GitHub Release automation ready for v1.0 tagging
+
+### Fixed
+- Historical env var name typos (`FEISHU_ESTIMATE_FIELD_MODE` → `FEISHU_BITABLE_ESTIMATE_FIELD_MODE`, etc.) that caused field-mode env overrides to be silently ignored since v0.1.0
+- `FakeError` test stub code for non-retryable error assertion
+
+### Changed
+- Package version bumped to `1.0.0`
+- `npm run build` added (compiles TypeScript to `dist/`)
 
 ### Planned
 - More `/doc` workflow coverage (richer spans, more block types, better DX)
