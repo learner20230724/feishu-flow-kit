@@ -192,6 +192,18 @@ node scripts/create-plugin.mjs my-greeting
 
 ![插件命令演示](docs/assets/plugin-commands-demo.png)
 
+### 插件示例库
+
+三个可直接复制的生产级参考插件 — 复制到 `plugins/` 即可生效：
+
+| 插件 | 命令 | 功能说明 |
+|---|---|---|
+| **qrcode-plugin** | `/qr [文字] [small\|medium\|large]` | 通过 QRServer API 生成二维码，以 Feishu 卡片形式返回图片。无需 API key。展示了 `beforeProcess()` 钩子、URL 构建和输入校验。 |
+| **joke-plugin** | `/joke [分类]` | 从 JokeAPI v2（safe-mode）获取笑话，以格式化的 Feishu 卡片返回。展示了异步 HTTP 调用、`AbortController` 超时保护以及 `afterProcess()` 分析钩子。 |
+| **remind-plugin** | `/remind <自然语言日期>` | 解析自然语言日期（`in 5 minutes`、`tomorrow at 09:00`、`every day at 18:00`），返回倒计时卡片。展示了正则解析、内存状态管理以及 `afterProcess()` 可扩展性。 |
+
+👉 完整使用说明、环境变量和各插件生命周期钩子对比见 [`plugins/examples/README.md`](./plugins/examples/README.md)。
+
 ## Demo 资产
 
 ![本地 webhook → /doc 工作流演示](./docs/demo-webhook-doc-flow.svg)

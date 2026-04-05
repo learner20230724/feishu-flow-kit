@@ -199,6 +199,18 @@ See [`docs/plugin-system.md`](./docs/plugin-system.md) for the full architecture
 
 ![Plugin commands in Feishu](docs/assets/plugin-commands-demo.png)
 
+### Plugin Examples Gallery
+
+Three production-ready reference plugins — copy into `plugins/` and they're live:
+
+| Plugin | Command | What it does |
+|---|---|---|
+| **qrcode-plugin** | `/qr [text] [small\|medium\|large]` | Generates a QR code via QRServer API, returns a Feishu card with the image. No API key needed. Demonstrates `beforeProcess()` hook, URL building, and input validation. |
+| **joke-plugin** | `/joke [category]` | Fetches a safe-mode joke from JokeAPI v2, returns a formatted Feishu card. Demonstrates async HTTP calls, `AbortController` timeout, and `afterProcess()` analytics hook. |
+| **remind-plugin** | `/remind <自然语言日期>` | Parses natural-language dates (`in 5 minutes`, `tomorrow at 09:00`, `every day at 18:00`) and returns a countdown card. Demonstrates regex parsing, in-memory state, and `afterProcess()` extensibility. |
+
+👉 See [`plugins/examples/README.md`](./plugins/examples/README.md) for full usage details, environment variables, and comparison of which lifecycle hooks each plugin uses.
+
 ## Demo assets
 
 ![Local webhook to /doc workflow demo](./docs/demo-webhook-doc-flow.svg)
