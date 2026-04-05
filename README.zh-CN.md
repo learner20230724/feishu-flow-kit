@@ -394,6 +394,7 @@ npm test
 - [Webhook 事件字段参考](./docs/webhook-field-reference.md)
 - [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)
+- [安全策略](./SECURITY.md) — Webhook 签名校验、凭证管理、部署安全加固、事件响应
 - [参与贡献指南](./CONTRIBUTING.md) — 本地开发环境搭建、添加命令、插件开发、PR 检查清单
 - [GitHub 仓库元数据](./docs/github-repo-meta.md)
 - [无浏览器环境下发布到 GitHub](./docs/publish-to-github.md)

@@ -403,6 +403,7 @@ You can always add deployment pieces later.
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
 - [Troubleshooting FAQ](./docs/troubleshooting.md) — webhook, auth, Docker, plugins, ngrok, and debug tips
+- [Security policy](./SECURITY.md) — webhook signature verification, credential management, deployment hardening, and incident response
 - [Contributing guide](./CONTRIBUTING.md) — local dev setup, adding commands, writing plugins, PR checklist
 - [GitHub repo metadata](./docs/github-repo-meta.md)
 - [Publishing to GitHub (no-browser)](./docs/publish-to-github.md)
