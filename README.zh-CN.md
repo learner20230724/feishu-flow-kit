@@ -379,6 +379,7 @@ npm test
 - [`/table` mapping config preflight（配置预检）`](./docs/table-mapping-config-preflight.zh-CN.md)
 - [`/table` select-option handoff 资产`](./docs/table-select-option-handoff.md)
 - [`/table` webhook 成功 / 失败示例](./docs/table-webhook-success-error-demo.md)
+- [Webhook 事件字段参考](./docs/webhook-field-reference.md)
 - [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)
 - [参与贡献指南](./CONTRIBUTING.md) — 本地开发环境搭建、添加命令、插件开发、PR 检查清单

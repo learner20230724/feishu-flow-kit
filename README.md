@@ -387,6 +387,7 @@ You can always add deployment pieces later.
 - [`/table` mapping config preflight](./docs/table-mapping-config-preflight.md)
 - [`/table` select-option handoff asset](./docs/table-select-option-handoff.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
+- [Webhook event field reference](./docs/webhook-field-reference.md)
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
 - [Troubleshooting FAQ](./docs/troubleshooting.md) — webhook, auth, Docker, plugins, ngrok, and debug tips
