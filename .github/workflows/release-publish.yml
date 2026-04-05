@@ -1,0 +1,60 @@
+name: Publish Draft Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+# This workflow complements release-draft.yml.
+# release-draft.yml creates a draft release when a tag is pushed.
+# This workflow auto-publishes that draft release (removes "draft: true").
+#
+# IMPORTANT: This action is PERMANENT — once run, the release is live and cannot be un-published.
+# If you want to review before publishing, delete this workflow or comment out the publish step
+# and run it manually from the Actions tab instead.
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish Draft Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse tag
+        id: tag
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+
+      - name: Get draft release
+        id: draft
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE=$(gh release list --repo ${{ github.repository }} --limit 50 --json tagName,url,isDraft --jq '.[] | select(.tagName == "${{ steps.tag.outputs.version }}") | select(.isDraft == true)')
+          if [ -z "$RELEASE" ]; then
+            echo "No draft release found for tag ${{ steps.tag.outputs.version }}"
+            echo "is_draft=false" >> $GITHUB_OUTPUT
+          else
+            echo "is_draft=true" >> $GITHUB_OUTPUT
+            echo "url=$(echo $RELEASE | jq -r '.url')" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Publish release
+        if: steps.draft.outputs.is_draft == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Publishing release ${{ steps.tag.outputs.version }}..."
+          # Extract the upload URL from the draft release
+          UPLOAD_URL=$(gh api repos/${{ github.repository }}/releases --jq '.[] | select(.tag_name == "${{ steps.tag.outputs.version }}") | select(.draft == true) | .upload_url' --paginate)
+          # Remove the trailing {?name,label} template suffix
+          UPLOAD_URL="${UPLOAD_URL%\{*}"
+          # Patch the release to remove draft flag
+          gh api --method PATCH "${{ steps.draft.outputs.url }}" \
+            --field draft=false
+          echo "✅ Release ${{ steps.tag.outputs.version }} published successfully!"
