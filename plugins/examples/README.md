@@ -108,6 +108,64 @@ REMIND_DEFAULT_UTC_OFFSET=8             # fallback UTC offset (hours)
 
 ---
 
+## `/weather` — Current Weather
+**File:** [`weather-plugin.ts`](./weather-plugin.ts)
+
+Fetches current weather for any city using the free [wttr.in](https://wttr.in/) API.
+No API key required. Returns a Feishu rich card with temperature, humidity, wind,
+feels-like, UV index, and visibility.
+
+**Patterns demonstrated:**
+- HTTP GET with query parameters (`axios.get`)
+- JSON response parsing (nested `current_condition[0]`)
+- Environment-variable-driven configuration (`unit` toggle °C/°F)
+- `AbortController` + timeout for reliability
+- Dynamic emoji mapping based on weather condition string
+- Graceful degradation on API error (timeout → friendly text fallback)
+- Feishu rich card with `note` elements (key-value grid)
+
+**Usage:**
+```
+/weather Beijing
+/weather Tokyo c        ← c=Celsius, f=Fahrenheit
+/weather "New York" f
+```
+
+**Environment variables:**
+```env
+WEATHER_DEFAULT_UNIT=c   # c=Celsius, f=Fahrenheit
+```
+
+---
+
+## `/poll` — Inline Interactive Poll
+**File:** [`poll-plugin.ts`](./poll-plugin.ts)
+
+Creates an inline Feishu poll with button-voting interaction. Tapping an option
+casts a vote and the card updates to show live results with an ASCII bar chart.
+
+**Patterns demonstrated:**
+- `onCallback()` — interactive button callback handling
+- In-memory vote tally (`Map<pollKey, Poll>`)
+- Live card update (`api.updateMessage()`)
+- Feishu rich card with multiple `action` elements
+- User deduplication (one vote per person, tracked by `open_id`)
+- Dynamic bar chart rendering in markdown (`█` / `░`)
+- Poll expiration (in-memory store, cleared on restart)
+- Fallback to text results when card update fails
+
+**Usage:**
+```
+/poll "Which flavor?" Vanilla Chocolate Strawberry
+/poll "Deploy to prod?" Yes No
+/poll "Q4 priorities?" "Ship faster" "Better docs" "Fix bugs" "More tests"
+```
+
+> ⚠️ In-memory storage means votes are lost on server restart. For persistent
+> polls, replace `activePolls` with a Redis or database backend.
+
+---
+
 ## Comparing plugin patterns
 
 | Plugin | Lifecycle hooks | External call | State | Async |
@@ -115,6 +173,8 @@ REMIND_DEFAULT_UTC_OFFSET=8             # fallback UTC offset (hours)
 | `/qr` | `beforeProcess`, `handle` | QRServer image API | — | Sync |
 | `/joke` | `handle`, `afterProcess` | JokeAPI REST | — | `async` |
 | `/remind` | `handle`, `afterProcess` | — | `Map<>` | Sync |
+| `/weather` | `handle` | wttr.in REST/JSON | — | `async` |
+| `/poll` | `handle`, `onCallback` | — | `Map<>` + `updateMessage` | Sync |
 
 ---
 
