@@ -1,0 +1,207 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" role="img" aria-label="feishu-flow-kit architecture diagram">
+  <title>feishu-flow-kit Architecture</title>
+  <desc>Flow diagram showing how a Feishu message triggers a slash command and passes through the plugin system, adapters, workflows, and Feishu API responses.</desc>
+
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="feishuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00A1E0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0070BA;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="serverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2D3748;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1A202C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="pluginGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5B8FFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3B6FD4;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="workflowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#38A169;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#276749;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="feishuApiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00A1E0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0070BA;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4A5568"/>
+    </marker>
+    <marker id="arrowheadGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#38A169"/>
+    </marker>
+
+    <!-- Drop shadow filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="620" fill="#F7FAFC" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="700" fill="#1A202C">feishu-flow-kit — Message Processing Flow</text>
+  <text x="450" y="58" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#718096">Slash command → Plugin pipeline → Feishu API → Rich card response</text>
+
+  <!-- ==================== FEISHU ==================== -->
+  <rect x="20" y="82" width="160" height="70" rx="10" fill="url(#feishuGrad)" filter="url(#shadow)"/>
+  <text x="100" y="110" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="white">Feishu</text>
+  <text x="100" y="126" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#BEE3F8">Lark IM / Groups</text>
+  <text x="100" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#BEE3F8">/qr hello | /poll | …</text>
+
+  <!-- Arrow: Feishu → Server -->
+  <line x1="180" y1="117" x2="248" y2="117" stroke="#4A5568" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="214" y="108" text-anchor="middle" font-family="monospace" font-size="9" fill="#718096">POST /webhook</text>
+
+  <!-- ==================== SERVER ==================== -->
+  <rect x="252" y="82" width="170" height="70" rx="10" fill="url(#serverGrad)" filter="url(#shadow)"/>
+  <text x="337" y="110" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="white">src/server/</text>
+  <text x="337" y="126" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#CBD5E0">Webhook guard</text>
+  <text x="337" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#CBD5E0">Signature validation</text>
+
+  <!-- Arrow: Server → Adapter -->
+  <line x1="422" y1="117" x2="490" y2="117" stroke="#4A5568" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="456" y="108" text-anchor="middle" font-family="monospace" font-size="9" fill="#718096">normalize</text>
+
+  <!-- ==================== ADAPTERS ==================== -->
+  <rect x="494" y="82" width="160" height="70" rx="10" fill="#4A5568" filter="url(#shadow)"/>
+  <text x="574" y="110" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="white">src/adapters/</text>
+  <text x="574" y="126" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#CBD5E0">FeishuEvent adapter</text>
+  <text x="574" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#CBD5E0">extract command + args</text>
+
+  <!-- Arrow: Adapter → Plugin Registry -->
+  <line x1="654" y1="117" x2="722" y2="117" stroke="#4A5568" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="688" y="108" text-anchor="middle" font-family="monospace" font-size="9" fill="#718096">FeishuMessage</text>
+
+  <!-- ==================== PLUGIN REGISTRY ==================== -->
+  <rect x="726" y="82" width="154" height="70" rx="10" fill="url(#pluginGrad)" filter="url(#shadow)"/>
+  <text x="803" y="110" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="white">Plugin Registry</text>
+  <text x="803" y="126" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#BEE3F8">onCommand match?</text>
+  <text x="803" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#BEE3F8">→ handler.execute()</text>
+
+  <!-- ==================== PLUGIN PIPELINE (vertical) ==================== -->
+
+  <!-- Plugin box 1: beforeProcess -->
+  <rect x="726" y="170" width="154" height="44" rx="8" fill="#EBF4FF" stroke="#5B8FFF" stroke-width="1.5"/>
+  <text x="803" y="186" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#2D6BCC">beforeProcess</text>
+  <text x="803" y="200" text-anchor="middle" font-family="monospace" font-size="10" fill="#4A5568">skip | transform</text>
+
+  <!-- Plugin box 2: handle -->
+  <rect x="726" y="222" width="154" height="44" rx="8" fill="#EBF4FF" stroke="#5B8FFF" stroke-width="1.5"/>
+  <text x="803" y="238" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#2D6BCC">handle</text>
+  <text x="803" y="252" text-anchor="middle" font-family="monospace" font-size="10" fill="#4A5568">command logic</text>
+
+  <!-- Plugin box 3: afterProcess -->
+  <rect x="726" y="274" width="154" height="44" rx="8" fill="#EBF4FF" stroke="#5B8FFF" stroke-width="1.5"/>
+  <text x="803" y="290" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#2D6BCC">afterProcess</text>
+  <text x="803" y="304" text-anchor="middle" font-family="monospace" font-size="10" fill="#4A5568">side-effects</text>
+
+  <!-- Vertical arrows between plugin hooks -->
+  <line x1="803" y1="154" x2="803" y2="170" stroke="#5B8FFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="803" y1="214" x2="803" y2="222" stroke="#5B8FFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="803" y1="266" x2="803" y2="274" stroke="#5B8FFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- ==================== WORKFLOWS ==================== -->
+  <rect x="20" y="190" width="148" height="66" rx="10" fill="url(#workflowGrad)" filter="url(#shadow)"/>
+  <text x="94" y="213" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="white">src/workflows/</text>
+  <text x="94" y="229" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#C6F6D5">run-message-workflow</text>
+  <text x="94" y="244" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#C6F6D5">FeishuClient call</text>
+
+  <!-- Arrow: Feishu message path through to workflows -->
+  <path d="M 100 152 L 100 172 Q 100 182 94 190" stroke="#4A5568" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,3"/>
+  <text x="76" y="168" text-anchor="middle" font-family="monospace" font-size="9" fill="#718096">register</text>
+
+  <!-- Arrow: Adapter → Workflow -->
+  <line x1="494" y1="152" x2="168" y2="190" stroke="#4A5568" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="326" y="174" text-anchor="middle" font-family="monospace" font-size="9" fill="#718096">FeishuMessage</text>
+
+  <!-- ==================== PLUGIN EXAMPLES GALLERY ==================== -->
+  <rect x="20" y="310" width="690" height="100" rx="10" fill="#EDF2F7" stroke="#CBD5E0" stroke-width="1.5"/>
+  <text x="40" y="332" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#2D3748">📦 Plugin Examples Gallery — plugins/examples/</text>
+  <text x="40" y="350" font-family="monospace" font-size="11" fill="#4A5568">qrcode-plugin.ts</text>
+  <text x="40" y="366" font-family="monospace" font-size="11" fill="#4A5568">joke-plugin.ts</text>
+  <text x="40" y="382" font-family="monospace" font-size="11" fill="#4A5568">remind-plugin.ts</text>
+  <text x="200" y="350" font-family="monospace" font-size="11" fill="#4A5568">weather-plugin.ts</text>
+  <text x="200" y="366" font-family="monospace" font-size="11" fill="#4A5568">poll-plugin.ts</text>
+  <text x="200" y="382" font-family="monospace" font-size="11" fill="#718096">→ Copy to plugins/ + configure FEISHU_PLUGINS</text>
+  <text x="40" y="400" font-family="system-ui,sans-serif" font-size="10" fill="#718096">lifecycle hooks: register → beforeProcess → handle → afterProcess → onCallback</text>
+
+  <!-- ==================== FEISHU API ==================== -->
+  <rect x="252" y="190" width="230" height="66" rx="10" fill="url(#feishuApiGrad)" filter="url(#shadow)"/>
+  <text x="367" y="213" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="white">Feishu Open Platform API</text>
+  <text x="367" y="229" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#BEE3F8">im/v1/messages (send) · docx/v1 docs</text>
+  <text x="367" y="244" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#BEE3F8">bitable/v1 appTables · lark/im/v1/rems</text>
+
+  <!-- Arrow: Server → Feishu API -->
+  <line x1="422" y1="190" x2="422" y2="223" stroke="#00A1E0" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="436" y="207" text-anchor="middle" font-family="monospace" font-size="9" fill="#00A1E0">API call</text>
+
+  <!-- Arrow: Workflow → Feishu API -->
+  <line x1="168" y1="223" x2="252" y2="223" stroke="#38A169" stroke-width="2" marker-end="url(#arrowheadGreen)"/>
+  <text x="210" y="216" text-anchor="middle" font-family="monospace" font-size="9" fill="#38A169">FeishuClient</text>
+
+  <!-- Arrow: Plugin → Feishu API (response path) -->
+  <path d="M 726 193 Q 660 165 482 193" stroke="#5B8FFF" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+  <text x="600" y="168" text-anchor="middle" font-family="monospace" font-size="9" fill="#5B8FFF">Rich card payload</text>
+
+  <!-- ==================== CONFIG ==================== -->
+  <rect x="20" y="430" width="210" height="70" rx="10" fill="#FAF5FF" stroke="#9F7AEA" stroke-width="1.5"/>
+  <text x="125" y="453" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#553C9A">⚙️ src/config/</text>
+  <text x="125" y="469" text-anchor="middle" font-family="monospace" font-size="10" fill="#6B46C1">FEISHU_APP_ID · FEISHU_APP_SECRET</text>
+  <text x="125" y="484" text-anchor="middle" font-family="monospace" font-size="10" fill="#6B46C1">FEISHU_WEBHOOK_SECRET · FEISHU_PLUGINS</text>
+
+  <!-- Config → all boxes (subtle) -->
+  <path d="M 230 465 Q 300 430 300 117" stroke="#9F7AEA" stroke-width="1" fill="none" stroke-dasharray="3,4" opacity="0.5"/>
+  <path d="M 230 465 Q 380 430 367 190" stroke="#9F7AEA" stroke-width="1" fill="none" stroke-dasharray="3,4" opacity="0.5"/>
+
+  <!-- ==================== ENVIRONMENT VARIABLES ==================== -->
+  <rect x="20" y="430" width="210" height="70" rx="10" fill="#FAF5FF" stroke="#9F7AEA" stroke-width="1.5"/>
+  <text x="125" y="453" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#553C9A">⚙️ src/config/</text>
+  <text x="125" y="469" text-anchor="middle" font-family="monospace" font-size="10" fill="#6B46C1">FEISHU_APP_ID · FEISHU_APP_SECRET</text>
+  <text x="125" y="484" text-anchor="middle" font-family="monospace" font-size="10" fill="#6B46C1">FEISHU_WEBHOOK_SECRET · FEISHU_PLUGINS</text>
+
+  <!-- ==================== Npm Package ==================== -->
+  <rect x="252" y="430" width="210" height="70" rx="10" fill="#FFF5F5" stroke="#FC8181" stroke-width="1.5"/>
+  <text x="357" y="453" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#C53030">📦 @feishu/plugin-template</text>
+  <text x="357" y="469" text-anchor="middle" font-family="monospace" font-size="10" fill="#C53030">npm install @feishu/plugin-template</text>
+  <text x="357" y="484" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#718096">→ npm publish → global install</text>
+
+  <!-- ==================== README / DOCS ==================== -->
+  <rect x="484" y="430" width="396" height="70" rx="10" fill="#FFFAF0" stroke="#ED8936" stroke-width="1.5"/>
+  <text x="682" y="453" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#C05621">📖 Documentation</text>
+  <text x="682" y="469" text-anchor="middle" font-family="monospace" font-size="10" fill="#C05621">README · CONTRIBUTING · SECURITY</text>
+  <text x="682" y="484" text-anchor="middle" font-family="monospace" font-size="10" fill="#718096">setup-guide · plugin-system · recipes · deployment</text>
+
+  <!-- Arrow: Plugin → Workflow (flow arrow) -->
+  <path d="M 726 318 L 726 350 Q 726 360 716 360 L 168 360 Q 158 360 158 350 L 158 256" stroke="#5B8FFF" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+  <text x="440" y="375" text-anchor="middle" font-family="monospace" font-size="9" fill="#5B8FFF">workflow result</text>
+
+  <!-- ==================== BOTTOM LEGEND ==================== -->
+  <line x1="20" y1="516" x2="880" y2="516" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="20" y="534" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#4A5568">Legend</text>
+  <rect x="20" y="544" width="12" height="12" rx="3" fill="url(#feishuGrad)"/>
+  <text x="38" y="555" font-family="system-ui,sans-serif" font-size="10" fill="#718096">Feishu platform</text>
+  <rect x="120" y="544" width="12" height="12" rx="3" fill="url(#serverGrad)"/>
+  <text x="138" y="555" font-family="system-ui,sans-serif" font-size="10" fill="#718096">Server / HTTP layer</text>
+  <rect x="240" y="544" width="12" height="12" rx="3" fill="#4A5568"/>
+  <text x="258" y="555" font-family="system-ui,sans-serif" font-size="10" fill="#718096">Adapter (normalize)</text>
+  <rect x="370" y="544" width="12" height="12" rx="3" fill="url(#pluginGrad)"/>
+  <text x="388" y="555" font-family="system-ui,sans-serif" font-size="10" fill="#718096">Plugin system</text>
+  <rect x="490" y="544" width="12" height="12" rx="3" fill="url(#workflowGrad)"/>
+  <text x="508" y="555" font-family="system-ui,sans-serif" font-size="10" fill="#718096">Workflow logic</text>
+  <rect x="620" y="544" width="12" height="12" rx="3" fill="url(#feishuApiGrad)"/>
+  <text x="638" y="555" font-family="system-ui,sans-serif" font-size="10" fill="#718096">Feishu API calls</text>
+  <rect x="760" y="544" width="12" height="12" rx="3" fill="#EBF4FF" stroke="#5B8FFF" stroke-width="1.5"/>
+  <text x="778" y="555" font-family="system-ui,sans-serif" font-size="10" fill="#718096">Plugin lifecycle hooks</text>
+
+  <!-- ==================== TOP ROW: 5 STEPS ==================== -->
+  <!-- Step labels -->
+  <text x="100" y="176" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#A0AEC0">① Feishu</text>
+  <text x="337" y="176" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#A0AEC0">② Server</text>
+  <text x="574" y="176" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#A0AEC0">③ Adapter</text>
+  <text x="803" y="176" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#A0AEC0">④ Plugin</text>
+
+</svg>
