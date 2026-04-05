@@ -22,6 +22,10 @@ examples/       # runnable local examples and mock events
 docs/           # setup notes and architecture docs
 ```
 
+## Architecture diagram
+
+![Architecture diagram](./assets/architecture-diagram.svg)
+
 ## Flow
 
 1. Config is loaded from env or local files.
