@@ -247,6 +247,34 @@ Before opening a PR:
 
 ---
 
+## Release Process
+
+This project uses two GitHub Actions workflows to automate releases:
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `release-draft.yml` | `v*.*.*` tag pushed | Creates a **draft** GitHub Release with changelog |
+| `release-publish.yml` | `v*.*.*` tag pushed (after draft) | **Publishes** the draft (removes `draft: true`) |
+
+### Making a release
+
+```bash
+# 1. Update CHANGELOG.md with the new version entry (if needed)
+# 2. Bump version in package.json
+npm version patch   # or minor / major
+
+# 3. Push the tag — this triggers both workflows automatically
+git push origin v1.0.4
+```
+
+The release goes through two phases:
+1. **Draft phase** — `release-draft.yml` creates the draft; CI must pass; you can preview and edit on GitHub
+2. **Live phase** — `release-publish.yml` publishes it automatically once the draft exists
+
+### Manual override
+
+If you need to publish manually or skip auto-publish, delete `release-publish.yml` before pushing the tag.
+
 ## Code Style
 
 - TypeScript strict mode — avoid `any`, prefer explicit types
