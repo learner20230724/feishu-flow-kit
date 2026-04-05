@@ -275,6 +275,31 @@ The release goes through two phases:
 
 If you need to publish manually or skip auto-publish, delete `release-publish.yml` before pushing the tag.
 
+### Publishing @feishu/plugin-template to npm
+
+The `@feishu/plugin-template` package is published to npm separately from the main feishu-flow-kit release. It lives in `packages/plugin-template/` and has its own `package.json` with independent versioning.
+
+**Prerequisites:** You must have an `NPM_TOKEN` secret configured in the repository (GitHub repo → Settings → Secrets → Actions). The token needs publish permission for the `@feishu` scope. Request access to the [feishu npm org](https://www.npmjs.com/org/feishu) if needed.
+
+**To publish** (GitHub Actions, recommended):
+
+1. Go to **Actions → Publish @feishu/plugin-template to npm → Run workflow**
+2. Enter the version number (e.g., `1.0.0`) or leave blank to use the version in `packages/plugin-template/package.json`
+3. Click **Run workflow**
+
+The workflow will:
+- Build the TypeScript in `packages/plugin-template/`
+- Publish to `https://registry.npmjs.org/` with public access
+- Tag the commit as `plugin-template-v{x.y.z}` on GitHub
+
+**To version-bump separately:**
+
+```bash
+cd packages/plugin-template
+npm version minor   # or patch
+# Then push the git tag: git push origin plugin-template-v1.2.0
+```
+
 ## Code Style
 
 - TypeScript strict mode — avoid `any`, prefer explicit types

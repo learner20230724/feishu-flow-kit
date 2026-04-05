@@ -4,8 +4,9 @@
 
 ![Plugin commands demo](https://raw.githubusercontent.com/learner20230724/feishu-flow-kit/main/docs/assets/plugin-commands-demo.png)
 
-[![npm version](https://img.shields.io/npm/v/@feishu/plugin-template)](https://www.npmjs.com/package/@feishu/plugin-template)
+[![npm version](https://img.shields.io/npm/v/@feishu/plugin-template?logo=npm)](https://www.npmjs.com/package/@feishu/plugin-template)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue)](https://www.typescriptlang.org/)
+[![Publish npm](https://github.com/learner20230724/feishu-flow-kit/actions/workflows/publish-npm.yml/badge.svg)](https://github.com/learner20230724/feishu-flow-kit/actions/workflows/publish-npm.yml)
 
 ## What is this?
 

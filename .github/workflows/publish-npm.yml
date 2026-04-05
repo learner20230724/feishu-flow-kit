@@ -1,0 +1,72 @@
+name: Publish @feishu/plugin-template to npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.0.0). Leave empty to use package.json version.'
+        required: false
+        type: string
+
+# Allows this workflow to publish packages under the @feishu scope.
+# Set NPM_TOKEN secret in GitHub repo settings (npmjs.com/org/feishu org token with package publish permission).
+# Scope: @feishu | Permission: "Automation" or "Publish"
+
+permissions:
+  contents: read
+
+jobs:
+  publish-plugin-template:
+    name: Publish @feishu/plugin-template
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@feishu'
+
+      - name: Install dependencies (root)
+        run: npm install
+
+      - name: Build plugin-template
+        run: |
+          cd packages/plugin-template
+          npm install
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Determine version
+        id: version
+        run: |
+          PKG_VERSION=$(node -p "require('./packages/plugin-template/package.json').version")
+          INPUT_VERSION="${{ inputs.version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            echo "version=$INPUT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "version=$PKG_VERSION" >> $GITHUB_OUTPUT
+          fi
+          echo "publishing version: ${{ steps.version.outputs.version }}"
+
+      - name: Publish @feishu/plugin-template to npm
+        run: |
+          cd packages/plugin-template
+          npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+          npm publish --access public --registry https://registry.npmjs.org/
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Tag the commit with plugin-template version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a plugin-template-v${{ steps.version.outputs.version }} -m "Publish @feishu/plugin-template v${{ steps.version.outputs.version }}"
+          git push origin plugin-template-v${{ steps.version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
