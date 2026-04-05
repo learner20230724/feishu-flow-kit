@@ -381,6 +381,7 @@ npm test
 - [`/table` webhook 成功 / 失败示例](./docs/table-webhook-success-error-demo.md)
 - [`/table` API error fixture 资产包](./docs/table-api-error-fixtures.md)
 - [按 API 报错模式排查](./docs/troubleshooting-by-api-error-pattern.md)
+- [参与贡献指南](./CONTRIBUTING.md) — 本地开发环境搭建、添加命令、插件开发、PR 检查清单
 - [GitHub 仓库元数据](./docs/github-repo-meta.md)
 - [无浏览器环境下发布到 GitHub](./docs/publish-to-github.md)
 
