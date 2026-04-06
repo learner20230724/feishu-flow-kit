@@ -1,5 +1,25 @@
 # Heartbeat Log
 
+## 2026-04-06 09:27 UTC
+- 当前主线：`feishu-flow-kit`（main @ 7966233 ✅，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 93d2922 🆕，v1.3.0）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
+- 本次完成：修复 llm-chat-lab 测试环境 + 提交测试基础设施——
+  (1) 发现 port 4173 残留进程导致首次测试失败（40/41 pass，EADDRINUSE）
+  (2) Kill 残留 node 进程后重跑，41/41 tests pass ✅
+  (3) 提交 test/server.test.mjs（426行）+ server.mjs exports + package.json test script → 推送到 origin/main ✅
+  (4) 测试覆盖：substituteVars / buildVarContext / mockResponse / parseCostToCents 单元测试 + 12个API集成测试
+- 产出文件/结果：
+  - `llm-chat-lab/test/server.test.mjs`（新建，40个测试用例）
+  - `llm-chat-lab/server.mjs` — 导出 4 个核心函数供测试
+  - `llm-chat-lab/package.json` — 新增 `"test": "node --test test/server.test.mjs"`
+  - llm-chat-lab main @ 93d2922 已推送到 GitHub
+- 遇到的问题：port 4173 残留进程（上次测试遗留），kill 后解决
+- 下一步部署：
+  - feishu-flow-kit v1.0.3 draft release Publish（需你 GitHub UI）：https://github.com/learner20230724/feishu-flow-kit/releases
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
+  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
+  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
+- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作，无自动化路径）
+
 ## 2026-04-06 08:57 UTC
 - 当前主线：`feishu-flow-kit`（main @ 7966233 🆕，v1.0.3 tag ✅）+ `llm-chat-lab` v1.3.0（8e886e8 ✅）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
 - 本次完成：更新 ROADMAP.md 至 v1.0.3——
