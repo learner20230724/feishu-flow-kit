@@ -258,6 +258,23 @@ test('buildDocBlockChildrenDraft converts divider lines into divider blocks', ()
   assert.deepEqual(children[1]?.divider, {});
 });
 
+test('buildDocBlockChildrenDraft converts inline code block lines into code blocks', () => {
+  // A line that is entirely backtick-wrapped (not fenced) is treated as a
+  // standalone code block, preserving the inline_code text_element_style.
+  const createDraft = buildDocCreateDraft(
+    'inline code block test',
+    '`console.log(1)`',
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 1);
+  assert.equal(children[0]?.block_type, 17); // code block
+  assert.equal(children[0]?.code?.elements[0]?.text_run?.content, 'console.log(1)');
+  assert.equal(children[0]?.code?.elements[0]?.text_run?.text_element_style?.inline_code, true);
+  assert.equal(children[0]?.code?.style?.language, 1); // plain text
+});
+
 test('buildDocBlockChildrenDraft handles mixed content with all new block types', () => {
   const createDraft = buildDocCreateDraft(
     'mixed blocks demo',
