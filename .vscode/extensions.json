@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "formulahendry.partial-diff",
+    "ms-vscode.extension-test-runner",
+    "ms-vscode.vscode-typescript-next",
+    "usernamehw.errorlens"
+  ],
+  "unwantedRecommendations": [
+    "christian-kohler.path-intellisense"
+  ]
+}

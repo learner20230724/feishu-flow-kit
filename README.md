@@ -33,7 +33,7 @@ This project is a cleaner starting point:
 
 | Capability | Built-in | Notes |
 |---|---|---|
-| `/doc` — Feishu doc creation | ✅ | Rich block authoring incl. bold/italic/code/links |
+| `/doc` — Feishu doc creation | ✅ | 10 block types: para, h1/h2/h3, bullet, ordered, todo, fenced code, quote, divider + inline styles (bold/italic/code/link) |
 | `/table` — Bitable record creation | ✅ | Schema-aware, 18 field types, env-var field mapping |
 | `/todo` — structured task drafting | ✅ | Text-first, no credentials needed |
 | `/help`, `/ping`, `/poll` plugins | ✅ | Also a full plugin system for custom commands |

@@ -108,61 +108,60 @@ REMIND_DEFAULT_UTC_OFFSET=8             # fallback UTC offset (hours)
 
 ---
 
-## `/weather` — Current Weather
+## `/weather` — Current Weather Info
 **File:** [`weather-plugin.ts`](./weather-plugin.ts)
 
-Fetches current weather for any city using the free [wttr.in](https://wttr.in/) API.
-No API key required. Returns a Feishu rich card with temperature, humidity, wind,
-feels-like, UV index, and visibility.
+Returns weather information for any city using the free [wttr.in](https://wttr.in/) service.
+No API key required. Points users to the wttr.in URL so they can view weather directly.
 
 **Patterns demonstrated:**
-- HTTP GET with query parameters (`axios.get`)
-- JSON response parsing (nested `current_condition[0]`)
-- Environment-variable-driven configuration (`unit` toggle °C/°F)
-- `AbortController` + timeout for reliability
-- Dynamic emoji mapping based on weather condition string
-- Graceful degradation on API error (timeout → friendly text fallback)
-- Feishu rich card with `note` elements (key-value grid)
+- Slash command registration (`registry.registerCommand`)
+- Argument parsing (city name + optional unit suffix)
+- Sync `handle()` function (plugin interface does not support async HTTP)
+- Clear usage text with examples
+- wttr.in URL construction for user-initiated weather lookup
 
 **Usage:**
 ```
 /weather Beijing
-/weather Tokyo c        ← c=Celsius, f=Fahrenheit
-/weather "New York" f
+/weather Tokyo f        ← f=Fahrenheit; default is Celsius
 ```
 
-**Environment variables:**
-```env
-WEATHER_DEFAULT_UNIT=c   # c=Celsius, f=Fahrenheit
-```
+> ⚠️ **Async limitation:** The plugin `handle` function is synchronous and cannot
+> make external HTTP calls directly. For full live weather cards, either pre-fetch
+> data in `beforeProcess()` with caching, or call the Feishu API directly from
+> the main webhook handler with a bot token.
 
 ---
 
-## `/poll` — Inline Interactive Poll
+## `/poll` — Inline Text-Based Poll
 **File:** [`poll-plugin.ts`](./poll-plugin.ts)
 
-Creates an inline Feishu poll with button-voting interaction. Tapping an option
-casts a vote and the card updates to show live results with an ASCII bar chart.
+Creates a simple text-based inline poll. Users vote by number with `/vote N`.
+Results are shown with ASCII bar charts.
 
 **Patterns demonstrated:**
-- `onCallback()` — interactive button callback handling
-- In-memory vote tally (`Map<pollKey, Poll>`)
-- Live card update (`api.updateMessage()`)
-- Feishu rich card with multiple `action` elements
-- User deduplication (one vote per person, tracked by `open_id`)
-- Dynamic bar chart rendering in markdown (`█` / `░`)
-- Poll expiration (in-memory store, cleared on restart)
-- Fallback to text results when card update fails
+- In-memory poll store (`Map<pollKey, PollState>`)
+- Argument parsing with quoted-question + unquoted-options format
+- Option count validation (2–10 options)
+- Sync `handle()` with subcommand routing (`create` / `results` / `help`)
+- ASCII bar chart rendering in markdown (`█` / `░`)
 
 **Usage:**
 ```
 /poll "Which flavor?" Vanilla Chocolate Strawberry
 /poll "Deploy to prod?" Yes No
-/poll "Q4 priorities?" "Ship faster" "Better docs" "Fix bugs" "More tests"
+/poll results         ← show current results
 ```
 
-> ⚠️ In-memory storage means votes are lost on server restart. For persistent
-> polls, replace `activePolls` with a Redis or database backend.
+> ⚠️ **Interactive-button limitation:** Feishu's interactive rich-card buttons
+> require the Feishu API client with a bot token and cannot run inside the
+> synchronous plugin `handle` function. For button-based polls, use Feishu's
+> built-in Poll bot. This plugin provides a text-based alternative that works
+> within the plugin interface constraints.
+>
+> ⚠️ In-memory storage means polls are lost on server restart. For persistent
+> polls, replace the module-level `Map` with a Redis or database backend.
 
 ---
 
@@ -173,8 +172,12 @@ casts a vote and the card updates to show live results with an ASCII bar chart.
 | `/qr` | `beforeProcess`, `handle` | QRServer image API | — | Sync |
 | `/joke` | `handle`, `afterProcess` | JokeAPI REST | — | `async` |
 | `/remind` | `handle`, `afterProcess` | — | `Map<>` | Sync |
-| `/weather` | `handle` | wttr.in REST/JSON | — | `async` |
-| `/poll` | `handle`, `onCallback` | — | `Map<>` + `updateMessage` | Sync |
+| `/weather` | `handle` | wttr.in URL (sync text) | — | Sync |
+| `/poll` | `handle` | — | `Map<>` (in-memory) | Sync |
+
+> **Async note:** `handle()` is synchronous — external HTTP calls inside it block
+> the webhook response. For live API calls, use `beforeProcess()` to pre-fetch
+> and cache data, or call the Feishu API directly from the main handler.
 
 ---
 

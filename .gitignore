@@ -4,3 +4,4 @@ dist/
 .env.production
 *.local
 *.log
+test-code-block.mjs

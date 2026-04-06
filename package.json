@@ -35,7 +35,9 @@
     "docs:export-svg-png": "node ./scripts/export-svg-png.mjs",
     "docs:export-assets": "node ./scripts/export-doc-assets.mjs",
     "verify:table-schema-handoff": "node ./scripts/verify-table-schema-handoff.mjs",
-    "verify:release": "bash ./scripts/verify-release-ready.sh"
+    "verify:release": "bash ./scripts/verify-release-ready.sh",
+    "demo": "node scripts/demo-interactive.mjs",
+    "demo:plugins": "node scripts/demo-interactive.mjs --speed fast"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",

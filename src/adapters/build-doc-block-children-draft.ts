@@ -9,6 +9,10 @@ const BLOCK_TYPE = {
   heading3: 5,
   bullet: 12,
   todo: 13,
+  ordered: 14,
+  code: 17,
+  quote: 18,
+  divider: 22,
 } as const;
 
 type BlockType = (typeof BLOCK_TYPE)[keyof typeof BLOCK_TYPE];
@@ -37,6 +41,10 @@ export interface FeishuDocRichBlock {
   heading3?: { elements: TextElement[] };
   bullet?: { elements: TextElement[] };
   todo?: { elements: TextElement[]; style: { done: boolean } };
+  ordered?: { elements: TextElement[] };
+  code?: { elements: TextElement[]; style: { language: number } };
+  quote?: { elements: TextElement[] };
+  divider?: Record<string, never>;
 }
 
 export interface FeishuDocBlockChildrenDraft {
@@ -297,6 +305,62 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     };
   }
 
+  // Ordered list: 1. item, 2. item, etc.
+  const ordered = trimmed.match(/^\d+\.\s+(.+)/);
+  if (ordered) {
+    const content = ordered[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.ordered,
+      ordered: { elements: parseInlineSpans(content) },
+    };
+  }
+
+  // Fenced code block: ``` language\n code \n``` or ```\ncode\n```
+  // After pre-processing in buildDocBlockChildrenDraft, multi-line fences are joined
+  // into a single string so classifyLine sees them as one unit.
+  // Matches: ```js\ncode\n``` or ```\ncode\n```
+  const codeFence = trimmed.match(/^```(\w*)\n([\s\S]*?)\n```$/);
+  if (codeFence) {
+    const codeContent = codeFence[2]!.trim();
+    return {
+      block_type: BLOCK_TYPE.code,
+      code: {
+        elements: [{ text_run: { content: codeContent } }],
+        style: { language: 1 }, // 1 = plain text; language detection is a future enhancement
+      },
+    };
+  }
+
+  // Inline code block: a line that is entirely `...` (backtick-wrapped, not a fenced block)
+  const inlineCodeBlock = trimmed.match(/^`([^`]+)`$/);
+  if (inlineCodeBlock) {
+    return {
+      block_type: BLOCK_TYPE.code,
+      code: {
+        elements: [{ text_run: { content: inlineCodeBlock[1]!, text_element_style: { inline_code: true } } }],
+        style: { language: 1 },
+      },
+    };
+  }
+
+  // Quote: > quote text
+  const quote = trimmed.match(/^>\s+(.+)/);
+  if (quote) {
+    const content = quote[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.quote,
+      quote: { elements: parseInlineSpans(content) },
+    };
+  }
+
+  // Divider: --- or *** or ___
+  if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+    return {
+      block_type: BLOCK_TYPE.divider,
+      divider: {},
+    };
+  }
+
   // Plain paragraph
   return {
     block_type: BLOCK_TYPE.paragraph,
@@ -313,8 +377,46 @@ export function buildDocBlockChildrenDraft(
     throw new Error('Missing document id for block append draft.');
   }
 
-  const children = createDraft.initialContentMarkdown
-    .split(/\r?\n/)
+  const rawLines = createDraft.initialContentMarkdown.split(/\r?\n/);
+
+  // Pre-process lines: join lines that are inside fenced code blocks so
+  // classifyLine sees the whole fence as one unit.
+  // Fenced code block: opens with ``` (optionally followed by a language tag)
+  // and closes with ``` (no language tag, on its own line).
+  // Lines between (exclusive) are accumulated and joined with \n.
+  const processedLines: string[] = [];
+  let i = 0;
+  while (i < rawLines.length) {
+    const line = rawLines[i]!;
+    const openMatch = line.match(/^```(\w*)$/);
+    if (openMatch && i + 1 < rawLines.length) {
+      // Found opening fence. Collect lines until closing fence.
+      const fenceLines: string[] = [line]; // opening fence line
+      let closed = false;
+      i++;
+      while (i < rawLines.length) {
+        const nextLine = rawLines[i]!;
+        fenceLines.push(nextLine);
+        if (nextLine === '```') {
+          closed = true;
+          break;
+        }
+        i++;
+      }
+      if (closed) {
+        // Join the entire fence as one line so classifyLine can match it
+        processedLines.push(fenceLines.join('\n'));
+      } else {
+        // Unclosed fence — push lines individually (fallback)
+        for (const fl of fenceLines) processedLines.push(fl);
+      }
+    } else {
+      processedLines.push(line);
+    }
+    i++;
+  }
+
+  const children = processedLines
     .map(classifyLine)
     .filter((block): block is FeishuDocRichBlock => block !== null);
 
@@ -328,7 +430,9 @@ export function buildDocBlockChildrenDraft(
     sourceMarkdown: createDraft.initialContentMarkdown,
     notes: [
       'This adapter converts markdown lines into native Feishu docx block types.',
-      'Supported block types: paragraph, heading1/2/3, bullet list, todo (checked and unchecked).',
+      'Supported block types: paragraph, heading1/2/3, bullet list, ordered list,',
+      '  todo (checked and unchecked), fenced code block (```...```), inline code block (`code`),',
+      '  quote (> text), and divider (---).',
       'Supported inline formatting: bold (**text**), italic (*text*), underline (__text__),',
       '  inline code (`text`), strikethrough (~~text~~), explicit links ([text](url)),',
       '  and bare URL auto-link (https://… or www.… → clickable link).',

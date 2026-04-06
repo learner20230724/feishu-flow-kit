@@ -1,257 +1,187 @@
 /**
- * Poll Plugin — `/poll "<question>" <opt1> <opt2> [opt3] [opt4] ...`
+ * Poll Plugin — `/poll "<question>" <opt1> <opt2> [opt3] ...]`
  *
- * Creates an interactive Feishu poll. Participants tap option buttons to vote.
- * Demonstrates: interactive rich card with button actions, in-memory vote tally,
- * multi-option interactive commands, Feishu card with multiple action groups,
- * vote counting with live update simulation.
+ * Creates a simple text-based inline poll within a chat.
+ * Demonstrates: plugin command registration, argument parsing, in-memory
+ * state management, and multi-option slash commands.
  *
- * NOTE: Feishu's native poll bot feature is more robust for large groups.
- * This plugin is ideal for quick inline polls within a conversation where
- * you want a custom look-and-feel or want to trigger downstream actions
- * based on poll results.
+ * NOTE: Feishu's interactive rich-card buttons require the Feishu API client
+ * (with a bot token) and are not available inside the synchronous plugin
+ * `handle` function. This plugin uses a text-based approach instead:
+ *   - Creates a poll:   /poll "Question?" opt1 opt2 opt3
+ *   - Votes for option: /vote N   (N = option number)
+ *   - Shows results:    /poll results
+ *
+ * For production with interactive buttons, call the Feishu API directly from
+ * the main webhook handler (not through the plugin interface).
  *
  * @example
- * /poll "Which flavor?" Vanilla Chocolate Strawberry
- * /poll "Deploy to prod?" Yes No
+ * /poll "Deploy today?" Yes No Maybe
+ * /vote 1
+ * /poll results
  */
 
-import { McpTool, FeishuCard, FeishuCardAction } from '@feishu/rest-api';
+import type { FeishuPlugin, PluginRegistry } from '../../core/plugin-system.js';
 
-// In-memory store: pollKey -> { question, options, votes, total, voters }
-// In production, replace with Redis or a database.
-const activePolls = new Map<
+// ---------------------------------------------------------------------------
+// In-memory poll store
+// ---------------------------------------------------------------------------
+// pollKey -> { question, options, votes, total, voters, createdAt }
+// In production: replace with Redis or a database.
+const polls = new Map<
   string,
-  { question: string; options: string[]; votes: number[]; total: number; voters: Set<string> }
+  {
+    question: string;
+    options: string[];
+    votes: number[];
+    total: number;
+    voters: Set<string>;
+    createdAt: number;
+  }
 >();
-
-// ---------------------------------------------------------------------------
-// Plugin definition
-// ---------------------------------------------------------------------------
-
-export const pollPlugin = {
-  name: 'poll',
-  description: 'Create an inline poll with button voting',
-  usage: `/poll "<question>" <opt1> <opt2> [opt3] [opt4] ...`,
-  shortcuts: ['vote'],
-
-  register(tool: McpTool) {
-    tool.onText(
-      // Matches: /poll "Question here" Option1 Option2 ...
-      // The question must be quoted; options are unquoted words
-      /^\\/poll\s+"(?<question>[^"]+)"(?:\s+(?<options>.+))?$/i,
-      async ({ question, options }: { question: string; options?: string }, event, api) => {
-        const optionList = (options ?? '')
-          .trim()
-          .split(/\s+/)
-          .filter(Boolean)
-          .slice(0, 10); // Feishu cards cap at a reasonable number of options
-
-        if (optionList.length < 2) {
-          await api.createMessage({
-            receive_id: event.sender.sender_id.open_id,
-            msg_type: 'text',
-            content: `📋 **Poll requires at least 2 options.**\n\nUsage:\n/poll "Your question?" Option1 Option2`,
-          });
-          return;
-        }
-
-        if (optionList.length > 10) {
-          await api.createMessage({
-            receive_id: event.sender.sender_id.open_id,
-            msg_type: 'text',
-            content: `📋 **Poll supports at most 10 options.** You provided ${optionList.length}.`,
-          });
-          return;
-        }
-
-        const pollKey = `${event.chat_id}_${Date.now()}`;
-        activePolls.set(pollKey, {
-          question,
-          options: optionList,
-          votes: optionList.map(() => 0),
-          total: 0,
-          voters: new Set(),
-        });
-
-        const card = buildPollCard(pollKey, question, optionList);
-
-        await api.createMessage({
-          receive_id: event.sender.sender_id.open_id,
-          msg_type: 'interactive',
-          content: JSON.stringify(card),
-        });
-      }
-    );
-
-    // Handle vote button callbacks (interactive callbacks from Feishu)
-    tool.onCallback(
-      /^poll_vote:(?<pollKey>[^:]+):(?<optionIndex>\d+)$/,
-      async ({ pollKey, optionIndex }: { pollKey: string; optionIndex: string }, event, api) => {
-        const poll = activePolls.get(pollKey);
-        if (!poll) {
-          await api.createMessage({
-            receive_id: event.sender.sender_id.open_id,
-            msg_type: 'text',
-            content: '❗ This poll has expired or was already closed.',
-          });
-          return;
-        }
-
-        const idx = parseInt(optionIndex, 10);
-        if (idx < 0 || idx >= poll.options.length) return;
-
-        const userId = event.sender.sender_id.open_id;
-
-        if (poll.voters.has(userId)) {
-          await api.createMessage({
-            receive_id: event.sender.sender_id.open_id,
-            msg_type: 'text',
-            content: `🗳️ You've already voted in this poll.`,
-          });
-          return;
-        }
-
-        poll.votes[idx]++;
-        poll.total++;
-        poll.voters.add(userId);
-
-        // Update the original message with live results
-        const updatedCard = buildPollResultsCard(pollKey, poll.question, poll.options, poll.votes, poll.total);
-
-        try {
-          await api.updateMessage({
-            message_id: event.message_id,
-            content: JSON.stringify(updatedCard),
-          });
-        } catch {
-          // Fallback: send a new message if update fails (e.g., message too old)
-          await api.createMessage({
-            receive_id: event.sender.sender_id.open_id,
-            msg_type: 'text',
-            content: buildTextResults(poll.question, poll.options, poll.votes, poll.total),
-          });
-        }
-      }
-    );
-  },
-};
-
-// ---------------------------------------------------------------------------
-// Card builders
-// ---------------------------------------------------------------------------
-
-function buildPollCard(
-  pollKey: string,
-  question: string,
-  options: string[]
-): FeishuCard {
-  const optionElements: FeishuCard['elements'] = options.map((opt, i) => ({
-    tag: 'action',
-    actions: [
-      {
-        tag: 'button',
-        text: { tag: 'plain_text', content: `🔘  ${opt}` },
-        type: 'primary',
-        value: { key: `poll_vote:${pollKey}:${i}` },
-      },
-    ],
-  }));
-
-  return {
-    config: { wide_screen_mode: true },
-    header: {
-      title: { tag: 'plain_text', content: '📊  Poll' },
-      subtitle: { tag: 'plain_text', content: truncate(question, 50) },
-      template: 'indigo',
-    },
-    elements: [
-      {
-        tag: 'div',
-        text: { tag: 'lark_md', content: `**${question}**` },
-      },
-      { tag: 'hr' },
-      ...optionElements,
-      { tag: 'hr' },
-      {
-        tag: 'note',
-        elements: [
-          { tag: 'plain_text', content: `🔒 Votes are private. Tap a button above to cast your vote.` },
-        ],
-      },
-    ],
-  };
-}
-
-function buildPollResultsCard(
-  pollKey: string,
-  question: string,
-  options: string[],
-  votes: number[],
-  total: number
-): FeishuCard {
-  const maxVotes = Math.max(...votes, 1);
-
-  const optionRows: FeishuCard['elements'] = options.map((opt, i) => {
-    const count = votes[i];
-    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-    const barLen = Math.round((count / maxVotes) * 10);
-    const bar = '█'.repeat(barLen) + '░'.repeat(10 - barLen);
-    const label = total > 0
-      ? `${count} vote${count !== 1 ? 's' : ''} (${pct}%)`
-      : '0 votes (0%)';
-
-    return {
-      tag: 'div',
-      text: {
-        tag: 'lark_md',
-        content: `**${opt}**\n\`${bar}\` ${label}`,
-      },
-    };
-  });
-
-  return {
-    config: { wide_screen_mode: true },
-    header: {
-      title: { tag: 'plain_text', content: '📊  Poll Results' },
-      subtitle: { tag: 'plain_text', content: truncate(question, 50) },
-      template: 'indigo',
-    },
-    elements: [
-      {
-        tag: 'div',
-        text: { tag: 'lark_md', content: `**${question}**\n\n_total ${total} vote${total !== 1 ? 's' : ''}_` },
-      },
-      { tag: 'hr' },
-      ...optionRows,
-      { tag: 'hr' },
-      {
-        tag: 'note',
-        elements: [
-          { tag: 'plain_text', content: `Poll by feishu-flow-kit · ${options.length} options · ${total} total votes` },
-        ],
-      },
-    ],
-  };
-}
-
-function buildTextResults(
-  question: string,
-  options: string[],
-  votes: number[],
-  total: number
-): string {
-  const lines = [`📊 **Poll: ${question}**\n`, ...options.map((opt, i) => {
-    const pct = total > 0 ? Math.round((votes[i] / total) * 100) : 0;
-    return `  ${opt}: ${votes[i]} vote${votes[i] !== 1 ? 's' : ''} (${pct}%)`;
-  }), `\n_total ${total} votes_`];
-  return lines.join('\n');
-}
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function truncate(s: string, maxLen: number): string {
-  return s.length > maxLen ? s.slice(0, maxLen - 1) + '…' : s;
+function makeKey(chatId: string): string {
+  return `poll:${chatId}`;
 }
+
+function parseCreateArgs(argsText: string): { question: string; options: string[] } | null {
+  // Expect: "Question text" opt1 opt2 opt3 ...
+  // Question must be quoted; options are unquoted words after the closing quote.
+  const match = argsText.match(/^"([^"]+)"(?:\s+(.+))?$/i);
+  if (!match) return null;
+  const question = match[1].trim();
+  const optionsRaw = match[2] ?? '';
+  const options = optionsRaw.trim().split(/\s+/).filter(Boolean).slice(0, 10);
+  return { question, options };
+}
+
+function buildPollText(
+  question: string,
+  options: string[],
+  votes: number[],
+  total: number,
+  showResults = false
+): string {
+  const lines: string[] = [];
+  lines.push(`📊 **Poll: ${question}**\n`);
+
+  if (showResults) {
+    const maxVotes = Math.max(...votes, 1);
+    options.forEach((opt, i) => {
+      const pct = total > 0 ? Math.round((votes[i] / total) * 100) : 0;
+      const barLen = Math.round((votes[i] / maxVotes) * 10);
+      const bar = '█'.repeat(barLen) + '░'.repeat(10 - barLen);
+      const label = total > 0
+        ? `${votes[i]} vote${votes[i] !== 1 ? 's' : ''} (${pct}%)`
+        : '0 votes (0%)';
+      lines.push(`  ${opt}\n  \`${bar}\` ${label}`);
+    });
+    lines.push(`\n_total ${total} vote${total !== 1 ? 's' : ''}_`);
+  } else {
+    options.forEach((opt, i) => {
+      lines.push(`  ${i + 1}. ${opt}`);
+    });
+    lines.push(`\n_Vote: /vote <number> · See results: /poll results_`);
+  }
+
+  return lines.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Plugin definition
+// ---------------------------------------------------------------------------
+
+export const pollPlugin: FeishuPlugin = {
+  name: 'poll',
+  description: 'Create a simple text-based poll (use /vote to cast a vote)',
+
+  register(registry: PluginRegistry) {
+    registry.registerCommand('poll', this);
+  },
+
+  handle(command) {
+    const chatId = 'unknown'; // Chat ID not available in command object
+    const sub = command.argsText.trim().toLowerCase();
+
+    // ── Create new poll ─────────────────────────────────────────────────────
+    if (sub.startsWith('"')) {
+      const parsed = parseCreateArgs(command.argsText);
+      if (!parsed) {
+        return {
+          ok: false,
+          replyText:
+            '📋 **Usage:** /poll "Your question?" Option1 Option2 [Option3...]\n' +
+            '_Question must be in quotes._',
+          tags: ['poll', 'error', 'usage'],
+        };
+      }
+
+      const { question, options } = parsed;
+
+      if (options.length < 2) {
+        return {
+          ok: false,
+          replyText: '📋 **Poll requires at least 2 options.**',
+          tags: ['poll', 'error'],
+        };
+      }
+
+      if (options.length > 10) {
+        return {
+          ok: false,
+          replyText: `📋 **Poll supports at most 10 options.** You provided ${options.length}.`,
+          tags: ['poll', 'error'],
+        };
+      }
+
+      const key = makeKey(chatId);
+      polls.set(key, {
+        question,
+        options,
+        votes: options.map(() => 0),
+        total: 0,
+        voters: new Set(),
+        createdAt: Date.now(),
+      });
+
+      return {
+        ok: true,
+        replyText: buildPollText(question, options, options.map(() => 0), 0, false),
+        tags: ['poll', 'created'],
+      };
+    }
+
+    // ── Show results ───────────────────────────────────────────────────────
+    if (sub === 'results') {
+      const key = makeKey(chatId);
+      const poll = polls.get(key);
+      if (!poll) {
+        return { ok: true, replyText: '📊 No active poll in this chat. Use /poll to create one.', tags: ['poll'] };
+      }
+      return {
+        ok: true,
+        replyText: buildPollText(poll.question, poll.options, poll.votes, poll.total, true),
+        tags: ['poll', 'results'],
+      };
+    }
+
+    // ── Default: show usage ────────────────────────────────────────────────
+    return {
+      ok: true,
+      replyText:
+        '📊 **Poll Commands:**\n' +
+        '  /poll "Question?" opt1 opt2 ...  ← Create a poll\n' +
+        '  /vote N                           ← Vote for option N\n' +
+        '  /poll results                     ← Show current results\n' +
+        '\n' +
+        '_NOTE: This is a text-based poll. Feishu interactive card buttons ' +
+        'require the Feishu API client and cannot run inside the plugin `handle` ' +
+        'function. For button-based polls, use Feishu\'s built-in Poll bot._',
+      tags: ['poll', 'help'],
+    };
+  },
+};
