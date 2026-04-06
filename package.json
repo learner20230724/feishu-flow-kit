@@ -26,7 +26,7 @@
     "dev": "tsx src/index.ts",
     "build": "tsc",
     "check": "tsc --noEmit",
-    "test": "node --import tsx --test",
+    "test": "node --import tsx --test test/*.test.ts",
     "table:mapping-draft": "node ./scripts/generate-table-mapping-env.mjs",
     "table:normalize-feishu-fields": "node ./scripts/normalize-feishu-table-fields.mjs",
     "table:extract-select-option-review": "node ./scripts/extract-select-option-review.mjs",
