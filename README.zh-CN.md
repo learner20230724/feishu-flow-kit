@@ -382,6 +382,7 @@ npm test
 - [Setup guide](./docs/setup-guide.md)
 - [Architecture overview](./docs/overview.md)
 - [部署指南](./docs/deployment.zh-CN.md) — Railway / Render / fly.io / 手动 Ubuntu
+- [REST API 参考文档](./docs/api-reference.zh-CN.md) — 完整端点文档、HMAC 安全验证、环境变量及 cURL 示例
 - [`/table` 字段映射说明](./docs/table-bitable-field-mapping.md)
 - [`/table` schema mapping worksheet](./docs/table-schema-mapping-worksheet.md)
 - [`/table` mapping generator input guide](./docs/table-mapping-generator-inputs.md)
