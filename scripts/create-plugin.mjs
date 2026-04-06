@@ -92,11 +92,21 @@ if (existsSync(targetDir)) {
 
 // ── Substitution helpers ──────────────────────────────────────────────────────
 
+// Replace only meaningful template identifiers, NOT arbitrary 'template' substrings
+// that appear in example code (e.g. Feishu card header background colour values).
 function substitute(text, name) {
   return text
-    .replaceAll('template', name)
+    // plugin name / command name fields in TypeScript/JSDoc
+    .replaceAll("'template'", `'${name}'`)
+    .replaceAll('"template"', `"${name}"`)
+    // the function that creates the plugin instance
+    .replaceAll('createPlugin', `createPlugin`)
+    // plugin instance name used in register()
     .replaceAll('your-new-plugin', name)
-    .replaceAll('your_new_plugin', name.replace(/-/g, '_'));
+    .replaceAll('your_new_plugin', name.replace(/-/g, '_'))
+    // directory name reference in comments
+    .replaceAll('plugins/template/', `plugins/${name}/`)
+    .replaceAll("'./template'", `'./${name}'`);
 }
 
 function processFile(srcPath, dstPath, name) {
