@@ -258,6 +258,64 @@ test('buildDocBlockChildrenDraft converts divider lines into divider blocks', ()
   assert.deepEqual(children[1]?.divider, {});
 });
 
+test('buildDocBlockChildrenDraft converts callout lines into callout blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'callout demo',
+    ['Before', '>> [!warning] This is a warning callout', 'After'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 3);
+  assert.equal(children[0]?.block_type, 2);   // paragraph
+  assert.equal(children[1]?.block_type, 34); // callout
+  assert.equal(children[1]?.callout?.callout_type, 1); // warning = 1
+  assert.equal(children[1]?.callout?.icon_id, 2);
+  assert.equal(children[1]?.callout?.border_color, 1);
+  assert.equal(children[2]?.block_type, 2);  // paragraph
+});
+
+test('buildDocBlockChildrenDraft converts all callout types correctly', () => {
+  const createDraft = buildDocCreateDraft(
+    'all callout types',
+    [
+      '>> [!info] Info callout',
+      '>> [!tip] Tip callout',
+      '>> [!success] Success callout',
+      '>> [!danger] Danger callout',
+      '>> [!book] Book callout',
+    ].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 5);
+  assert.equal(children[0]?.callout?.callout_type, 0);  // info
+  assert.equal(children[1]?.callout?.callout_type, 3);  // tip
+  assert.equal(children[2]?.callout?.callout_type, 4);  // success
+  assert.equal(children[3]?.callout?.callout_type, 2);  // danger
+  assert.equal(children[4]?.callout?.callout_type, 5);  // book
+});
+
+test('buildDocBlockChildrenDraft supports inline spans inside callout text', () => {
+  const createDraft = buildDocCreateDraft(
+    'callout inline styles',
+    '>> [!tip] Use **bold**, *italic*, and `code` inside callouts',
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children[0]?.block_type, 34);
+  const elements = children[0]?.callout?.paragraph?.elements ?? [];
+  // Should have: "Use ", bold("bold"), ", ", italic("italic"), ", and ", inline_code("code"), " inside callouts"
+  const boldRun = elements.find((e: any) => e.text_run?.text_element_style?.bold);
+  const italicRun = elements.find((e: any) => e.text_run?.text_element_style?.italic);
+  const codeRun = elements.find((e: any) => e.text_run?.text_element_style?.inline_code);
+  assert.ok(boldRun, 'should contain bold run');
+  assert.ok(italicRun, 'should contain italic run');
+  assert.ok(codeRun, 'should contain inline_code run');
+});
+
 test('buildDocBlockChildrenDraft converts inline code block lines into code blocks', () => {
   // A line that is entirely backtick-wrapped (not fenced) is treated as a
   // standalone code block, preserving the inline_code text_element_style.

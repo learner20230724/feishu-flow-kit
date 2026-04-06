@@ -13,6 +13,7 @@ const BLOCK_TYPE = {
   code: 17,
   quote: 18,
   divider: 22,
+  callout: 34,
 } as const;
 
 type BlockType = (typeof BLOCK_TYPE)[keyof typeof BLOCK_TYPE];
@@ -45,6 +46,12 @@ export interface FeishuDocRichBlock {
   code?: { elements: TextElement[]; style: { language: number } };
   quote?: { elements: TextElement[] };
   divider?: Record<string, never>;
+  callout?: {
+    callout_type: number;
+    icon_id: number;
+    border_color: number;
+    paragraph: { elements: TextElement[] };
+  };
 }
 
 export interface FeishuDocBlockChildrenDraft {
@@ -353,6 +360,33 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     };
   }
 
+  // Callout: >> [!<type>] text  (GFM-inspired syntax)
+  // Supported types: info, warning, tip, success, danger, book
+  // Maps to Feishu callout_type: 0=info, 1=warning, 2=danger, 3=bulb/tip, 4=success, 5=book
+  const calloutMatch = trimmed.match(/^>>\s*\[!(info|warning|tip|success|danger|book)\]\s*(.+)/i);
+  if (calloutMatch) {
+    const type = calloutMatch[1]!.toLowerCase();
+    const content = calloutMatch[2]!.trim();
+    const typeMap: Record<string, { callout_type: number; icon_id: number; border_color: number }> = {
+      info:    { callout_type: 0, icon_id: 1, border_color: 0 },
+      warning: { callout_type: 1, icon_id: 2, border_color: 1 },
+      danger:  { callout_type: 2, icon_id: 3, border_color: 2 },
+      tip:     { callout_type: 3, icon_id: 4, border_color: 3 },
+      success: { callout_type: 4, icon_id: 5, border_color: 4 },
+      book:    { callout_type: 5, icon_id: 6, border_color: 5 },
+    };
+    const { callout_type, icon_id, border_color } = typeMap[type] ?? typeMap['info'];
+    return {
+      block_type: BLOCK_TYPE.callout,
+      callout: {
+        callout_type,
+        icon_id,
+        border_color,
+        paragraph: { elements: parseInlineSpans(content) },
+      },
+    };
+  }
+
   // Divider: --- or *** or ___
   if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
     return {
@@ -432,7 +466,8 @@ export function buildDocBlockChildrenDraft(
       'This adapter converts markdown lines into native Feishu docx block types.',
       'Supported block types: paragraph, heading1/2/3, bullet list, ordered list,',
       '  todo (checked and unchecked), fenced code block (```...```), inline code block (`code`),',
-      '  quote (> text), and divider (---).',
+      '  quote (> text), divider (---), and callout blocks (>> [!type] text).',
+      '  Callout types: info, warning, tip, success, danger, book.',
       'Supported inline formatting: bold (**text**), italic (*text*), underline (__text__),',
       '  inline code (`text`), strikethrough (~~text~~), explicit links ([text](url)),',
       '  and bare URL auto-link (https://… or www.… → clickable link).',
