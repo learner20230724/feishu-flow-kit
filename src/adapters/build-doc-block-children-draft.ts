@@ -7,6 +7,9 @@ const BLOCK_TYPE = {
   heading1: 3,
   heading2: 4,
   heading3: 5,
+  heading4: 6,
+  heading5: 7,
+  heading6: 8,
   bullet: 12,
   todo: 13,
   ordered: 14,
@@ -100,6 +103,9 @@ export interface FeishuDocRichBlock {
   heading1?: { elements: TextElement[] };
   heading2?: { elements: TextElement[] };
   heading3?: { elements: TextElement[] };
+  heading4?: { elements: TextElement[] };
+  heading5?: { elements: TextElement[] };
+  heading6?: { elements: TextElement[] };
   bullet?: { elements: TextElement[]; style?: ListBlockStyle };
   todo?: { elements: TextElement[]; style: { done: boolean; indent_level?: number } };
   ordered?: { elements: TextElement[]; style?: ListBlockStyle };
@@ -343,6 +349,33 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     };
   }
 
+  const h4 = trimmed.match(/^#### (.+)/);
+  if (h4) {
+    const content = h4[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.heading4,
+      heading4: { elements: parseInlineSpans(content) },
+    };
+  }
+
+  const h5 = trimmed.match(/^##### (.+)/);
+  if (h5) {
+    const content = h5[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.heading5,
+      heading5: { elements: parseInlineSpans(content) },
+    };
+  }
+
+  const h6 = trimmed.match(/^###### (.+)/);
+  if (h6) {
+    const content = h6[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.heading6,
+      heading6: { elements: parseInlineSpans(content) },
+    };
+  }
+
   // Checkbox / todo: - [ ] or - [x]
   // Also supports indentation: "  - [ ] nested item" → indent_level 1
   // Match against original `line` (not `trimmed`) to preserve leading whitespace
@@ -536,7 +569,7 @@ export function buildDocBlockChildrenDraft(
     sourceMarkdown: createDraft.initialContentMarkdown,
     notes: [
       'This adapter converts markdown lines into native Feishu docx block types.',
-      'Supported block types: paragraph, heading1/2/3, bullet list, ordered list,',
+      'Supported block types: paragraph, heading1/2/3/4/5/6, bullet list, ordered list,',
       '  todo (checked and unchecked), fenced code block (```...```), inline code block (`code`),',
       '  quote (> text), divider (---), and callout blocks (>> [!type] text).',
       '  Callout types: info, warning, tip, success, danger, book.',

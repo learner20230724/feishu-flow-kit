@@ -39,6 +39,9 @@ test('buildDocBlockChildrenDraft converts markdown lines into richer docx blocks
         child.heading1?.elements[0]?.text_run.content ??
         child.heading2?.elements[0]?.text_run.content ??
         child.heading3?.elements[0]?.text_run.content ??
+        child.heading4?.elements[0]?.text_run.content ??
+        child.heading5?.elements[0]?.text_run.content ??
+        child.heading6?.elements[0]?.text_run.content ??
         child.bullet?.elements[0]?.text_run.content ??
         child.todo?.elements[0]?.text_run.content,
       done: child.todo?.style?.done,
@@ -193,6 +196,28 @@ test('heading blocks support inline spans', () => {
     { text_run: { content: ' and ' } },
     { text_run: { content: 'link', link: { url: 'https://feishu.cn' } } },
   ]);
+});
+
+test('buildDocBlockChildrenDraft converts h4/h5/h6 lines into heading4/5/6 blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'h4-h6 demo',
+    ['# H1 Title', '## H2 Title', '### H3 Title', '#### H4 Title', '##### H5 Title', '###### H6 Title'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_h', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children[0]?.block_type, 3);  // heading1
+  assert.equal(children[0]?.heading1?.elements[0]?.text_run.content, 'H1 Title');
+  assert.equal(children[1]?.block_type, 4);  // heading2
+  assert.equal(children[1]?.heading2?.elements[0]?.text_run.content, 'H2 Title');
+  assert.equal(children[2]?.block_type, 5);  // heading3
+  assert.equal(children[2]?.heading3?.elements[0]?.text_run.content, 'H3 Title');
+  assert.equal(children[3]?.block_type, 6);  // heading4
+  assert.equal(children[3]?.heading4?.elements[0]?.text_run.content, 'H4 Title');
+  assert.equal(children[4]?.block_type, 7);  // heading5
+  assert.equal(children[4]?.heading5?.elements[0]?.text_run.content, 'H5 Title');
+  assert.equal(children[5]?.block_type, 8);  // heading6
+  assert.equal(children[5]?.heading6?.elements[0]?.text_run.content, 'H6 Title');
 });
 
 test('buildDocBlockChildrenDraft converts ordered list lines into ordered blocks', () => {
