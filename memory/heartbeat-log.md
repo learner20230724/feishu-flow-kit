@@ -327,3 +327,17 @@
   - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布（唯一剩余阻塞项）
   - 所有 3 个 repo 的 GitHub releases 均已 published（feishu-flow-kit v1.0.3 ✅ / llm-chat-lab v1.3.0→v1.3.1 ✅ / room-measure-kit v0.1.2 ✅）
 - 是否需要你介入：是（NPM_TOKEN secret 设置，仅此一项）
+
+## 2026-04-06 11:12 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit：`git fetch origin` → main @ fcd822e ✅，`npm run check` ✅，`npm test` pass ✅（latest CI run #96 "Publish Docker Image" @ fcd822e → success ✅）
+  (2) llm-chat-lab：main @ bd9fe3d ✅（server.mjs main-module guard fix）
+  (3) room-measure-kit：main @ 0edff83 ✅（位于 `publish/room-measure-kit/`）
+  (4) GitHub Actions 状态：feishu-flow-kit 最新 workflow（publish.yml #96）@ fcd822e → success ✅；npm publish workflow（publish-npm.yml）从未触发（因 NPM_TOKEN secret 缺失）
+- 产出文件/结果：无（健康检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项）：
+  - **NPM_TOKEN secret 设置**（需你操作）：GitHub → learner20230724/feishu-flow-kit → Settings → Secrets and variables → Actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com API Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm
+  - feishu-flow-kit v1.0.3 GitHub Release（draft 已 published，可忽略）
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
