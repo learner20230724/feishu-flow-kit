@@ -1,5 +1,102 @@
 # Heartbeat Log
 
+## 2026-04-06 18:12 UTC
+- 当前主线：`feishu-flow-kit`（main @ 531419d 🆕，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：新建 `docs/api-reference.md`——完整 REST API 参考文档——
+  (1) 记录全部 3 个端点：GET /healthz（健康检查）、GET /status（完整状态）、POST /webhook（事件接收）
+  (2) 每个端点的完整请求/响应 schema + 示例 payload（健康检查、URL 验证、/doc、/table、/help、未识别命令）
+  (3) 错误响应码详解：401（签名无效）/405（方法不允许）/500（处理异常）+ 根因和解决方案
+  (4) Webhook 安全机制：HMAC-SHA256 签名验证流程 + 重放攻击防护 + 生产部署 checklist
+  (5) 环境变量参考表（FEISHU_WEBHOOK_SECRET / PORT / SENTRY_DSN 等）
+  (6) cURL 调用示例（healthz / status / 本地 mock 事件 / 自定义命令）
+  (7) 多租户 status 响应 shape + Rate Limits 说明
+  (8) `npm run check` ✅
+  (9) 提交 531419d → 推送到 origin/main ✅
+- 产出文件/结果：
+  - `feishu-flow-kit/docs/api-reference.md`（新建，400行，~11KB）
+  - feishu-flow-kit main @ 531419d 已推送到 GitHub
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 17:57 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit git fetch → main @ fcd822e ✅，无新 commits，本地 clean ✅
+  (2) llm-chat-lab git fetch → main @ bd9fe3d ✅，无新 commits，本地 clean ✅
+  (3) room-measure-kit（位于 publish/room-measure-kit/）git fetch → main @ 0edff83 ✅，无新 commits，本地 clean ✅
+  (4) workspace root git repo clean ✅
+- 产出文件/结果：无（检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 17:27 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit git fetch → main @ fcd822e ✅，无新 commits，本地 clean ✅
+  (2) llm-chat-lab git fetch → main @ bd9fe3d ✅，无新 commits，本地 clean ✅
+  (3) room-measure-kit（位于 publish/room-measure-kit/）git fetch → main @ 0edff83 ✅，无新 commits，本地 clean ✅
+- 产出文件/结果：无（检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 15:57 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——所有 3 个 repo 均 clean，与 origin/main 同步，无新 commits，状态与上次一致
+- 产出文件/结果：无（检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 15:27 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：新建 `NPM_TOKEN_SETUP.md` — 傻瓜式 NPM_TOKEN secret 设置指南——
+  (1) Step 1：npmjs.com Settings → Create New Token → Automation → Generate
+  (2) Step 2：GitHub → feishu-flow-kit → Settings → Secrets → Actions → New secret → NPM_TOKEN
+  (3) Step 3：可选推送测试 tag v1.0.4-test 验证 npm publish workflow
+  (4) 提交 4d8bd07 → 推送到 origin/master ✅
+- 产出文件/结果：
+  - `NPM_TOKEN_SETUP.md`（新建，~1.3KB，48行）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项）：
+  - **NPM_TOKEN secret 设置**（Settings → Secrets → Actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com API Token）。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 14:27 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查 + MEMORY.md 重建——
+  (1) feishu-flow-kit git fetch → main @ fcd822e ✅，无新 commits
+  (2) llm-chat-lab git fetch → main @ bd9fe3d ✅，无新 commits
+  (3) room-measure-kit git fetch → main @ 0edff83 ✅，无新 commits
+  (4) 确认所有 3 个 repo 均 clean，与 origin/main 同步
+  (5) 新建 `MEMORY.md`（1568字节）—— 记录项目架构、剩余 blocker、关键决策
+- 产出文件/结果：
+  - `MEMORY.md`（重建，1568字节）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项）：
+  - **NPM_TOKEN secret 设置**（Settings → Secrets and variables → Actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com API Token）。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 13:42 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit git fetch → main @ fcd822e ✅，`npm run check` ✅，`npm test` pass ✅
+  (2) llm-chat-lab main @ bd9fe3d ✅，v1.3.1 published ✅
+  (3) room-measure-kit main @ 0edff83 ✅，v0.1.2 published ✅
+  (4) 确认 workspace `master` branch 已同步至 cbad7b4（仅 heartbeat-log 提交）
+- 产出文件/结果：无（健康检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项）：
+  - **NPM_TOKEN secret 设置**（Settings → Secrets and variables → Actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com API Token）。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 13:27 UTC
 ## 2026-04-06 11:42 UTC
 - 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：验证 GitHub Actions secrets 状态（via GitHub API）——
@@ -20,7 +117,21 @@
     4. Value: 你的 npmjs.com API Token（https://www.npmjs.com/settings/tokens → Create New Token → Automation → Generate）
     5. 点击 "Add secret"
     → 设置完成后，下次 push tag v1.0.3+ 将自动发布 @feishu/plugin-template 到 npm
-- 是否需要你介入：是（NPM_TOKEN secret，GitHub UI 操作）
+- 是否需要你介入：是（NPM_TOKEN secret 设置，GitHub UI 操作）
+
+## 2026-04-06 11:12 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit：`git fetch origin` → main @ fcd822e ✅，`npm run check` ✅，`npm test` pass ✅（latest CI run #96 "Publish Docker Image" @ fcd822e → success ✅）
+  (2) llm-chat-lab：main @ bd9fe3d ✅（server.mjs main-module guard fix）
+  (3) room-measure-kit：main @ 0edff83 ✅（位于 `publish/room-measure-kit/`）
+  (4) GitHub Actions 状态：feishu-flow-kit 最新 workflow（publish.yml #96）@ fcd822e → success ✅；npm publish workflow（publish-npm.yml）从未触发（因 NPM_TOKEN secret 缺失）
+- 产出文件/结果：无（健康检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项）：
+  - **NPM_TOKEN secret 设置**（需你操作）：GitHub → learner20230724/feishu-flow-kit → Settings → Secrets and variables → Actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com API Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm
+  - feishu-flow-kit v1.0.3 GitHub Release（draft 已 published，可忽略）
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
 
 ## 2026-04-06 10:42 UTC
 - 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
@@ -38,8 +149,25 @@
   - 所有 3 个 repo 的 GitHub releases 均已 published
 - 是否需要你介入：是（NPM_TOKEN secret 设置，仅此一项）
 
+## 2026-04-06 10:27 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d 🆕，v1.3.1 tag ✅）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：修复 llm-chat-lab server.mjs 关键 bug——server.listen() 在被 import 为 module 时无条件启动（导致集成测试时 EADDRINUSE on port 4173），所有 40 tests 从 28 pass / 12 fail 修复为 40/40 pass——
+  (1) 添加 main-module guard：`import.meta.url === pathToFileURL(process.argv[1]).href` 检测是否为直接运行
+  (2) 仅在主模块时调用 `server.listen(port)`，import 导入时跳过
+  (3) `npm test` 40/40 ✅；`node server.mjs` 直接运行正常 ✅
+  (4) 提交 bd9fe3d → 推送到 origin/main ✅
+  (5) 推送 v1.3.1 tag → 触发 release workflow 自动发布 ✅
+- 产出文件/结果：
+  - `llm-chat-lab/server.mjs` — 添加 main-module guard（+18/-5 行）
+  - llm-chat-lab v1.3.1 tag 已推送，release 将自动发布
+- 遇到的问题：zombie node 进程残留 port 4173（之前测试遗留），根因为 server.mjs 未检查是否为 module 入口即调用 listen()
+- 下一步部署：
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布（唯一剩余阻塞项）
+  - 所有 3 个 repo 的 GitHub releases 均已 published（feishu-flow-kit v1.0.3 ✅ / llm-chat-lab v1.3.0→v1.3.1 ✅ / room-measure-kit v0.1.2 ✅）
+- 是否需要你介入：是（NPM_TOKEN secret 设置，仅此一项）
+
 ## 2026-04-06 10:12 UTC
-- 当前主线：`feishu-flow-kit`（main @ fcd822e 🆕，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 8936c9e ✅，v1.3.0）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2）
+- 当前主线：`feishu-flow-kit`（main @ 84ebceb ✅，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 8936c9e ✅，v1.3.0）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2）
 - 本次完成：新建 `plugins/README.md` —— 综合插件注册表文档——
   (1) 列出所有内置命令（/doc, /table, /todo, /help）含详细用法和block type映射表
   (2) 列出所有示例插件（/ping, /poll）含源码路径和使用示例
@@ -58,7 +186,7 @@
 - 是否需要你介入：是（仅 NPM_TOKEN secret 设置）
 
 ## 2026-04-06 09:57 UTC
-- 当前主线：`feishu-flow-kit`（main @ 84ebceb ✅，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 8936c9e 🆕，v1.3.0）+ `room-measure-kit`（main @ 0edff83 🆕，v0.1.2）
+- 当前主线：`feishu-flow-kit`（main @ 84ebceb 🆕，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 93d2922 ✅，v1.3.0）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
 - 本次完成：为 llm-chat-lab v1.3.0 和 room-measure-kit v0.1.2 各创建 GitHub Release Notes 草稿文档——
   (1) `llm-chat-lab/docs/releases/v1.3.0-release-notes.md`（新建，73行，4.9KB）— 含特性表格（rate limit/retry、prompt变量、analytics charts、AI rubric scoring、测试套件40用例）、改进说明、完整CHANGELOG diff、文档链接矩阵；发布步骤已包含
   (2) `room-measure-kit/docs/releases/v0.1.2-release-notes.md`（新建，66行，3.0KB）— 含特性表格（L形房间、圆形房间、3路形状切换、动态输入面板、shape-aware结果）、完整CHANGELOG diff、文档链接矩阵；发布步骤已包含
@@ -235,131 +363,4 @@
 - 遇到的问题：无
 - 下一步部署：
   - feishu-flow-kit v1.0.3 draft release（需 GitHub UI Publish）：https://github.com/learner20230724/feishu-flow-kit/releases
-  - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
-  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
-  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
-- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作，无自动化路径）
-
-## 2026-04-06 06:42 UTC
-- 当前主线：`feishu-flow-kit`（main @ fd00bb5 🆕，v1.0.3 tag ✅）+ `llm-chat-lab` v1.3.0（8e886e8 ✅）+ `room-measure-kit` v0.1.2（b50eb04 ✅，位于 `publish/room-measure-kit/`）
-- 本次完成：修复 create-plugin.mjs 脚手架 bug — 
-  (1) 原问题：`replaceAll('template', name)` 无差别替换所有 'template' 字符串，包括 Feishu card header 中的 `template: 'green'`（无引号包裹），导致生成的插件产生非法 JS 对象键如 `test-plugin: 'green'`
-  (2) 修复方案：改为只替换带引号的 `'template'` / `"template"`（覆盖 name 字段和 register() 调用），保留无引号的 `template` 在示例代码中
-  (3) 验证：scaffolder 创建 hello-world 插件，`name: 'hello-world'` ✓ 和 `template: 'green'` ✓ 均正确
-  (4) `npx tsc --noEmit` 无错误；提交 fd00bb5 → 推送到 origin/main ✅；清理 test scaffold，提交 09fc635
-- 产出文件/结果：
-  - `feishu-flow-kit/scripts/create-plugin.mjs` — 替换策略从全局 replaceAll 改为精准 quoted-only 替换
-  - feishu-flow-kit main @ fd00bb5 已推送到 GitHub
-- 遇到的问题：无
-- 下一步部署：
-  - feishu-flow-kit v1.0.3 draft release（需 GitHub UI Publish）：https://github.com/learner20230724/feishu-flow-kit/releases
-  - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
-  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
-  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
-- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作，无自动化路径）
-
-## 2026-04-06 06:12 UTC
-- 当前主线：`feishu-flow-kit`（main @ c63211d 🆕，v1.0.3 tag ✅）+ `llm-chat-lab` v1.3.0（8e886e8 ✅）+ `room-measure-kit` v0.1.2（b50eb04 ✅，位于 `publish/room-measure-kit/`）
-- 本次完成：新增 `docs/DEMO.md` — 完整的 feishu-flow-kit 演示指南——
-  (1) 记录了 `npm run demo` 的 8 个步骤详解（Prerequisites / Quick Start / Server Startup / Webhook Event / Processing Pipeline / Feishu Card Response / Available Commands / Architecture Overview）
-  (2) 包含 ASCII 格式的 Server startup 输出、Feishu card 响应示例、Architecture 流程图
-  (3) 说明了 TTY 动画模式 vs 非 TTY 静态模式的区别
-  (4) 提供了静态 demo（CI/CI 环境）输出示例
-  (5) 提交 c63211d → 已推送到 origin/main ✅
-- 产出文件/结果：
-  - `feishu-flow-kit/docs/DEMO.md`（新建，148 行，4.9KB）
-  - feishu-flow-kit main @ c63211d 已推送到 GitHub
-- 遇到的问题：无
-- 下一步部署：
-  - feishu-flow-kit v1.0.3 draft release（需 GitHub UI Publish）：https://github.com/learner20230724/feishu-flow-kit/releases
-  - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
-  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
-  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
-- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作，无自动化路径）
-
-## 2026-04-06 05:57 UTC
-- 当前主线：`feishu-flow-kit`（main @ 97a53ed ✅，v1.0.3 tag 推送）+ `llm-chat-lab` v1.3.0（8e886e8 ✅）+ `room-measure-kit` v0.1.2（b50eb04 ✅，位于 `publish/room-measure-kit/`）
-- 本次完成：全项目健康检查——
-  (1) `feishu-flow-kit` — `npm run build` ✅ / `npm run check` ✅ / `npm test` 101/101 ✅ / `npm run demo:plugins` ✅（8 步骤全通过）
-  (2) `publish/room-measure-kit` — `npm run build` ✅（1.41s，chunk size warning 可忽略）/ `npm test` 9/9 ✅
-  (3) 确认 `room-measure-kit` 实际位于 `workspace/publish/room-measure-kit/`，非根目录缺失（之前日志"目录不存在"系路径理解有误）
-- 产出文件/结果：
-  - feishu-flow-kit 全套验证通过（build + check + 101 tests + demo）
-  - room-measure-kit build + 9 tests 通过
-- 遇到的问题：无
-- 下一步部署：
-  - feishu-flow-kit v1.0.3 release-publish.yml 理论上在 tag push 时自动发布（需 GitHub UI 确认）
-  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
-  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
-  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
-- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作）
-
-## 2026-04-06 05:42 UTC
-- 当前主线：`feishu-flow-kit`（main @ 97a53ed ✅ `npm run demo` + `demo:plugins` 脚本修复，v1.0.3 tag 已推送待 Publish）+ `llm-chat-lab` v1.3.0（8e886e8 ✅，GitHub Release 待手动）+ `room-measure-kit`（目录不存在，需确认）
-- 本次完成：修复 README 文档与 package.json 不匹配问题——
-  (1) README 声称 `npm run demo` 和 `npm run demo:plugins` 可用，但 package.json 缺少对应 script 条目
-  (2) 添加 `"demo": "node scripts/demo-interactive.mjs"` 和 `"demo:plugins": "node scripts/demo-interactive.mjs --speed fast"` 到 package.json
-  (3) 验证 `npm run demo -- --speed fast` ✅ / `npm run check` ✅
-  (4) 提交 97a53ed → 推送到 origin/main ✅
-- 产出文件/结果：
-  - `feishu-flow-kit/package.json` — 新增 demo + demo:plugins npm scripts
-  - feishu-flow-kit main @ 97a53ed 已推送到 GitHub
-- 遇到的问题：无
-- 下一步部署：
-  - feishu-flow-kit v1.0.3 draft release 已在 tag v1.0.3 push 时由 release-draft.yml 创建（tag 800d579 → 比当前 main 329cc0e 早一个 commit）；release-publish.yml 应已在 tag push 时自动发布；需确认 GitHub：https://github.com/learner20230724/feishu-flow-kit/releases
-  - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）以启用 @feishu/plugin-template npm 发布
-  - llm-chat-lab v1.3.0 GitHub Release（需手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
-- 是否需要你介入：是（NPM_TOKEN secret + llm-chat-lab release）
-
-## 2026-04-06 05:27 UTC
-- 当前主线：`feishu-flow-kit`（main @ 329cc0e ✅ 新增 VS Code 配置，v1.0.3 draft release 待 Publish）+ `llm-chat-lab` v1.3.0（8e886e8 ✅，GitHub Release 待手动）+ `room-measure-kit` v0.1.2（b50eb04 ✅，GitHub Release 待手动）
-- 本次完成：添加 VS Code 配置 + .editorconfig 改进开发体验——
-  (1) `.vscode/extensions.json` — 推荐 ESLint、Prettier、Error Lens、VS Code Test Runner、TypeScript Nightly 扩展
-  (2) `.vscode/settings.json` — format-on-save、workspace TSdk、严格 TS 设置
-  (3) `.vscode/launch.json` — 3 个调试配置：dev server、current test file、mock event
-  (4) `.editorconfig` — 统一字符集、EOL、缩进风格（所有编辑器）
-  (5) `npm run check` ✅ `tsc --noEmit` 无错误；`npm test` 101/101 pass ✅
-  (6) 提交 329cc0e → 推送到 origin/main ✅
-- 产出文件/结果：
-  - `feishu-flow-kit/.editorconfig` (新建)
-  - `feishu-flow-kit/.vscode/extensions.json` (新建)
-  - `feishu-flow-kit/.vscode/settings.json` (新建)
-  - `feishu-flow-kit/.vscode/launch.json` (新建)
-  - feishu-flow-kit main @ 329cc0e 已推送到 GitHub
-- 遇到的问题：无
-- 下一步部署：
-  - feishu-flow-kit v1.0.3 draft release Publish（需你 GitHub UI）：https://github.com/learner20230724/feishu-flow-kit/releases
-  - llm-chat-lab v1.3.0 GitHub Release（需你手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
-  - room-measure-kit v0.1.2 GitHub Release（需你手动）：https://github.com/learner20230724/room-measure-kit/releases/new
-  - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）以启用 @feishu/plugin-template npm 发布
-- 是否需要你介入：是（上述 4 项均需你在 GitHub UI 操作，无自动化路径）
-## 2026-04-06 10:27 UTC
-- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d 🆕，v1.3.1 tag ✅）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
-- 本次完成：修复 llm-chat-lab server.mjs 关键 bug——server.listen() 在被 import 为 module 时无条件启动（导致集成测试时 EADDRINUSE on port 4173），所有 40 tests 从 28 pass / 12 fail 修复为 40/40 pass——
-  (1) 添加 main-module guard：`import.meta.url === pathToFileURL(process.argv[1]).href` 检测是否为直接运行
-  (2) 仅在主模块时调用 `server.listen(port)`，import 导入时跳过
-  (3) `npm test` 40/40 ✅；`node server.mjs` 直接运行正常 ✅
-  (4) 提交 bd9fe3d → 推送到 origin/main ✅
-  (5) 推送 v1.3.1 tag → 触发 release workflow 自动发布 ✅
-- 产出文件/结果：
-  - `llm-chat-lab/server.mjs` — 添加 main-module guard（+18/-5 行）
-  - llm-chat-lab v1.3.1 tag 已推送，release 将自动发布
-- 遇到的问题：zombie node 进程残留 port 4173（之前测试遗留），根因为 server.mjs 未检查是否为 module 入口即调用 listen()
-- 下一步部署：
-  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布（唯一剩余阻塞项）
-  - 所有 3 个 repo 的 GitHub releases 均已 published（feishu-flow-kit v1.0.3 ✅ / llm-chat-lab v1.3.0→v1.3.1 ✅ / room-measure-kit v0.1.2 ✅）
-- 是否需要你介入：是（NPM_TOKEN secret 设置，仅此一项）
-
-## 2026-04-06 11:12 UTC
-- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
-- 本次完成：全项目健康检查确认——
-  (1) feishu-flow-kit：`git fetch origin` → main @ fcd822e ✅，`npm run check` ✅，`npm test` pass ✅（latest CI run #96 "Publish Docker Image" @ fcd822e → success ✅）
-  (2) llm-chat-lab：main @ bd9fe3d ✅（server.mjs main-module guard fix）
-  (3) room-measure-kit：main @ 0edff83 ✅（位于 `publish/room-measure-kit/`）
-  (4) GitHub Actions 状态：feishu-flow-kit 最新 workflow（publish.yml #96）@ fcd822e → success ✅；npm publish workflow（publish-npm.yml）从未触发（因 NPM_TOKEN secret 缺失）
-- 产出文件/结果：无（健康检查确认完毕）
-- 遇到的问题：无
-- 下一步部署（唯一剩余项）：
-  - **NPM_TOKEN secret 设置**（需你操作）：GitHub → learner20230724/feishu-flow-kit → Settings → Secrets and variables → Actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com API Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm
-  - feishu-flow-kit v1.0.3 GitHub Release（draft 已 published，可忽略）
-- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+  - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）→ 启用 @feish
