@@ -195,6 +195,126 @@ test('heading blocks support inline spans', () => {
   ]);
 });
 
+test('buildDocBlockChildrenDraft converts ordered list lines into ordered blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'ordered list demo',
+    ['1. First step', '2. Second step', '3. Third step'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children[0]?.block_type, 14);
+  assert.equal(children[0]?.ordered?.elements[0]?.text_run.content, 'First step');
+  assert.equal(children[1]?.block_type, 14);
+  assert.equal(children[1]?.ordered?.elements[0]?.text_run.content, 'Second step');
+  assert.equal(children[2]?.block_type, 14);
+  assert.equal(children[2]?.ordered?.elements[0]?.text_run.content, 'Third step');
+});
+
+test('buildDocBlockChildrenDraft converts fenced code blocks into code blocks', () => {
+  // Fenced code block must be a single line (multi-line code blocks require
+  // state-machine parsing that is beyond line-by-line classifyLine splitting).
+  // This tests the single-line form: ```language\ncode\n```
+  const createDraft = buildDocCreateDraft(
+    'code block demo',
+    // Pass as a single line so classifyLine sees it as one unit
+    '```js\nconsole.log("hello")\n```',
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 1);
+  assert.equal(children[0]?.block_type, 17);
+  assert.equal(children[0]?.code?.elements[0]?.text_run.content, 'console.log("hello")');
+  assert.equal(children[0]?.code?.style?.language, 1); // plain text
+});
+
+test('buildDocBlockChildrenDraft converts quote lines into quote blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'quote demo',
+    ['> This is a wise quote', '> — Someone'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children[0]?.block_type, 18);
+  assert.equal(children[0]?.quote?.elements[0]?.text_run.content, 'This is a wise quote');
+  assert.equal(children[1]?.block_type, 18);
+  assert.equal(children[1]?.quote?.elements[0]?.text_run.content, '— Someone');
+});
+
+test('buildDocBlockChildrenDraft converts divider lines into divider blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'divider demo',
+    ['Before', '---', 'After'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 3);
+  assert.equal(children[0]?.block_type, 2);  // paragraph
+  assert.equal(children[1]?.block_type, 22); // divider
+  assert.equal(children[2]?.block_type, 2);  // paragraph
+  assert.deepEqual(children[1]?.divider, {});
+});
+
+test('buildDocBlockChildrenDraft handles mixed content with all new block types', () => {
+  const createDraft = buildDocCreateDraft(
+    'mixed blocks demo',
+    [
+      '# Project Notes',
+      '',
+      '## Setup',
+      '1. Install dependencies',
+      '2. Configure `.env`',
+      '',
+      '> Remember to restart the server after changes.',
+      '',
+      '---',
+      '',
+      '## Usage',
+      '- Run `npm run dev` to start',
+      '',
+      // Multi-line fenced code blocks require state-machine parsing; test
+      // the single-line form instead: ```language\ncode\n```
+      '```ts\nconst app = createApp();\n```',
+    ].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  // Blank lines are filtered (classifyLine returns null for them).
+  // The code fence (lines 13-15) is joined into one block.
+  // Expected: h1, h2, ol1, ol2, quote, divider, h2, bullet, code = 9 blocks.
+  assert.equal(children.length, 9);
+
+  // Verify h1
+  assert.equal(children[0]?.block_type, 3);
+
+  // Verify ordered list items (blank lines filtered, so ol1=idx2, ol2=idx3)
+  assert.equal(children[2]?.block_type, 14);
+  assert.equal(children[2]?.ordered?.elements[0]?.text_run.content, 'Install dependencies');
+  assert.equal(children[3]?.block_type, 14);
+  // Content "Configure `.env`" is parsed into: "Configure " (plain) + ".env" (inline_code, backticks stripped by parseInlineSpans)
+  assert.equal(
+    children[3]?.ordered?.elements?.map(e => e.text_run.content).join(''),
+    'Configure .env',
+  );
+
+  // Verify quote (blank filtered before it)
+  assert.equal(children[4]?.block_type, 18);
+  assert.ok(children[4]?.quote?.elements[0]?.text_run.content?.includes('Remember'));
+
+  // Verify divider
+  assert.equal(children[5]?.block_type, 22);
+  assert.deepEqual(children[5]?.divider, {});
+
+  // Verify fenced code block at end
+  const lastChild = children[children.length - 1];
+  assert.equal(lastChild?.block_type, 17);
+  assert.equal(lastChild?.code?.elements[0]?.text_run.content?.trim(), 'const app = createApp();');
+});
+
 test('sendDocBlockChildrenRequest posts blocks and returns block ids', async () => {
   const createDraft = buildDocCreateDraft('weekly launch review', 'Line 1\n- Line 2');
   const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
