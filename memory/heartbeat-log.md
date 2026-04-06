@@ -1,5 +1,17 @@
 # Heartbeat Log
 
+## 2026-04-06 20:42 UTC
+- 当前主线：`feishu-flow-kit`（main @ ee45926 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit git fetch → main @ ee45926 ✅，无新 commits，本地 clean ✅
+  (2) llm-chat-lab main @ bd9fe3d ✅，无新 commits
+  (3) room-measure-kit main @ 0edff83 ✅，无新 commits
+- 产出文件/结果：无（检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
 ## 2026-04-06 19:42 UTC
 - 当前主线：`feishu-flow-kit`（main @ ee45926 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：发现 feishu-flow-kit 本地 worktree 落后 origin/main 2个 commits（fcd822e → ee45926），执行 git pull fast-forward 同步——
@@ -418,3 +430,30 @@
 - 下一步部署：
   - feishu-flow-kit v1.0.3 draft release（需 GitHub UI Publish）：https://github.com/learner20230724/feishu-flow-kit/releases
   - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）→ 启用 @feish
+## 2026-04-06 20:57 UTC
+- 当前主线：`feishu-flow-kit`（main @ ee45926 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit git fetch → main @ ee45926 ✅，无新 commits，本地 clean ✅，`npm run check` ✅（tsc --noEmit 无错误）
+  (2) llm-chat-lab git fetch → main @ bd9fe3d ✅，无新 commits
+  (3) room-measure-kit git fetch → main @ 0edff83 ✅，无新 commits
+  (4) 注：已连续多轮（12h+）仅做健康检查，所有 repos 稳定，未发现任何新问题
+- 产出文件/结果：无（检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 21:12 UTC
+- 当前主线：`feishu-flow-kit`（main @ ee45926 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：清理系统 zombie 测试进程 + 全项目测试验证——
+  (1) 发现并清理 10 个 zombie node 测试进程（来自 Apr04，多日累积导致 llm-chat-lab `node --test` 挂起 61s）
+  (2) feishu-flow-kit `npm test` → 107/107 ✅（duration 8.9s）
+  (3) llm-chat-lab `node --test test/server.test.mjs` → 40/40 ✅（无挂起）
+  (4) room-measure-kit `npm test` → 9/9 ✅
+  (5) feishu-flow-kit `npm run check`（tsc --noEmit）→ 无错误 ✅
+  (6) feishu-flow-kit 无新 commits，origin/main @ ee45926 同步 ✅
+- 产出文件/结果：无（系统清理 + 测试验证完毕）
+- 遇到的问题：Apr04 zombie node 测试进程累积导致 llm-chat-lab 测试套件挂起（已清理）
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
