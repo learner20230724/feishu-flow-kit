@@ -211,6 +211,83 @@ test('buildDocBlockChildrenDraft converts ordered list lines into ordered blocks
   assert.equal(children[2]?.ordered?.elements[0]?.text_run.content, 'Third step');
 });
 
+test('buildDocBlockChildrenDraft converts nested bullet lists with indent_level', () => {
+  const createDraft = buildDocCreateDraft(
+    'nested bullet demo',
+    ['- Top-level item', '  - Nested level 1', '    - Nested level 2', '- Another top'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 4);
+  // Top-level bullet (0 indent spaces → indent_level 0, no style emitted)
+  assert.equal(children[0]?.block_type, 12);
+  assert.equal(children[0]?.bullet?.elements[0]?.text_run.content, 'Top-level item');
+  assert.equal(children[0]?.bullet?.style?.indent_level, undefined);
+
+  // Level 1 indent (2 spaces → indent_level 1)
+  assert.equal(children[1]?.block_type, 12);
+  assert.equal(children[1]?.bullet?.elements[0]?.text_run.content, 'Nested level 1');
+  assert.equal(children[1]?.bullet?.style?.indent_level, 1);
+
+  // Level 2 indent (4 spaces → indent_level 2)
+  assert.equal(children[2]?.block_type, 12);
+  assert.equal(children[2]?.bullet?.elements[0]?.text_run.content, 'Nested level 2');
+  assert.equal(children[2]?.bullet?.style?.indent_level, 2);
+
+  // Back to top-level
+  assert.equal(children[3]?.block_type, 12);
+  assert.equal(children[3]?.bullet?.style?.indent_level, undefined);
+});
+
+test('buildDocBlockChildrenDraft converts nested ordered lists with indent_level', () => {
+  const createDraft = buildDocCreateDraft(
+    'nested ordered demo',
+    ['1. Step one', '  1. Sub-step A', '    1. Sub-sub-step', '2. Step two'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 4);
+  assert.equal(children[0]?.block_type, 14);
+  assert.equal(children[0]?.ordered?.elements[0]?.text_run.content, 'Step one');
+  assert.equal(children[0]?.ordered?.style?.indent_level, undefined);
+
+  assert.equal(children[1]?.block_type, 14);
+  assert.equal(children[1]?.ordered?.elements[0]?.text_run.content, 'Sub-step A');
+  assert.equal(children[1]?.ordered?.style?.indent_level, 1);
+
+  assert.equal(children[2]?.block_type, 14);
+  assert.equal(children[2]?.ordered?.elements[0]?.text_run.content, 'Sub-sub-step');
+  assert.equal(children[2]?.ordered?.style?.indent_level, 2);
+
+  assert.equal(children[3]?.block_type, 14);
+  assert.equal(children[3]?.ordered?.elements[0]?.text_run.content, 'Step two');
+  assert.equal(children[3]?.ordered?.style?.indent_level, undefined);
+});
+
+test('buildDocBlockChildrenDraft converts nested todo items with indent_level and done state', () => {
+  const createDraft = buildDocCreateDraft(
+    'nested todo demo',
+    ['- [ ] Top-level task', '  - [x] Done subtask', '    - [ ] Nested task'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 3);
+  assert.equal(children[0]?.block_type, 13);
+  assert.equal(children[0]?.todo?.style?.done, false);
+  assert.equal(children[0]?.todo?.style?.indent_level, undefined);
+
+  assert.equal(children[1]?.block_type, 13);
+  assert.equal(children[1]?.todo?.style?.done, true);
+  assert.equal(children[1]?.todo?.style?.indent_level, 1);
+
+  assert.equal(children[2]?.block_type, 13);
+  assert.equal(children[2]?.todo?.style?.done, false);
+  assert.equal(children[2]?.todo?.style?.indent_level, 2);
+});
+
 test('buildDocBlockChildrenDraft converts fenced code blocks into code blocks', () => {
   // Fenced code block must be a single line (multi-line code blocks require
   // state-machine parsing that is beyond line-by-line classifyLine splitting).

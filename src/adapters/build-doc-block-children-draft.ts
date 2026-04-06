@@ -76,6 +76,16 @@ interface TextElementStyle {
   underline?: boolean;
 }
 
+interface ListBlockStyle {
+  indent_level: number;
+  /** Bullet lists only */
+  align?: number;
+  /** Bullet lists only: bullet_type 1=disc, 2=circle, 3=square, 4=number, 5=latin, 6=chinese, 7= japanese, 8= korean */
+  bullet?: { type: number };
+  /** Ordered lists only */
+  numbering_type?: number;
+}
+
 interface TextElement {
   text_run: {
     content: string;
@@ -90,9 +100,9 @@ export interface FeishuDocRichBlock {
   heading1?: { elements: TextElement[] };
   heading2?: { elements: TextElement[] };
   heading3?: { elements: TextElement[] };
-  bullet?: { elements: TextElement[] };
-  todo?: { elements: TextElement[]; style: { done: boolean } };
-  ordered?: { elements: TextElement[] };
+  bullet?: { elements: TextElement[]; style?: ListBlockStyle };
+  todo?: { elements: TextElement[]; style: { done: boolean; indent_level?: number } };
+  ordered?: { elements: TextElement[]; style?: ListBlockStyle };
   code?: { elements: TextElement[]; style: { language: number } };
   quote?: { elements: TextElement[] };
   divider?: Record<string, never>;
@@ -334,41 +344,52 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
   }
 
   // Checkbox / todo: - [ ] or - [x]
-  const checkedTodo = trimmed.match(/^- \[x\] (.+)/i);
-  if (checkedTodo) {
-    const content = checkedTodo[1]!.trim();
+  // Also supports indentation: "  - [ ] nested item" → indent_level 1
+  // Match against original `line` (not `trimmed`) to preserve leading whitespace
+  const todoMatch = line.match(/^(\s*)- \[([x ])\] (.+)/i);
+  if (todoMatch) {
+    const indent = todoMatch[1]!.length; // leading spaces before "-"
+    const indentLevel = Math.floor(indent / 2); // 2 spaces = 1 level
+    const checked = todoMatch[2]!.toLowerCase() === 'x';
+    const content = todoMatch[3]!.trim();
     return {
       block_type: BLOCK_TYPE.todo,
-      todo: { elements: parseInlineSpans(content), style: { done: true } },
+      todo: {
+        elements: parseInlineSpans(content),
+        style: { done: checked, ...(indentLevel > 0 ? { indent_level: indentLevel } : {}) },
+      },
     };
   }
 
-  const uncheckedTodo = trimmed.match(/^- \[ \] (.+)/);
-  if (uncheckedTodo) {
-    const content = uncheckedTodo[1]!.trim();
-    return {
-      block_type: BLOCK_TYPE.todo,
-      todo: { elements: parseInlineSpans(content), style: { done: false } },
-    };
-  }
-
-  // Bullet list: - item
-  const bullet = trimmed.match(/^- (.+)/);
-  if (bullet) {
-    const content = bullet[1]!.trim();
+  // Bullet list: - item  (supports indentation: "  - item" → indent_level 1)
+  // Match against original `line` (not `trimmed`) to preserve leading whitespace
+  const bulletMatch = line.match(/^(\s*)- (.+)/);
+  if (bulletMatch) {
+    const indent = bulletMatch[1]!.length;
+    const indentLevel = Math.floor(indent / 2);
+    const content = bulletMatch[2]!.trim();
     return {
       block_type: BLOCK_TYPE.bullet,
-      bullet: { elements: parseInlineSpans(content) },
+      bullet: {
+        elements: parseInlineSpans(content),
+        style: { ...(indentLevel > 0 ? { indent_level: indentLevel } : {}) },
+      },
     };
   }
 
-  // Ordered list: 1. item, 2. item, etc.
-  const ordered = trimmed.match(/^\d+\.\s+(.+)/);
-  if (ordered) {
-    const content = ordered[1]!.trim();
+  // Ordered list: 1. item  (supports indentation: "  1. item" → indent_level 1)
+  // Match against original `line` (not `trimmed`) to preserve leading whitespace
+  const orderedMatch = line.match(/^(\s*)(\d+)\.\s+(.+)/);
+  if (orderedMatch) {
+    const indent = orderedMatch[1]!.length;
+    const indentLevel = Math.floor(indent / 2);
+    const content = orderedMatch[3]!.trim();
     return {
       block_type: BLOCK_TYPE.ordered,
-      ordered: { elements: parseInlineSpans(content) },
+      ordered: {
+        elements: parseInlineSpans(content),
+        style: { ...(indentLevel > 0 ? { indent_level: indentLevel } : {}) },
+      },
     };
   }
 
