@@ -1,5 +1,17 @@
 # Heartbeat Log
 
+## 2026-04-06 19:12 UTC
+- 当前主线：`feishu-flow-kit`（main @ ee45926 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：全项目健康检查确认——
+  (1) feishu-flow-kit git fetch → main @ ee45926 ✅，无新 commits，本地 clean ✅，`npm run check` ✅
+  (2) llm-chat-lab git fetch → main @ bd9fe3d ✅，无新 commits，本地 clean ✅
+  (3) room-measure-kit git fetch → main @ 0edff83 ✅，无新 commits，本地 clean ✅
+- 产出文件/结果：无（健康检查确认完毕）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
 ## 2026-04-06 18:57 UTC
 - 当前主线：`feishu-flow-kit`（main @ ee45926 🆕，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：发现 api-reference.md 已添加（531419d）但 README.md 未链接，补上两处引用——
