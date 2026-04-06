@@ -16,6 +16,56 @@ const BLOCK_TYPE = {
   callout: 34,
 } as const;
 
+// Feishu code block language IDs
+// https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block/block-types
+const LANGUAGE_MAP: Record<string, number> = {
+  // Managed high-value languages
+  python: 2,
+  py: 2,
+  javascript: 3,
+  js: 3,
+  java: 4,
+  go: 5,
+  'c++': 6,
+  cpp: 6,
+  cc: 6,
+  c: 7,
+  ruby: 8,
+  rb: 8,
+  php: 9,
+  swift: 10,
+  kotlin: 11,
+  typescript: 12,
+  ts: 12,
+  rust: 13,
+  rs: 13,
+  sql: 14,
+  bash: 15,
+  sh: 15,
+  shell: 15,
+  zsh: 15,
+  html: 16,
+  css: 17,
+  yaml: 18,
+  yml: 18,
+  json: 19,
+  xml: 20,
+  markdown: 21,
+  md: 21,
+  diff: 22,
+  patch: 22,
+  // Fallback
+  plaintext: 1,
+  text: 1,
+  txt: 1,
+  plain: 1,
+};
+
+function getFeishuLanguageId(lang: string): number {
+  const normalized = lang.toLowerCase().trim();
+  return LANGUAGE_MAP[normalized] ?? 1; // default: plain text
+}
+
 type BlockType = (typeof BLOCK_TYPE)[keyof typeof BLOCK_TYPE];
 
 interface TextElementStyle {
@@ -328,12 +378,13 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
   // Matches: ```js\ncode\n``` or ```\ncode\n```
   const codeFence = trimmed.match(/^```(\w*)\n([\s\S]*?)\n```$/);
   if (codeFence) {
+    const lang = codeFence[1] ?? '';
     const codeContent = codeFence[2]!.trim();
     return {
       block_type: BLOCK_TYPE.code,
       code: {
         elements: [{ text_run: { content: codeContent } }],
-        style: { language: 1 }, // 1 = plain text; language detection is a future enhancement
+        style: { language: getFeishuLanguageId(lang) },
       },
     };
   }
@@ -345,7 +396,7 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
       block_type: BLOCK_TYPE.code,
       code: {
         elements: [{ text_run: { content: inlineCodeBlock[1]!, text_element_style: { inline_code: true } } }],
-        style: { language: 1 },
+        style: { language: 1 }, // inline code blocks are always plain text
       },
     };
   }

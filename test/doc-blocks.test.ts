@@ -226,7 +226,36 @@ test('buildDocBlockChildrenDraft converts fenced code blocks into code blocks', 
   assert.equal(children.length, 1);
   assert.equal(children[0]?.block_type, 17);
   assert.equal(children[0]?.code?.elements[0]?.text_run.content, 'console.log("hello")');
-  assert.equal(children[0]?.code?.style?.language, 1); // plain text
+  assert.equal(children[0]?.code?.style?.language, 3); // 3 = JavaScript
+});
+
+test('buildDocBlockChildrenDraft maps fenced code block languages correctly', async () => {
+  // Language mapping: python→2, js→3, ts→12, bash→15, rust→13, json→19, etc.
+  const cases = [
+    { input: '```python\nprint("hi")\n```', lang: 2, name: 'python' },
+    { input: '```py\nprint("hi")\n```', lang: 2, name: 'py alias' },
+    { input: '```typescript\nconst x: number = 1\n```', lang: 12, name: 'typescript' },
+    { input: '```ts\nconst x = 1\n```', lang: 12, name: 'ts alias' },
+    { input: '```bash\ngit status\n```', lang: 15, name: 'bash' },
+    { input: '```sh\nexit 1\n```', lang: 15, name: 'sh alias' },
+    { input: '```rust\nfn main() {}\n```', lang: 13, name: 'rust' },
+    { input: '```rs\nfn main() {}\n```', lang: 13, name: 'rust alias' },
+    { input: '```go\nfmt.Println("hi")\n```', lang: 5, name: 'go' },
+    { input: '```java\nSystem.out.println("hi")\n```', lang: 4, name: 'java' },
+    { input: '```json\n{"key": "value"}\n```', lang: 19, name: 'json' },
+    { input: '```yaml\nkey: value\n```', lang: 18, name: 'yaml' },
+    { input: '```\nplain text\n```', lang: 1, name: 'no-lang defaults to plain' },
+    { input: '```unknownlang\ncode\n```', lang: 1, name: 'unknown lang falls back to plain' },
+  ];
+
+  for (const { input, lang, name } of cases) {
+    const createDraft = buildDocCreateDraft('lang test', input);
+    const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+    const children = draft.body.children;
+    assert.equal(children.length, 1, `should produce one block for ${name}`);
+    assert.equal(children[0]?.block_type, 17, `block_type should be 17 for ${name}`);
+    assert.equal(children[0]?.code?.style?.language, lang, `language should be ${lang} for ${name}`);
+  }
 });
 
 test('buildDocBlockChildrenDraft converts quote lines into quote blocks', () => {
