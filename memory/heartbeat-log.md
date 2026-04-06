@@ -295,3 +295,19 @@
   - room-measure-kit v0.1.2 GitHub Release（需你手动）：https://github.com/learner20230724/room-measure-kit/releases/new
   - feishu-flow-kit NPM_TOKEN secret 设置（Settings → Secrets → Actions）以启用 @feishu/plugin-template npm 发布
 - 是否需要你介入：是（上述 4 项均需你在 GitHub UI 操作，无自动化路径）
+## 2026-04-06 10:27 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d 🆕，v1.3.1 tag ✅）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：修复 llm-chat-lab server.mjs 关键 bug——server.listen() 在被 import 为 module 时无条件启动（导致集成测试时 EADDRINUSE on port 4173），所有 40 tests 从 28 pass / 12 fail 修复为 40/40 pass——
+  (1) 添加 main-module guard：`import.meta.url === pathToFileURL(process.argv[1]).href` 检测是否为直接运行
+  (2) 仅在主模块时调用 `server.listen(port)`，import 导入时跳过
+  (3) `npm test` 40/40 ✅；`node server.mjs` 直接运行正常 ✅
+  (4) 提交 bd9fe3d → 推送到 origin/main ✅
+  (5) 推送 v1.3.1 tag → 触发 release workflow 自动发布 ✅
+- 产出文件/结果：
+  - `llm-chat-lab/server.mjs` — 添加 main-module guard（+18/-5 行）
+  - llm-chat-lab v1.3.1 tag 已推送，release 将自动发布
+- 遇到的问题：zombie node 进程残留 port 4173（之前测试遗留），根因为 server.mjs 未检查是否为 module 入口即调用 listen()
+- 下一步部署：
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布（唯一剩余阻塞项）
+  - 所有 3 个 repo 的 GitHub releases 均已 published（feishu-flow-kit v1.0.3 ✅ / llm-chat-lab v1.3.0→v1.3.1 ✅ / room-measure-kit v0.1.2 ✅）
+- 是否需要你介入：是（NPM_TOKEN secret 设置，仅此一项）
