@@ -7,13 +7,67 @@ const BLOCK_TYPE = {
   heading1: 3,
   heading2: 4,
   heading3: 5,
+  heading4: 6,
+  heading5: 7,
+  heading6: 8,
   bullet: 12,
   todo: 13,
   ordered: 14,
   code: 17,
   quote: 18,
   divider: 22,
+  callout: 34,
 } as const;
+
+// Feishu code block language IDs
+// https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block/block-types
+const LANGUAGE_MAP: Record<string, number> = {
+  // Managed high-value languages
+  python: 2,
+  py: 2,
+  javascript: 3,
+  js: 3,
+  java: 4,
+  go: 5,
+  'c++': 6,
+  cpp: 6,
+  cc: 6,
+  c: 7,
+  ruby: 8,
+  rb: 8,
+  php: 9,
+  swift: 10,
+  kotlin: 11,
+  typescript: 12,
+  ts: 12,
+  rust: 13,
+  rs: 13,
+  sql: 14,
+  bash: 15,
+  sh: 15,
+  shell: 15,
+  zsh: 15,
+  html: 16,
+  css: 17,
+  yaml: 18,
+  yml: 18,
+  json: 19,
+  xml: 20,
+  markdown: 21,
+  md: 21,
+  diff: 22,
+  patch: 22,
+  // Fallback
+  plaintext: 1,
+  text: 1,
+  txt: 1,
+  plain: 1,
+};
+
+function getFeishuLanguageId(lang: string): number {
+  const normalized = lang.toLowerCase().trim();
+  return LANGUAGE_MAP[normalized] ?? 1; // default: plain text
+}
 
 type BlockType = (typeof BLOCK_TYPE)[keyof typeof BLOCK_TYPE];
 
@@ -23,6 +77,16 @@ interface TextElementStyle {
   inline_code?: boolean;
   strikethrough?: boolean;
   underline?: boolean;
+}
+
+interface ListBlockStyle {
+  indent_level: number;
+  /** Bullet lists only */
+  align?: number;
+  /** Bullet lists only: bullet_type 1=disc, 2=circle, 3=square, 4=number, 5=latin, 6=chinese, 7= japanese, 8= korean */
+  bullet?: { type: number };
+  /** Ordered lists only */
+  numbering_type?: number;
 }
 
 interface TextElement {
@@ -39,12 +103,21 @@ export interface FeishuDocRichBlock {
   heading1?: { elements: TextElement[] };
   heading2?: { elements: TextElement[] };
   heading3?: { elements: TextElement[] };
-  bullet?: { elements: TextElement[] };
-  todo?: { elements: TextElement[]; style: { done: boolean } };
-  ordered?: { elements: TextElement[] };
+  heading4?: { elements: TextElement[] };
+  heading5?: { elements: TextElement[] };
+  heading6?: { elements: TextElement[] };
+  bullet?: { elements: TextElement[]; style?: ListBlockStyle };
+  todo?: { elements: TextElement[]; style: { done: boolean; indent_level?: number } };
+  ordered?: { elements: TextElement[]; style?: ListBlockStyle };
   code?: { elements: TextElement[]; style: { language: number } };
   quote?: { elements: TextElement[] };
   divider?: Record<string, never>;
+  callout?: {
+    callout_type: number;
+    icon_id: number;
+    border_color: number;
+    paragraph: { elements: TextElement[] };
+  };
 }
 
 export interface FeishuDocBlockChildrenDraft {
@@ -276,42 +349,80 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     };
   }
 
+  const h4 = trimmed.match(/^#### (.+)/);
+  if (h4) {
+    const content = h4[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.heading4,
+      heading4: { elements: parseInlineSpans(content) },
+    };
+  }
+
+  const h5 = trimmed.match(/^##### (.+)/);
+  if (h5) {
+    const content = h5[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.heading5,
+      heading5: { elements: parseInlineSpans(content) },
+    };
+  }
+
+  const h6 = trimmed.match(/^###### (.+)/);
+  if (h6) {
+    const content = h6[1]!.trim();
+    return {
+      block_type: BLOCK_TYPE.heading6,
+      heading6: { elements: parseInlineSpans(content) },
+    };
+  }
+
   // Checkbox / todo: - [ ] or - [x]
-  const checkedTodo = trimmed.match(/^- \[x\] (.+)/i);
-  if (checkedTodo) {
-    const content = checkedTodo[1]!.trim();
+  // Also supports indentation: "  - [ ] nested item" → indent_level 1
+  // Match against original `line` (not `trimmed`) to preserve leading whitespace
+  const todoMatch = line.match(/^(\s*)- \[([x ])\] (.+)/i);
+  if (todoMatch) {
+    const indent = todoMatch[1]!.length; // leading spaces before "-"
+    const indentLevel = Math.floor(indent / 2); // 2 spaces = 1 level
+    const checked = todoMatch[2]!.toLowerCase() === 'x';
+    const content = todoMatch[3]!.trim();
     return {
       block_type: BLOCK_TYPE.todo,
-      todo: { elements: parseInlineSpans(content), style: { done: true } },
+      todo: {
+        elements: parseInlineSpans(content),
+        style: { done: checked, ...(indentLevel > 0 ? { indent_level: indentLevel } : {}) },
+      },
     };
   }
 
-  const uncheckedTodo = trimmed.match(/^- \[ \] (.+)/);
-  if (uncheckedTodo) {
-    const content = uncheckedTodo[1]!.trim();
-    return {
-      block_type: BLOCK_TYPE.todo,
-      todo: { elements: parseInlineSpans(content), style: { done: false } },
-    };
-  }
-
-  // Bullet list: - item
-  const bullet = trimmed.match(/^- (.+)/);
-  if (bullet) {
-    const content = bullet[1]!.trim();
+  // Bullet list: - item  (supports indentation: "  - item" → indent_level 1)
+  // Match against original `line` (not `trimmed`) to preserve leading whitespace
+  const bulletMatch = line.match(/^(\s*)- (.+)/);
+  if (bulletMatch) {
+    const indent = bulletMatch[1]!.length;
+    const indentLevel = Math.floor(indent / 2);
+    const content = bulletMatch[2]!.trim();
     return {
       block_type: BLOCK_TYPE.bullet,
-      bullet: { elements: parseInlineSpans(content) },
+      bullet: {
+        elements: parseInlineSpans(content),
+        style: { ...(indentLevel > 0 ? { indent_level: indentLevel } : {}) },
+      },
     };
   }
 
-  // Ordered list: 1. item, 2. item, etc.
-  const ordered = trimmed.match(/^\d+\.\s+(.+)/);
-  if (ordered) {
-    const content = ordered[1]!.trim();
+  // Ordered list: 1. item  (supports indentation: "  1. item" → indent_level 1)
+  // Match against original `line` (not `trimmed`) to preserve leading whitespace
+  const orderedMatch = line.match(/^(\s*)(\d+)\.\s+(.+)/);
+  if (orderedMatch) {
+    const indent = orderedMatch[1]!.length;
+    const indentLevel = Math.floor(indent / 2);
+    const content = orderedMatch[3]!.trim();
     return {
       block_type: BLOCK_TYPE.ordered,
-      ordered: { elements: parseInlineSpans(content) },
+      ordered: {
+        elements: parseInlineSpans(content),
+        style: { ...(indentLevel > 0 ? { indent_level: indentLevel } : {}) },
+      },
     };
   }
 
@@ -321,12 +432,13 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
   // Matches: ```js\ncode\n``` or ```\ncode\n```
   const codeFence = trimmed.match(/^```(\w*)\n([\s\S]*?)\n```$/);
   if (codeFence) {
+    const lang = codeFence[1] ?? '';
     const codeContent = codeFence[2]!.trim();
     return {
       block_type: BLOCK_TYPE.code,
       code: {
         elements: [{ text_run: { content: codeContent } }],
-        style: { language: 1 }, // 1 = plain text; language detection is a future enhancement
+        style: { language: getFeishuLanguageId(lang) },
       },
     };
   }
@@ -338,7 +450,7 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
       block_type: BLOCK_TYPE.code,
       code: {
         elements: [{ text_run: { content: inlineCodeBlock[1]!, text_element_style: { inline_code: true } } }],
-        style: { language: 1 },
+        style: { language: 1 }, // inline code blocks are always plain text
       },
     };
   }
@@ -350,6 +462,33 @@ function classifyLine(line: string): FeishuDocRichBlock | null {
     return {
       block_type: BLOCK_TYPE.quote,
       quote: { elements: parseInlineSpans(content) },
+    };
+  }
+
+  // Callout: >> [!<type>] text  (GFM-inspired syntax)
+  // Supported types: info, warning, tip, success, danger, book
+  // Maps to Feishu callout_type: 0=info, 1=warning, 2=danger, 3=bulb/tip, 4=success, 5=book
+  const calloutMatch = trimmed.match(/^>>\s*\[!(info|warning|tip|success|danger|book)\]\s*(.+)/i);
+  if (calloutMatch) {
+    const type = calloutMatch[1]!.toLowerCase();
+    const content = calloutMatch[2]!.trim();
+    const typeMap: Record<string, { callout_type: number; icon_id: number; border_color: number }> = {
+      info:    { callout_type: 0, icon_id: 1, border_color: 0 },
+      warning: { callout_type: 1, icon_id: 2, border_color: 1 },
+      danger:  { callout_type: 2, icon_id: 3, border_color: 2 },
+      tip:     { callout_type: 3, icon_id: 4, border_color: 3 },
+      success: { callout_type: 4, icon_id: 5, border_color: 4 },
+      book:    { callout_type: 5, icon_id: 6, border_color: 5 },
+    };
+    const { callout_type, icon_id, border_color } = typeMap[type] ?? typeMap['info'];
+    return {
+      block_type: BLOCK_TYPE.callout,
+      callout: {
+        callout_type,
+        icon_id,
+        border_color,
+        paragraph: { elements: parseInlineSpans(content) },
+      },
     };
   }
 
@@ -430,9 +569,10 @@ export function buildDocBlockChildrenDraft(
     sourceMarkdown: createDraft.initialContentMarkdown,
     notes: [
       'This adapter converts markdown lines into native Feishu docx block types.',
-      'Supported block types: paragraph, heading1/2/3, bullet list, ordered list,',
+      'Supported block types: paragraph, heading1/2/3/4/5/6, bullet list, ordered list,',
       '  todo (checked and unchecked), fenced code block (```...```), inline code block (`code`),',
-      '  quote (> text), and divider (---).',
+      '  quote (> text), divider (---), and callout blocks (>> [!type] text).',
+      '  Callout types: info, warning, tip, success, danger, book.',
       'Supported inline formatting: bold (**text**), italic (*text*), underline (__text__),',
       '  inline code (`text`), strikethrough (~~text~~), explicit links ([text](url)),',
       '  and bare URL auto-link (https://… or www.… → clickable link).',

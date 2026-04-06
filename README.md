@@ -33,7 +33,7 @@ This project is a cleaner starting point:
 
 | Capability | Built-in | Notes |
 |---|---|---|
-| `/doc` — Feishu doc creation | ✅ | 10 block types: para, h1/h2/h3, bullet, ordered, todo, fenced code, quote, divider + inline styles (bold/italic/code/link) |
+| `/doc` — Feishu doc creation | ✅ | 11 block types: para, h1–h6, bullet, ordered, todo, fenced code (17 languages), quote, divider, callout + inline styles (bold/italic/code/link) |
 | `/table` — Bitable record creation | ✅ | Schema-aware, 18 field types, env-var field mapping |
 | `/todo` — structured task drafting | ✅ | Text-first, no credentials needed |
 | `/help`, `/ping`, `/poll` plugins | ✅ | Also a full plugin system for custom commands |
@@ -51,6 +51,7 @@ This project is a cleaner starting point:
 | Plugin scaffolder CLI | ✅ | `node scripts/create-plugin.mjs <name>` |
 | Table schema mapping preflight | ✅ | `npm run table:validate-mapping-config` |
 | Setup verification script | ✅ | `node scripts/verify-setup.mjs` |
+| REST API reference | ✅ | `docs/api-reference.md` — complete endpoint docs + cURL examples |
 
 ![Webhook message lifecycle — sequence diagram](./docs/assets/webhook-sequence-diagram.svg)
 
@@ -400,6 +401,7 @@ You can always add deployment pieces later.
 - [`/table` select-option handoff asset](./docs/table-select-option-handoff.md)
 - [`/table` webhook success / error demo](./docs/table-webhook-success-error-demo.md)
 - [Webhook event field reference](./docs/webhook-field-reference.md)
+- [REST API reference](./docs/api-reference.md) — complete endpoint docs, HMAC security, env vars, and cURL examples
 - [`/table` API error fixture pack](./docs/table-api-error-fixtures.md)
 - [Troubleshooting by API error pattern](./docs/troubleshooting-by-api-error-pattern.md)
 - [Troubleshooting FAQ](./docs/troubleshooting.md) — webhook, auth, Docker, plugins, ngrok, and debug tips

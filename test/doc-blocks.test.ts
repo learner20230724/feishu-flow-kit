@@ -39,6 +39,9 @@ test('buildDocBlockChildrenDraft converts markdown lines into richer docx blocks
         child.heading1?.elements[0]?.text_run.content ??
         child.heading2?.elements[0]?.text_run.content ??
         child.heading3?.elements[0]?.text_run.content ??
+        child.heading4?.elements[0]?.text_run.content ??
+        child.heading5?.elements[0]?.text_run.content ??
+        child.heading6?.elements[0]?.text_run.content ??
         child.bullet?.elements[0]?.text_run.content ??
         child.todo?.elements[0]?.text_run.content,
       done: child.todo?.style?.done,
@@ -195,6 +198,28 @@ test('heading blocks support inline spans', () => {
   ]);
 });
 
+test('buildDocBlockChildrenDraft converts h4/h5/h6 lines into heading4/5/6 blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'h4-h6 demo',
+    ['# H1 Title', '## H2 Title', '### H3 Title', '#### H4 Title', '##### H5 Title', '###### H6 Title'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_h', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children[0]?.block_type, 3);  // heading1
+  assert.equal(children[0]?.heading1?.elements[0]?.text_run.content, 'H1 Title');
+  assert.equal(children[1]?.block_type, 4);  // heading2
+  assert.equal(children[1]?.heading2?.elements[0]?.text_run.content, 'H2 Title');
+  assert.equal(children[2]?.block_type, 5);  // heading3
+  assert.equal(children[2]?.heading3?.elements[0]?.text_run.content, 'H3 Title');
+  assert.equal(children[3]?.block_type, 6);  // heading4
+  assert.equal(children[3]?.heading4?.elements[0]?.text_run.content, 'H4 Title');
+  assert.equal(children[4]?.block_type, 7);  // heading5
+  assert.equal(children[4]?.heading5?.elements[0]?.text_run.content, 'H5 Title');
+  assert.equal(children[5]?.block_type, 8);  // heading6
+  assert.equal(children[5]?.heading6?.elements[0]?.text_run.content, 'H6 Title');
+});
+
 test('buildDocBlockChildrenDraft converts ordered list lines into ordered blocks', () => {
   const createDraft = buildDocCreateDraft(
     'ordered list demo',
@@ -209,6 +234,83 @@ test('buildDocBlockChildrenDraft converts ordered list lines into ordered blocks
   assert.equal(children[1]?.ordered?.elements[0]?.text_run.content, 'Second step');
   assert.equal(children[2]?.block_type, 14);
   assert.equal(children[2]?.ordered?.elements[0]?.text_run.content, 'Third step');
+});
+
+test('buildDocBlockChildrenDraft converts nested bullet lists with indent_level', () => {
+  const createDraft = buildDocCreateDraft(
+    'nested bullet demo',
+    ['- Top-level item', '  - Nested level 1', '    - Nested level 2', '- Another top'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 4);
+  // Top-level bullet (0 indent spaces → indent_level 0, no style emitted)
+  assert.equal(children[0]?.block_type, 12);
+  assert.equal(children[0]?.bullet?.elements[0]?.text_run.content, 'Top-level item');
+  assert.equal(children[0]?.bullet?.style?.indent_level, undefined);
+
+  // Level 1 indent (2 spaces → indent_level 1)
+  assert.equal(children[1]?.block_type, 12);
+  assert.equal(children[1]?.bullet?.elements[0]?.text_run.content, 'Nested level 1');
+  assert.equal(children[1]?.bullet?.style?.indent_level, 1);
+
+  // Level 2 indent (4 spaces → indent_level 2)
+  assert.equal(children[2]?.block_type, 12);
+  assert.equal(children[2]?.bullet?.elements[0]?.text_run.content, 'Nested level 2');
+  assert.equal(children[2]?.bullet?.style?.indent_level, 2);
+
+  // Back to top-level
+  assert.equal(children[3]?.block_type, 12);
+  assert.equal(children[3]?.bullet?.style?.indent_level, undefined);
+});
+
+test('buildDocBlockChildrenDraft converts nested ordered lists with indent_level', () => {
+  const createDraft = buildDocCreateDraft(
+    'nested ordered demo',
+    ['1. Step one', '  1. Sub-step A', '    1. Sub-sub-step', '2. Step two'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 4);
+  assert.equal(children[0]?.block_type, 14);
+  assert.equal(children[0]?.ordered?.elements[0]?.text_run.content, 'Step one');
+  assert.equal(children[0]?.ordered?.style?.indent_level, undefined);
+
+  assert.equal(children[1]?.block_type, 14);
+  assert.equal(children[1]?.ordered?.elements[0]?.text_run.content, 'Sub-step A');
+  assert.equal(children[1]?.ordered?.style?.indent_level, 1);
+
+  assert.equal(children[2]?.block_type, 14);
+  assert.equal(children[2]?.ordered?.elements[0]?.text_run.content, 'Sub-sub-step');
+  assert.equal(children[2]?.ordered?.style?.indent_level, 2);
+
+  assert.equal(children[3]?.block_type, 14);
+  assert.equal(children[3]?.ordered?.elements[0]?.text_run.content, 'Step two');
+  assert.equal(children[3]?.ordered?.style?.indent_level, undefined);
+});
+
+test('buildDocBlockChildrenDraft converts nested todo items with indent_level and done state', () => {
+  const createDraft = buildDocCreateDraft(
+    'nested todo demo',
+    ['- [ ] Top-level task', '  - [x] Done subtask', '    - [ ] Nested task'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 3);
+  assert.equal(children[0]?.block_type, 13);
+  assert.equal(children[0]?.todo?.style?.done, false);
+  assert.equal(children[0]?.todo?.style?.indent_level, undefined);
+
+  assert.equal(children[1]?.block_type, 13);
+  assert.equal(children[1]?.todo?.style?.done, true);
+  assert.equal(children[1]?.todo?.style?.indent_level, 1);
+
+  assert.equal(children[2]?.block_type, 13);
+  assert.equal(children[2]?.todo?.style?.done, false);
+  assert.equal(children[2]?.todo?.style?.indent_level, 2);
 });
 
 test('buildDocBlockChildrenDraft converts fenced code blocks into code blocks', () => {
@@ -226,7 +328,36 @@ test('buildDocBlockChildrenDraft converts fenced code blocks into code blocks', 
   assert.equal(children.length, 1);
   assert.equal(children[0]?.block_type, 17);
   assert.equal(children[0]?.code?.elements[0]?.text_run.content, 'console.log("hello")');
-  assert.equal(children[0]?.code?.style?.language, 1); // plain text
+  assert.equal(children[0]?.code?.style?.language, 3); // 3 = JavaScript
+});
+
+test('buildDocBlockChildrenDraft maps fenced code block languages correctly', async () => {
+  // Language mapping: python→2, js→3, ts→12, bash→15, rust→13, json→19, etc.
+  const cases = [
+    { input: '```python\nprint("hi")\n```', lang: 2, name: 'python' },
+    { input: '```py\nprint("hi")\n```', lang: 2, name: 'py alias' },
+    { input: '```typescript\nconst x: number = 1\n```', lang: 12, name: 'typescript' },
+    { input: '```ts\nconst x = 1\n```', lang: 12, name: 'ts alias' },
+    { input: '```bash\ngit status\n```', lang: 15, name: 'bash' },
+    { input: '```sh\nexit 1\n```', lang: 15, name: 'sh alias' },
+    { input: '```rust\nfn main() {}\n```', lang: 13, name: 'rust' },
+    { input: '```rs\nfn main() {}\n```', lang: 13, name: 'rust alias' },
+    { input: '```go\nfmt.Println("hi")\n```', lang: 5, name: 'go' },
+    { input: '```java\nSystem.out.println("hi")\n```', lang: 4, name: 'java' },
+    { input: '```json\n{"key": "value"}\n```', lang: 19, name: 'json' },
+    { input: '```yaml\nkey: value\n```', lang: 18, name: 'yaml' },
+    { input: '```\nplain text\n```', lang: 1, name: 'no-lang defaults to plain' },
+    { input: '```unknownlang\ncode\n```', lang: 1, name: 'unknown lang falls back to plain' },
+  ];
+
+  for (const { input, lang, name } of cases) {
+    const createDraft = buildDocCreateDraft('lang test', input);
+    const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+    const children = draft.body.children;
+    assert.equal(children.length, 1, `should produce one block for ${name}`);
+    assert.equal(children[0]?.block_type, 17, `block_type should be 17 for ${name}`);
+    assert.equal(children[0]?.code?.style?.language, lang, `language should be ${lang} for ${name}`);
+  }
 });
 
 test('buildDocBlockChildrenDraft converts quote lines into quote blocks', () => {
@@ -256,6 +387,64 @@ test('buildDocBlockChildrenDraft converts divider lines into divider blocks', ()
   assert.equal(children[1]?.block_type, 22); // divider
   assert.equal(children[2]?.block_type, 2);  // paragraph
   assert.deepEqual(children[1]?.divider, {});
+});
+
+test('buildDocBlockChildrenDraft converts callout lines into callout blocks', () => {
+  const createDraft = buildDocCreateDraft(
+    'callout demo',
+    ['Before', '>> [!warning] This is a warning callout', 'After'].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 3);
+  assert.equal(children[0]?.block_type, 2);   // paragraph
+  assert.equal(children[1]?.block_type, 34); // callout
+  assert.equal(children[1]?.callout?.callout_type, 1); // warning = 1
+  assert.equal(children[1]?.callout?.icon_id, 2);
+  assert.equal(children[1]?.callout?.border_color, 1);
+  assert.equal(children[2]?.block_type, 2);  // paragraph
+});
+
+test('buildDocBlockChildrenDraft converts all callout types correctly', () => {
+  const createDraft = buildDocCreateDraft(
+    'all callout types',
+    [
+      '>> [!info] Info callout',
+      '>> [!tip] Tip callout',
+      '>> [!success] Success callout',
+      '>> [!danger] Danger callout',
+      '>> [!book] Book callout',
+    ].join('\n'),
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children.length, 5);
+  assert.equal(children[0]?.callout?.callout_type, 0);  // info
+  assert.equal(children[1]?.callout?.callout_type, 3);  // tip
+  assert.equal(children[2]?.callout?.callout_type, 4);  // success
+  assert.equal(children[3]?.callout?.callout_type, 2);  // danger
+  assert.equal(children[4]?.callout?.callout_type, 5);  // book
+});
+
+test('buildDocBlockChildrenDraft supports inline spans inside callout text', () => {
+  const createDraft = buildDocCreateDraft(
+    'callout inline styles',
+    '>> [!tip] Use **bold**, *italic*, and `code` inside callouts',
+  );
+  const draft = buildDocBlockChildrenDraft('docxcn_demo', createDraft);
+  const children = draft.body.children;
+
+  assert.equal(children[0]?.block_type, 34);
+  const elements = children[0]?.callout?.paragraph?.elements ?? [];
+  // Should have: "Use ", bold("bold"), ", ", italic("italic"), ", and ", inline_code("code"), " inside callouts"
+  const boldRun = elements.find((e: any) => e.text_run?.text_element_style?.bold);
+  const italicRun = elements.find((e: any) => e.text_run?.text_element_style?.italic);
+  const codeRun = elements.find((e: any) => e.text_run?.text_element_style?.inline_code);
+  assert.ok(boldRun, 'should contain bold run');
+  assert.ok(italicRun, 'should contain italic run');
+  assert.ok(codeRun, 'should contain inline_code run');
 });
 
 test('buildDocBlockChildrenDraft converts inline code block lines into code blocks', () => {
