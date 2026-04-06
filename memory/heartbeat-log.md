@@ -1,5 +1,61 @@
 # Heartbeat Log
 
+## 2026-04-06 10:12 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e 🆕，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 8936c9e ✅，v1.3.0）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2）
+- 本次完成：新建 `plugins/README.md` —— 综合插件注册表文档——
+  (1) 列出所有内置命令（/doc, /table, /todo, /help）含详细用法和block type映射表
+  (2) 列出所有示例插件（/ping, /poll）含源码路径和使用示例
+  (3) FEISHU_PLUGINS 加载配置说明
+  (4) 从零编写新插件的完整步骤（scaffold → 写逻辑 → build → 启用 → npm发布）
+  (5) Plugin API Reference：FeishuPlugin / PluginCommand / PluginCommandResult / PluginRegistry 接口说明
+  (6) `npm run check` ✅ / `npm test` 107/107 ✅（vs 之前 107/107）
+  (7) 提交 fcd822e → 推送到 origin/main ✅
+- 产出文件/结果：
+  - `feishu-flow-kit/plugins/README.md`（新建，230行，5.6KB）
+  - feishu-flow-kit main @ fcd822e 已推送到 GitHub
+- 遇到的问题：无
+- 下一步部署：
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布（唯一剩余项）
+  - 注意：之前日志误判"需要 GitHub UI 操作发布 release"——经 API 核实，feishu-flow-kit v1.0.3 / llm-chat-lab v1.3.0 / room-measure-kit v0.1.2 三个 release 均已在 tag push 时由 release-publish.yml 自动发布（draft: false），无需手动干预
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置）
+
+## 2026-04-06 09:57 UTC
+- 当前主线：`feishu-flow-kit`（main @ 84ebceb ✅，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 8936c9e 🆕，v1.3.0）+ `room-measure-kit`（main @ 0edff83 🆕，v0.1.2）
+- 本次完成：为 llm-chat-lab v1.3.0 和 room-measure-kit v0.1.2 各创建 GitHub Release Notes 草稿文档——
+  (1) `llm-chat-lab/docs/releases/v1.3.0-release-notes.md`（新建，73行，4.9KB）— 含特性表格（rate limit/retry、prompt变量、analytics charts、AI rubric scoring、测试套件40用例）、改进说明、完整CHANGELOG diff、文档链接矩阵；发布步骤已包含
+  (2) `room-measure-kit/docs/releases/v0.1.2-release-notes.md`（新建，66行，3.0KB）— 含特性表格（L形房间、圆形房间、3路形状切换、动态输入面板、shape-aware结果）、完整CHANGELOG diff、文档链接矩阵；发布步骤已包含
+  (3) llm-chat-lab main @ 8936c9e → 推送到 origin/main ✅
+  (4) room-measure-kit main @ 0edff83 → 推送到 origin/main ✅
+- 产出文件/结果：
+  - `llm-chat-lab/docs/releases/v1.3.0-release-notes.md`
+  - `room-measure-kit/docs/releases/v0.1.2-release-notes.md`
+- 遇到的问题：无
+- 下一步部署（仅 GitHub UI，均可由你直接操作）：
+  - feishu-flow-kit v1.0.3 release → https://github.com/learner20230724/feishu-flow-kit/releases/new → tag v1.0.3 → 粘贴 `docs/releases/v1.0.3-release-notes.md` 内容
+  - llm-chat-lab v1.3.0 release → https://github.com/learner20230724/llm-chat-lab/releases/new → tag v1.3.0 → 粘贴 `docs/releases/v1.3.0-release-notes.md` 内容
+  - room-measure-kit v0.1.2 release → https://github.com/learner20230724/room-measure-kit/releases/new → tag v0.1.2 → 粘贴 `docs/releases/v0.1.2-release-notes.md` 内容
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
+- 是否需要你介入：是（3个 GitHub Release + 1个 NPM_TOKEN secret 设置）
+
+## 2026-04-06 09:42 UTC
+- 当前主线：`feishu-flow-kit`（main @ 84ebceb 🆕，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 93d2922 ✅，v1.3.0）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
+- 本次完成：新建 v1.0.3 GitHub Release 草稿文档——
+  (1) 基于 CHANGELOG.md v1.0.3 条目生成完整的 Release Notes（~150行，含特性表格、改进列表、bug修复）
+  (2) 包含完整的"下一步行动"说明（NPM_TOKEN secret 设置 + npm publish workflow 触发步骤）
+  (3) 包含完整 Docs 链接矩阵、Assets 说明、Full Changelog 对比链接
+  (4) 用户可直接复制到 GitHub Release 页面：https://github.com/learner20230724/feishu-flow-kit/releases → Edit release → Paste
+  (5) 提交 84ebceb → 推送到 origin/main ✅
+- 产出文件/结果：
+  - `feishu-flow-kit/docs/releases/v1.0.3-release-notes.md`（新建，~150行，4965字节）
+  - feishu-flow-kit main @ 84ebceb 已推送到 GitHub
+- 遇到的问题：无
+- 下一步部署：
+  - feishu-flow-kit v1.0.3 GitHub Release Publish（需你 GitHub UI）：https://github.com/learner20230724/feishu-flow-kit/releases → Edit release → 粘贴 docs/releases/v1.0.3-release-notes.md 内容
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
+  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
+  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
+- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作，无自动化路径）
+
 ## 2026-04-06 09:27 UTC
 - 当前主线：`feishu-flow-kit`（main @ 7966233 ✅，v1.0.3 tag ✅）+ `llm-chat-lab`（main @ 93d2922 🆕，v1.3.0）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
 - 本次完成：修复 llm-chat-lab 测试环境 + 提交测试基础设施——
