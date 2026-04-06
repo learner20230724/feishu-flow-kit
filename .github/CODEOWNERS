@@ -1,0 +1,17 @@
+# CODEOWNERS — automatic reviewer assignment
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner (fallback for everything not matched below)
+*       @learner20230724
+
+# Release & CI/CD
+.github/workflows/release-*.yml       @learner20230724
+.github/workflows/docker-*           @learner20230724
+
+# Package publishing
+packages/plugin-template/             @learner20230724
+
+# Plugin system (core)
+src/core/                            @learner20230724
+plugins/                             @learner20230724
+scripts/create-plugin.mjs            @learner20230724

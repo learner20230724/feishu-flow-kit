@@ -56,11 +56,29 @@ Notes:
 ## Current next step
 M5 is complete. M6 is fully done (M6.1–M6.8 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working. Developer guide (M6.7) and multi-tenant guide (M6.8) cover all production patterns.
 
-**Plugin system** (`src/core/plugin-system.ts`, `docs/plugin-system.md`) was implemented as a v1.0.2 enhancement — allows adding new slash commands via `FEISHU_PLUGINS` env var with zero core code changes. Reference plugins in `plugins/` (`/help`, `/ping`, `/poll`). `/help` dynamically lists all registered commands (built-in + plugin).
+**feishu-flow-kit v1.0.3** (2026-04-06) is the current release. All M1–M6.9 items are complete. The plugin ecosystem is fully operational. Next horizon: real Feishu workspace E2E testing, npm publish of `@feishu/plugin-template` (awaiting NPM_TOKEN secret), or richer `/doc` block type coverage (nested structures, tables inside docs).
 
-**Plugin ecosystem scaffolding** (M6.9): `plugins/template/` (complete plugin template with all lifecycle hooks), `scripts/create-plugin.mjs` (CLI scaffolder: `node scripts/create-plugin.mjs <name>`), `plugins/template/README.md`. Examples gallery: `plugins/examples/` (`/qr` image API + beforeProcess, `/joke` async REST + afterProcess, `/remind` natural-language parsing + in-memory state) with annotated source and comparison table.
+**M6.9 — Plugin ecosystem scaffolding** ✅
+- `plugins/template/` — complete plugin template with all lifecycle hooks documented
+- `scripts/create-plugin.mjs` — CLI scaffolder: `node scripts/create-plugin.mjs <name>` generates a new plugin from the template
+- `plugins/template/README.md` — per-plugin usage guide
+- `docs/plugin-system.md` updated with template + scaffolder documentation
 
-No blocking roadmap items. Optional future directions: real Feishu workspace E2E testing (needs credentials), publish `@feishu/plugin-template` npm package, or multi-tenant real-world usage patterns.
+**v1.0.3 release** (2026-04-06) — full plugin ecosystem shipped:
+- `@feishu/plugin-template` npm package (`packages/plugin-template/`) — publishable standalone plugin package
+- Built-in plugins: `/ping`, `/poll`, `/help` — reference implementations
+- Plugin CLI scaffolder: `node scripts/create-plugin.mjs <name>`
+- Postman collection (`docs/postman-collection.json`) — 10+ API call presets
+- Local webhook test script + setup verification script
+- Troubleshooting FAQ (8 scenarios)
+- Commands Reference Card + Features overview SVG
+- Production deploy stack (docker-compose.yml + Traefik v3 + Let's Encrypt TLS)
+- Release automation (auto-generates draft GitHub Release on `v*.*.*` tags)
+- Interactive ASCII demo (`npm run demo`)
+- Security policy (`SECURITY.md`) with 4-level vulnerability response timeline
+- Dependabot automation + CODEOWNERS + structured issue templates
+
+No blocking roadmap items. Optional future directions: real Feishu workspace E2E testing (needs credentials), publish `@feishu/plugin-template` npm package (requires NPM_TOKEN secret), multi-tenant real-world usage patterns, or richer `/doc` block type coverage.
 
 ---
 
