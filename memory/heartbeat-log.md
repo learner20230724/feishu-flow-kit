@@ -1,5 +1,49 @@
 # Heartbeat Log
 
+## 2026-04-06 08:57 UTC
+- 当前主线：`feishu-flow-kit`（main @ 7966233 🆕，v1.0.3 tag ✅）+ `llm-chat-lab` v1.3.0（8e886e8 ✅）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
+- 本次完成：更新 ROADMAP.md 至 v1.0.3——
+  (1) 标记 M6.9 Plugin ecosystem scaffolding 为完成状态（plugin template + CLI scaffolder + plugin README）
+  (2) 新增 v1.0.3 release summary：plugin system、npm template、Postman collection、troubleshooting FAQ、commands reference、production deploy stack、release automation、interactive demo、security policy、Dependabot
+  (3) 更新 "Current next step" 为 v1.0.3（当前状态）并列举未来方向（E2E testing、npm publish、/doc nested structures）
+  (4) `npm run check` ✅ / `npm test` 107/107 ✅
+  (5) 提交 7966233 → 推送到 origin/main ✅
+- 产出文件/结果：
+  - `feishu-flow-kit/ROADMAP.md` — 更新 v1.0.3 release 条目 + M6.9 完成状态
+  - feishu-flow-kit main @ 7966233 已推送到 GitHub
+- 遇到的问题：无
+- 下一步部署：
+  - feishu-flow-kit v1.0.3 draft release Publish（需你 GitHub UI）：https://github.com/learner20230724/feishu-flow-kit/releases
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
+  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
+  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
+- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作，无自动化路径）
+
+## 2026-04-06 08:42 UTC
+- 当前主线：`feishu-flow-kit`（main @ da188c1 🆕，v1.0.3 tag ✅）+ `llm-chat-lab` v1.3.0（8e886e8 ✅）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
+- 本次完成：新增 5 个标准 OSS 资源文件——
+  (1) `SECURITY.md`（~3KB）— 完整安全策略：支持版本表、漏洞报告流程（GitHub Private + Email）、4 级时间线响应（24h→30d）、严重性评级（Critical/High/Medium/Low）、生产部署安全最佳实践（TLS/凭证轮换/ngrok/插件隔离/令牌缓存）
+  (2) `.github/CODEOWNERS` — 自动reviewer分配：default / workflows / packages/plugin-template / src/core+plugins
+  (3) `.github/dependabot.yml` — 每周自动更新：npm main + packages/plugin-template（按prod/dev分组）、GitHub Actions；限制5个PR/周
+  (4) `.github/ISSUE_TEMPLATE/bug_report.md` — 结构化bug报告：环境/日志/配置/env字段、已尝试步骤checklist、FAQs提示
+  (5) `.github/ISSUE_TEMPLATE/feature_request.md` — 功能请求模板：Pain Point / Proposed Solution / Suggested Approach / Alternatives Considered + checklist
+  (6) `npm run check` ✅ / `npm test` 107/107 ✅（vs 之前 107/107）
+  (7) 提交 da188c1 → 推送到 origin/main ✅
+- 产出文件/结果：
+  - `feishu-flow-kit/SECURITY.md`（新建，~3KB）
+  - `feishu-flow-kit/.github/CODEOWNERS`（新建）
+  - `feishu-flow-kit/.github/dependabot.yml`（新建）
+  - `feishu-flow-kit/.github/ISSUE_TEMPLATE/bug_report.md`（新建）
+  - `feishu-flow-kit/.github/ISSUE_TEMPLATE/feature_request.md`（新建）
+  - feishu-flow-kit main @ da188c1 已推送到 GitHub
+- 遇到的问题：无
+- 下一步部署：
+  - feishu-flow-kit v1.0.3 draft release Publish（需你 GitHub UI）：https://github.com/learner20230724/feishu-flow-kit/releases
+  - feishu-flow-kit NPM_TOKEN secret（Settings → Secrets → Actions）→ 启用 @feishu/plugin-template npm 发布
+  - llm-chat-lab v1.3.0 GitHub Release（手动）：https://github.com/learner20230724/llm-chat-lab/releases/new
+  - room-measure-kit v0.1.2 GitHub Release（手动）：https://github.com/learner20230724/room-measure-kit/releases/new
+- 是否需要你介入：是（上述 4 项均需 GitHub UI 操作，无自动化路径）
+
 ## 2026-04-06 08:27 UTC
 - 当前主线：`feishu-flow-kit`（main @ 5633801 🆕，v1.0.3 tag ✅）+ `llm-chat-lab` v1.3.0（8e886e8 ✅）+ `room-measure-kit` v0.1.2（b50eb04 ✅）
 - 本次完成：新增 Postman Collection 使用指南 `docs/postman-collection.md`——
