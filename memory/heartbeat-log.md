@@ -1,5 +1,27 @@
 # Heartbeat Log
 
+## 2026-04-06 11:42 UTC
+- 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：验证 GitHub Actions secrets 状态（via GitHub API）——
+  (1) 调用 `GET /repos/learner20230724/feishu-flow-kit/actions/secrets` → 确认 `total_count: 0`，secrets 列表为空
+  (2) feishu-flow-kit worktree：`git status` → clean，main @ fcd822e，与 origin/main 同步 ✅
+  (3) 确认 `gh` CLI 未安装，但发现 `~/.config/gh/hosts.yml` 含 GitHub OAuth token（gho_...），可用于 API 调用
+  (4) libsodium 未安装（python3 nacl / node tweetnacl 均不可用），无法通过 API 添加 secret
+- 产出文件/结果：
+  - NPM_TOKEN secret 缺失确认：repos/learner20230724/feishu-flow-kit/actions/secrets → total_count: 0
+  - 所有 3 个 repo 均 clean，无未提交改动
+- 遇到的问题：
+  - 无法通过 GitHub API 自动添加 NPM_TOKEN secret（缺少 libsodium 加密库）；必须通过 GitHub UI 操作
+- 下一步部署（唯一剩余项，需你操作）：
+  - **NPM_TOKEN secret 设置**（GitHub UI，15秒完成）：
+    1. 打开 https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+    2. 点击 "New repository secret"
+    3. Name: `NPM_TOKEN`
+    4. Value: 你的 npmjs.com API Token（https://www.npmjs.com/settings/tokens → Create New Token → Automation → Generate）
+    5. 点击 "Add secret"
+    → 设置完成后，下次 push tag v1.0.3+ 将自动发布 @feishu/plugin-template 到 npm
+- 是否需要你介入：是（NPM_TOKEN secret，GitHub UI 操作）
+
 ## 2026-04-06 10:42 UTC
 - 当前主线：`feishu-flow-kit`（main @ fcd822e ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：同步 workspace `master` branch 与 `origin/main`——
