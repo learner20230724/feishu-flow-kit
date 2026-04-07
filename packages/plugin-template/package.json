@@ -39,7 +39,7 @@
     "feishu-flow-kit": ">=1.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
+    "typescript": "^6.0.2",
     "@types/node": "^20.0.0"
   },
   "files": [
