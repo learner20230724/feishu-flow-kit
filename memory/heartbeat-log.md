@@ -1,5 +1,44 @@
 # Heartbeat Log
 
+## 2026-04-07 09:42 UTC
+**Current mainline:** feishu-flow-kit @ 39a0b3b (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
+
+**What was completed:**
+- **Full health check — no changes since last heartbeat (08:57 UTC, ~45 min ago)**
+  (1) feishu-flow-kit origin/main @ 39a0b3b ✅ (docs: /doc block type syntax reference EN+ZH)
+  (2) llm-chat-lab origin/main @ bd9fe3d ✅
+  (3) room-measure-kit origin/main @ 0edff83 ✅
+  (4) Workspace root master @ 730fd3d, 32 commits ahead of origin/main (heartbeat-log commits, not pushed to avoid polluting public feishu-flow-kit repo)
+  (5) All repos clean, no zombie processes
+
+**Output files/results:** None (no changes needed)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** None. All repos stable. NPM_TOKEN has been sole blocker for 27+ hours — no code changes possible until human sets it.
+
+## 2026-04-07 10:12 UTC
+**Current mainline:** feishu-flow-kit @ 39a0b3b (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
+
+**What was completed:**
+- **Full health check — no changes since last heartbeat (09:42 UTC, ~30 min ago)**
+  (1) feishu-flow-kit origin/main @ 39a0b3b ✅ (docs: /doc block type syntax reference EN+ZH)
+  (2) llm-chat-lab origin/main @ bd9fe3d ✅
+  (3) room-measure-kit origin/main @ 0edff83 ✅
+  (4) Workspace root master @ 730fd3d (heartbeat-log commits, clean working tree)
+  (5) feishu-flow-kit `npm run check` ✅ (tsc --noEmit) + tests pass ✅ (128/128, ~11s)
+  (6) All repos clean, no zombie processes
+
+**Output files/results:** None (no changes needed)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** None. All repos stable. NPM_TOKEN has been sole blocker for 27+ hours — no code changes possible until human sets it.
+
 ## 2026-04-07 08:57 UTC
 - 当前主线：`feishu-flow-kit`（main @ 39a0b3b ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：Workspace root submodule 同步——
