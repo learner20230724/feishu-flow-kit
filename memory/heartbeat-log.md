@@ -7,7 +7,8 @@
   (2) `git pull origin main` → fast-forward 8b74f12 → effc920 ✅
   (3) `npm run check` ✅ (tsc --noEmit) + `npm test` 128/128 ✅ (11.2s)
   (4) llm-chat-lab @ bd9fe3d ✅, room-measure-kit @ 0edff83 ✅ (no changes)
-  (5) Heartbeat log pushed: badfcee ✅
+  (5) Heartbeat log pushed: f339ff3 ✅
+  (6) Workspace root feishu-flow-kit gitlink synced: 8b74f12 → effc920 ✅ (daed58b)
 
 **Output files/results:** None (sync + health check only)
 
