@@ -1,3 +1,30 @@
+## 2026-04-07 12:00 UTC
+**Current mainline:** feishu-flow-kit @ f29c732 (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
+
+**What was completed:**
+- **Sync feishu-flow-kit to latest origin/main + push to GitHub** —
+  (1) `git fetch origin` → discovered 3 new commits since last heartbeat (d39037a → f29c732):
+      - f29c732 chore: add plugin-template/package-lock.json to .gitignore
+      - d39037a fix(publish-npm): add --allow-same-version to npm version
+      - 34cab30 fix(plugin-template): remove nonexistent peerDependency on feishu-flow-kit
+  (2) `git pull origin main` → fast-forward main d39037a → f29c732 ✅
+  (3) `npm run check` ✅ (tsc --noEmit) + `npm test` 128/128 ✅ (12.4s)
+  (4) Updated feishu-flow-kit gitlink in workspace root index: 39a0b3b → f29c732
+  (5) Fixed push rejection (secret scanning): redacted GitHub token `gho_...` in heartbeat-log.md (was exposed in 11:42 UTC entry)
+  (6) `git commit --amend` + `git push origin main` ✅
+
+**Output files/results:**
+- feishu-flow-kit main @ f29c732 ✅ (origin/main now at 3b8548d after amend)
+- workspace root HEAD @ 3b8548d (gitlink sync + heartbeat log)
+- heartbeat-log.md token redacted ✅ (was causing push rejection)
+
+**Problems:**
+- Push was rejected due to GitHub secret scanning: GitHub OAuth token embedded in heartbeat-log.md line 9. Fixed by redacting token.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** None. All repos stable. NPM_TOKEN remains the only blocker. Token redaction is now permanent in heartbeat-log.md.
+
 ## 2026-04-07 11:42 UTC
 **Current mainline:** feishu-flow-kit @ d39037a (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
 
