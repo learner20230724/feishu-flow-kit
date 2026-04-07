@@ -400,3 +400,27 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** Breaking the sync-only cycle with a real PR equivalent fix. All repos stable. NPM_TOKEN remains the only blocker for 100+ hours.
+
+---
+
+## 2026-04-07 22:27 UTC
+**Current mainline:** feishu-flow-kit @ c33a3cf (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **README accuracy spot-check + demo verification** —
+  (1) Pulled feishu-flow-kit: c25228d → c33a3cf (heartbeat-log.md commit)
+  (2) npm run check ✅ (tsc --noEmit) + npm test 130/130 ✅ (10.8s)
+  (3) README accuracy spot-check: all 18 "What you get" table entries verified:
+      - All npm scripts mentioned exist (`npm run demo`, `demo:plugins`, `table:validate-mapping-config`, etc.) ✅
+      - All docs files mentioned exist (`docs/api-reference.md`, `docs/postman-collection.json`, etc.) ✅
+      - Feature descriptions match actual implementation ✅
+  (4) `npm run demo` → all 8 checks pass ✅ (prerequisites, quick start, server startup, webhook event, command processing, card response, available commands, architecture overview)
+  (5) `@feishu/plugin-template` npm registry check → still NOT published (404 on npmjs.com) — no change
+
+**Output files/results:** README fully accurate. Demo verified working.
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. README fully accurate. Demo verified working. Nothing to deploy until NPM_TOKEN is added by human.
