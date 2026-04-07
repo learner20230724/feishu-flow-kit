@@ -1,3 +1,39 @@
+## 2026-04-07 21:42 UTC
+**Current mainline:** feishu-flow-kit @ 8d11451 (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **Security audit + HEARTBEAT.md overhaul + field mapping review** —
+  (1) feishu-flow-kit: `npm audit --audit-level=high` → **0 vulnerabilities** ✅
+  (2) llm-chat-lab: no lockfile present (`npm error ENOLOCK`) — cannot audit, not a security risk (dev-only)
+  (3) GitHub issues page requires login — skipped (would need GH_TOKEN for API access)
+  (4) Reviewed `src/adapters/create-table-record-with-schema.ts` re: Issue 21 open items:
+      - date (type 5) → already handled ✅
+      - number (type 2) → already handled ✅
+      - checkbox (type 7) → already handled ✅
+      - linked_record (type 18/21) → already handled ✅
+      - Remaining gap: option-name→option_id lookup (commented as "nice-to-have")
+  (5) Updated `/root/.openclaw/workspace/HEARTBEAT.md` with 5 useful standing tasks:
+      - GitHub issues check (needs auth workaround)
+      - npm registry check for @feishu/plugin-template
+      - Security audits (npm audit)
+      - ROADMAP.md review
+      - README accuracy spot-check
+  (6) Pulled feishu-flow-kit to 8d11451 (1 heartbeat-log.md commit from 21:27 UTC)
+  (7) npm test 130/130 ✅
+
+**Output files/results:**
+- `/root/.openclaw/workspace/HEARTBEAT.md` — rewritten with 5 standing tasks + NPM_TOKEN blocker note
+- feishu-flow-kit: 0 vulnerabilities (npm audit)
+- Field mapping: date, number, checkbox, linked_record all handled in code already
+
+**Problems:** GitHub issues page inaccessible without login. llm-chat-lab has no lockfile (minor, dev-only project).
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** Heartbeat was cycling sync-only for 90+ hours. HEARTBEAT.md now has real periodic tasks. Issue 21 field mapping is largely complete — remaining work (option-name→option_id) is a nice-to-have enhancement. All repos stable.
+
+---
+
 ## 2026-04-07 20:42 UTC
 **Current mainline:** feishu-flow-kit @ d06a599 (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
 
