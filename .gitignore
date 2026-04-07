@@ -5,3 +5,4 @@ dist/
 *.local
 *.log
 test-code-block.mjs
+MEMORY.md
