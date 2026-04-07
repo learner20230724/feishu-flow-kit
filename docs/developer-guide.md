@@ -134,6 +134,102 @@ buildDocCreateDraft(topic, markdown)               → DocCreateDraft
 buildTableRecordDraft(fields)                      → TableRecordDraft
 ```
 
+#### `/doc` block type syntax
+
+`buildDocBlockChildrenDraft(text)` converts markdown-like text into Feishu docx block arrays. Supported syntax:
+
+**Headings**
+```
+# H1 Title          → block_type 3 (heading1)
+## H2 Title         → block_type 4 (heading2)
+### H3 Title        → block_type 5 (heading3)
+#### H4 Title        → block_type 6 (heading4)
+##### H5 Title       → block_type 7 (heading5)
+###### H6 Title      → block_type 8 (heading6)
+```
+
+**Lists**
+```
+- Bullet item              → block_type 12 (bullet)
+* Also bullet              → block_type 12 (bullet)
+- [ ] Todo item            → block_type 13 (todo, unchecked)
+- [x] Done item            → block_type 13 (todo, checked)
+1. Ordered item            → block_type 14 (ordered)
+```
+
+**Nested lists** — indent with 2 spaces or 1 tab:
+```
+- Top level
+  - Nested
+    - Deeply nested
+```
+
+**Fenced code blocks** — 17 languages supported:
+~~~
+```python
+def hello():
+    print("world")
+```
+```javascript
+console.log('hi');
+```
+~~~
+
+Language IDs mapped: python/py → 2, javascript/js → 3, java → 4, go → 5, c++/cpp → 6, c → 7, ruby/rb → 8, php → 9, swift → 10, kotlin → 11, typescript/ts → 12, rust/rs → 13, sql → 14, bash/sh/shell/zsh → 15, html → 16, css → 17, yaml/yml → 18, json → 19, xml → 20, markdown/md → 21, diff/patch → 22, plaintext/text/txt → 1.
+
+**Inline code** — backtick-delimited:
+```
+Use `npm install` to add packages
+```
+
+**Quote blocks** — `>` prefix:
+```
+> This is a wise quote
+> — Attribution
+```
+
+**Dividers** — three dashes:
+```
+---
+```
+
+**Callout blocks** — `>> [!type]` prefix:
+```
+>> [!info] This is an info callout
+>> [!tip] Pro tip here
+>> [!warning] Watch out
+>> [!danger] Critical warning
+>> [!success] All good
+>> [!book] Reference material
+```
+
+**Inline styles** — work inside paragraphs, headings, quotes, and callouts:
+```
+**bold**, *italic*, `code`, ~~strikethrough~~, __underline__
+[link text](https://example.com)
+```
+
+**Mixed content** — a `/doc` argument can combine multiple block types:
+```
+# Project Notes
+
+## Todo
+- [ ] Design doc
+- [ ] Review with team
+
+## Code Example
+```python
+def foo():
+    pass
+```
+
+> [!tip] Remember to update the README
+
+---
+
+End of notes.
+```
+
 ### Maybe adapters (`maybe-*.ts`)
 
 Check the feature flag, then call the request adapter:

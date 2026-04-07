@@ -132,6 +132,102 @@ buildDocCreateDraft(topic, markdown)               → DocCreateDraft
 buildTableRecordDraft(fields)                      → TableRecordDraft
 ```
 
+#### `/doc` 块类型语法
+
+`buildDocBlockChildrenDraft(text)` 将类 markdown 文本转换为飞书文档块数组。支持的语法：
+
+**标题**
+```
+# 一级标题             → block_type 3 (heading1)
+## 二级标题            → block_type 4 (heading2)
+### 三级标题           → block_type 5 (heading3)
+#### 四级标题          → block_type 6 (heading4)
+##### 五级标题         → block_type 7 (heading5)
+###### 六级标题        → block_type 8 (heading6)
+```
+
+**列表**
+```
+- 无序列表项            → block_type 12 (bullet)
+* 也支持               → block_type 12 (bullet)
+- [ ] 待办事项          → block_type 13 (todo，未完成）
+- [x] 已完成事项        → block_type 13 (todo，已完成）
+1. 有序列表项          → block_type 14 (ordered）
+```
+
+**嵌套列表** — 使用 2 个空格或 1 个 Tab 缩进：
+```
+- 顶层
+  - 嵌套
+    - 深度嵌套
+```
+
+**代码块** — 支持 17 种语言：
+~~~
+```python
+def hello():
+    print("world")
+```
+```javascript
+console.log('hi');
+```
+~~~
+
+语言 ID 映射：python/py → 2, javascript/js → 3, java → 4, go → 5, c++/cpp → 6, c → 7, ruby/rb → 8, php → 9, swift → 10, kotlin → 11, typescript/ts → 12, rust/rs → 13, sql → 14, bash/sh/shell/zsh → 15, html → 16, css → 17, yaml/yml → 18, json → 19, xml → 20, markdown/md → 21, diff/patch → 22, plaintext/text/txt → 1。
+
+**行内代码** — 反引号包裹：
+```
+使用 `npm install` 添加依赖包
+```
+
+**引用块** — `>` 前缀：
+```
+> 这是引用的内容
+> —— 出处
+```
+
+**分隔线** — 三个短横线：
+```
+---
+```
+
+**标注块（Callout）** — `>> [!类型]` 前缀：
+```
+>> [!info] 信息提示
+>> [!tip] 使用提示
+>> [!warning] 警告提示
+>> [!danger] 危险警告
+>> [!success] 成功提示
+>> [!book] 参考资料
+```
+
+**行内样式** — 在段落、标题、引用和标注块中均可用：
+```
+**粗体**，*斜体*，`代码`，~~删除线~~，__下划线__
+[链接文字](https://example.com)
+```
+
+**混排内容** — `/doc` 参数可组合多种块类型：
+```
+# 项目笔记
+
+## 待办事项
+- [ ] 设计文档
+- [ ] 团队评审
+
+## 代码示例
+```python
+def foo():
+    pass
+```
+
+> [!tip] 别忘了更新 README
+
+---
+
+笔记结束。
+```
+
 ### Maybe 适配器（`maybe-*.ts`）
 
 检查功能开关，然后调用请求适配器：
