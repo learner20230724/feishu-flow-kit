@@ -3,10 +3,20 @@ import { fetchTenantAccessToken, InMemoryFeishuTenantAccessTokenCache } from './
 import { sendTableRecordRequest } from './send-table-record-request.js';
 import type { TableRecordDraft, TableRecordFieldValue } from './build-table-record-draft.js';
 
+export interface BitableFieldOption {
+  name: string;
+  id: string;
+}
+
+export interface BitableFieldProperty {
+  options?: BitableFieldOption[];
+}
+
 export interface BitableFieldSchema {
   field_id: string;
   field_name: string;
   type: number;
+  property?: BitableFieldProperty;
 }
 
 export interface BitableTableSchema {
@@ -67,6 +77,24 @@ function buildFieldTypeMap(schema: BitableTableSchema): Map<string, number> {
   return map;
 }
 
+/**
+ * Build a map: field_id → Map<option_name_lower → option_id>
+ * Only populated for single-select (type 3) and multi-select (type 4) fields.
+ */
+function buildFieldOptionsMap(schema: BitableTableSchema): Map<string, Map<string, string>> {
+  const map = new Map<string, Map<string, string>>();
+  for (const field of schema.fields) {
+    if (isOptionField(field.type) && field.property?.options) {
+      const optionMap = new Map<string, string>();
+      for (const opt of field.property.options) {
+        optionMap.set(opt.name.toLowerCase(), opt.id);
+      }
+      map.set(field.field_id, optionMap);
+    }
+  }
+  return map;
+}
+
 function resolveFieldId(name: string, fieldNameToId: Map<string, string>): string | undefined {
   return fieldNameToId.get(name) ?? fieldNameToId.get(name.toLowerCase());
 }
@@ -100,6 +128,45 @@ function isNumberField(type: number): boolean {
 }
 
 /**
+ * Transform an option field value from { name } to { id } using the schema's
+ * option list. Falls back to the original value if the option name is not found.
+ */
+function transformOptionValue(
+  fieldValue: TableRecordFieldValue,
+  optionMap: Map<string, string> | undefined,
+): TableRecordFieldValue {
+  if (!optionMap) return fieldValue;
+
+  // Single-select: { name: "..." } → { id: "..." }
+  if (fieldValue !== null && typeof fieldValue === 'object' && !Array.isArray(fieldValue)) {
+    const name = (fieldValue as unknown as Record<string, unknown>).name;
+    if (typeof name === 'string') {
+      const id = optionMap.get(name.toLowerCase());
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return id ? ({ id } as any) : fieldValue;
+    }
+  }
+
+  // Multi-select: [{ name: "..." }, ...] → [{ id: "..." }, ...]
+  if (Array.isArray(fieldValue)) {
+    const transformed = fieldValue.map((item) => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        const name = (item as unknown as Record<string, unknown>).name;
+        if (typeof name === 'string') {
+          const id = optionMap.get(name.toLowerCase());
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return id ? ({ id } as any) : item;
+        }
+      }
+      return item;
+    });
+    return transformed as TableRecordFieldValue;
+  }
+
+  return fieldValue;
+}
+
+/**
  * Transform a draft's field-name keys into field_id keys, using the live
  * Bitable table schema. Returns a new draft with transformed body.fields.
  */
@@ -109,6 +176,7 @@ export function transformDraftWithSchema(
 ): TableRecordDraft {
   const fieldNameToId = buildFieldNameToIdMap(schema);
   const fieldTypeMap = buildFieldTypeMap(schema);
+  const fieldOptionsMap = buildFieldOptionsMap(schema);
 
   const mappedFields: Record<string, TableRecordFieldValue> = {};
   let fieldsMapped = 0;
@@ -123,11 +191,12 @@ export function transformDraftWithSchema(
 
     const fieldType = fieldTypeMap.get(fieldId) ?? 0;
 
-    // Wrap option values { name } → option_id is looked up from the schema's
-    // option lists. For now, emit as { name } and let Bitable resolve by name.
-    // A full implementation would fetch option lists and map name → option_id.
+    // Option fields: map option name(s) → option_id using schema property options.
+    // Feishu accepts { name } but { id } is more reliable.
     if (isOptionField(fieldType)) {
-      mappedFields[fieldId] = fieldValue as TableRecordFieldValue;
+      const optionMap = fieldOptionsMap.get(fieldId);
+      const transformed = transformOptionValue(fieldValue, optionMap);
+      mappedFields[fieldId] = transformed;
       fieldsMapped++;
       continue;
     }
@@ -199,7 +268,12 @@ export async function fetchBitableTableSchema(
     code?: number;
     msg?: string;
     data?: {
-      items?: Array<{ field_id?: string; field_name?: string; type?: number }>;
+      items?: Array<{
+        field_id?: string;
+        field_name?: string;
+        type?: number;
+        property?: BitableFieldProperty;
+      }>;
     };
   };
 
@@ -215,6 +289,8 @@ export async function fetchBitableTableSchema(
         field_id: f.field_id!,
         field_name: f.field_name!,
         type: f.type!,
+        // property contains option lists for select fields and other field-specific data
+        property: f.property,
       })),
   };
 }
