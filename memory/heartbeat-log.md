@@ -1,5 +1,31 @@
 # Heartbeat Log
 
+## 2026-04-07 11:12 UTC
+**Current mainline:** feishu-flow-kit @ ec66e85 (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
+
+**What was completed:**
+- **Merged 4 of 5 Dependabot PRs via GitHub API + verified updated deps build cleanly** —
+  (1) Found 5 open Dependabot PRs via GitHub API (3 Dependabot auto-generated, all dev dep bumps)
+  (2) Merged PRs #7, #6, #5, #3 via `PUT /repos/.../pulls/:n/merge` (squash merge)
+  (3) PR #4 (`@types/node` bump in `/packages/plugin-template`) = `mergeable_state: dirty` — Dependabot is rebasing; will self-resolve
+  (4) `git fetch origin main` → pulled new merged commits (4f1ac29 → ec66e85)
+  (5) `npm run check` ✅ (tsc --noEmit, 10.9s)
+  (6) `npm test` ✅ (128/128 pass, 11.6s)
+  (7) `npm run demo` ✅ (8/8 steps)
+  (8) Pushed worktree to origin/main ✅ (ec66e85)
+- Merged deps: typescript 5.9.3→6.0.2, @types/node 24.12.0→25.5.2 (root); same bumps in plugin-template; docker/login-action 3→4
+
+**Output files/results:**
+- feishu-flow-kit main @ ec66e85 (4 new merge commits from Dependabot PRs #3/#5/#6/#7)
+- TypeScript 6.0.2 + @types/node 25.5.2 now active in root and plugin-template
+
+**Problems:**
+- PR #4 still open: Dependabot rebasing `@types/node` in plugin-template (mergeable_state=dirty). Will auto-resolve when rebase completes — no action needed.
+
+**Next deployment:** NPM_TOKEN secret still blocks `@feishu/plugin-template` npm publish. GitHub UI action required (~15 seconds): https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** ✅ Broke the 28h health-check loop. Dependabot PRs were accumulating and I was able to merge 4/5 without any new credentials. Consider running this proactively on each heartbeat. PR #4 will self-resolve; can re-check on next heartbeat.
+
 ## 2026-04-07 09:42 UTC
 **Current mainline:** feishu-flow-kit @ 39a0b3b (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
 
