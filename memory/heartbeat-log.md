@@ -403,6 +403,27 @@
 
 ---
 
+## 2026-04-07 22:42 UTC
+**Current mainline:** feishu-flow-kit @ 45ebed0 (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **ROADMAP.md review + cleanup — 3 bugs fixed** —
+  (1) "Current next step" paragraph: "v1.0.2" → "v1.0.3" and "M6.1–M6.8" → "M6.1–M6.9"
+  (2) Removed orphaned duplicate M6.6 section from "Current next step" area (was mid-paragraph, out of place)
+  (3) Removed duplicate checklist items in M6.1 (Dockerfile, docker-compose, VPS/deployment, health-check, env-var-validation all listed twice) — trimmed 5 duplicate bullet points
+  (4) Removed duplicate M6.6 section at bottom of file (M6.6 was already in sequential position above M6.7/M6.8/M6.9)
+  (5) Committed + pushed: `45ebed0` ("docs: ROADMAP.md cleanup — fix v1.0.2→v1.0.3, M6.1 duplicate items, M6.6/M6.9 placement")
+  (6) npm run check ✅ (tsc --noEmit, 11.2s) + npm test 130/130 ✅
+
+**Output files/results:**
+- `ROADMAP.md`: 3 bugs fixed, 18 lines removed, 1 line added
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. Realistic next steps without NPM_TOKEN: more doc accuracy sweeps, additional test coverage, or README translation parity check. Nothing blocking until NPM_TOKEN is added.
+
 ## 2026-04-07 22:27 UTC
 **Current mainline:** feishu-flow-kit @ c33a3cf (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
 
