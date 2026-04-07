@@ -1,3 +1,30 @@
+## 2026-04-07 19:12 UTC
+**Current mainline:** feishu-flow-kit @ 91e9210 (main ✅, v1.0.3 published) + llm-chat-lab @ c57fe2b (v1.3.1 just tagged + pushed ✅) + room-measure-kit @ 0edff83 (not present in workspace)
+
+**What was completed:**
+- **Fixed llm-chat-lab version/tag inconsistency** —
+  (1) Found stray `v1.3.1` git tag at bd9fe3d but `package.json` was still `1.3.0` and CHANGELOG had no entry for 1.3.1
+  (2) Bumped `package.json` version `1.3.0 → 1.3.1`
+  (3) Added CHANGELOG entry for "server.listen() main-module guard" fix
+  (4) Committed: `c57fe2b` ("chore: bump version to 1.3.1 and add CHANGELOG entry")
+  (5) Deleted old v1.3.1 tag (was at bd9fe3d) and created new v1.3.1 tag at c57fe2b
+  (6) Pushed commit + updated tag to origin: `bd9fe3d..c57fe2b main → main`, `v1.3.1` re-tagged ✅
+  (7) feishu-flow-kit @ 91e9210 ✅ (already synced, no changes)
+  (8) feishu-flow-kit health check: 128/128 tests pass ✅ (11s)
+  (9) llm-chat-lab tests: fail=0 ✅ (72s, no typecheck script)
+
+**Output files/results:**
+- `llm-chat-lab/package.json`: version `1.3.0 → 1.3.1`
+- `llm-chat-lab/CHANGELOG.md`: added `[1.3.1] — 2026-04-07` entry
+- `llm-chat-lab` git commit `c57fe2b` pushed to origin/main
+- `v1.3.1` git tag updated and pushed to origin
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN still needed to publish `@feishu/plugin-template` npm package from feishu-flow-kit. llm-chat-lab v1.3.1 GitHub Release may need manual update on GitHub UI.
+
+**Direction adjustment:** None. Mainline repos healthy. Version fix was a real consistency bug found and resolved.
+
 ## 2026-04-07 18:42 UTC
 **Current mainline:** feishu-flow-kit @ 39690e6 (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (not present in workspace)
 
@@ -78,6 +105,33 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** None. All repos stable. NPM_TOKEN remains the only blocker for 40+ hours.
+
+## 2026-04-07 19:12 UTC
+**Current mainline:** feishu-flow-kit @ 91e9210 (main ✅, v1.0.3 published) + llm-chat-lab @ c57fe2b (v1.3.1 just tagged + pushed ✅) + room-measure-kit @ 0edff83 (not present in workspace)
+
+**What was completed:**
+- **Fixed llm-chat-lab version/tag inconsistency** —
+  (1) Found stray `v1.3.1` git tag at bd9fe3d but `package.json` was still `1.3.0` and CHANGELOG had no entry for 1.3.1
+  (2) Bumped `package.json` version `1.3.0 → 1.3.1`
+  (3) Added CHANGELOG entry for "server.listen() main-module guard" fix
+  (4) Committed: `c57fe2b` ("chore: bump version to 1.3.1 and add CHANGELOG entry")
+  (5) Deleted old v1.3.1 tag (was at bd9fe3d) and created new v1.3.1 tag at c57fe2b
+  (6) Pushed commit + updated tag to origin: `bd9fe3d..c57fe2b main → main`, `v1.3.1` re-tagged ✅
+  (7) feishu-flow-kit @ 91e9210 ✅ (already synced, no changes)
+  (8) feishu-flow-kit health check: 128/128 tests pass ✅ (11s)
+  (9) llm-chat-lab tests: fail=0 ✅ (72s, no typecheck script)
+
+**Output files/results:**
+- `llm-chat-lab/package.json`: version `1.3.0 → 1.3.1`
+- `llm-chat-lab/CHANGELOG.md`: added `[1.3.1] — 2026-04-07` entry
+- `llm-chat-lab` git commit `c57fe2b` pushed to origin/main
+- `v1.3.1` git tag updated and pushed to origin
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN still needed to publish `@feishu/plugin-template` npm package from feishu-flow-kit. GitHub Releases for llm-chat-lab v1.3.1 may also need a release note update on GitHub UI (no release workflow present, only GitHub Pages).
+
+**Direction adjustment:** None. Mainline repos healthy. The version fix was a real consistency bug found and resolved.
 
 ## 2026-04-07 18:57 UTC
 **Current mainline:** feishu-flow-kit @ fa972d2 (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published)
