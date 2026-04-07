@@ -80,7 +80,7 @@ interface TextElementStyle {
 }
 
 interface ListBlockStyle {
-  indent_level: number;
+  indent_level?: number;
   /** Bullet lists only */
   align?: number;
   /** Bullet lists only: bullet_type 1=disc, 2=circle, 3=square, 4=number, 5=latin, 6=chinese, 7= japanese, 8= korean */
