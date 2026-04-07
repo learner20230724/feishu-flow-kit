@@ -6,3 +6,4 @@ dist/
 *.log
 test-code-block.mjs
 MEMORY.md
+packages/plugin-template/package-lock.json
