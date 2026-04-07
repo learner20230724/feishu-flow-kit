@@ -491,3 +491,26 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. README fully accurate. Demo verified working. Nothing to deploy until NPM_TOKEN is added by human.
+
+## 2026-04-07 23:27 UTC
+**Current mainline:** feishu-flow-kit @ 73d33ce (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **Wrote 11-unit test suite for select-field option name→id transformation (Issue 21 completion verification)** —
+  (1) Created `test/select-option-transform.test.ts` with 11 focused tests covering:
+      - Single-select: `{ name }` → `{ id }` resolution, case-insensitivity, unknown name fallback, null passthrough, no-options-in-schema edge case
+      - Multi-select: `[{ name }]` → `[{ id }]` array transformation, unknown item fallback, empty array passthrough, non-object item passthrough
+      - Mixed types: single-select + number + text all transformed in one pass
+      - Case-insensitive field name lookup for select fields
+  (2) `node --import tsx --test` → **11/11 pass** ✅
+  (3) Full suite `npm test` → **141/141 pass** ✅ (was 130, +11 new)
+  (4) Committed + pushed: `73d33ce` ("test: add select-option-transform unit tests for option name→id lookup")
+
+**Output files/results:**
+- `test/select-option-transform.test.ts`: +272 lines, 11 test cases
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. Test coverage for Issue 21 feature (option name→id lookup) now verified. 141/141 tests. NPM_TOKEN remains sole blocker for 115+ hours.
