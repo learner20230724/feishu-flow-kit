@@ -56,7 +56,7 @@ jobs:
       - name: Publish @feishu/plugin-template to npm
         run: |
           cd packages/plugin-template
-          npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+          npm version ${{ steps.version.outputs.version }} --no-git-tag-version --allow-same-version
           npm publish --access public --registry https://registry.npmjs.org/
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
