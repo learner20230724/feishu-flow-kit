@@ -35,9 +35,7 @@
   "bugs": {
     "url": "https://github.com/learner20230724/feishu-flow-kit/issues"
   },
-  "peerDependencies": {
-    "feishu-flow-kit": ">=1.0.0"
-  },
+
   "devDependencies": {
     "typescript": "^6.0.2",
     "@types/node": "^25.5.2"
