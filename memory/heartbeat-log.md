@@ -1,5 +1,20 @@
 # Heartbeat Log
 
+## 2026-04-07 08:57 UTC
+- 当前主线：`feishu-flow-kit`（main @ 39a0b3b ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：Workspace root submodule 同步——
+  (1) 发现 feishu-flow-kit worktree 和 publish/feishu-flow-kit 均已更新至 39a0b3b（上次 heartbeat 06:57 UTC 后已同步）
+  (2) Workspace root commit 54ab822 → 5776623，记录新的 submodule commits
+  (3) 推送 master → origin/master ✅
+  (4) 无 zombie node test 进程，系统干净
+- 产出文件/结果：
+  - workspace root master @ 5776623（记录 submodule 更新）
+  - feishu-flow-kit @ 39a0b3b ✅（docs: /doc block type syntax reference EN+ZH）
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
 ## 2026-04-07 00:42 UTC
 - 当前主线：`feishu-flow-kit`（main @ a263160 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：Workspace root 同步 + 全项目健康检查——
@@ -572,3 +587,21 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** MEMORY.md now populated. Future sessions can read MEMORY.md directly for project context without parsing heartbeat-log.md. All repos stable 22h+.
+
+## 2026-04-07 07:12 UTC
+**Current mainline:** feishu-flow-kit @ 39a0b3b (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
+
+**What was completed:**
+- **Full health check — all 3 repos confirmed at latest commits, no changes since last heartbeat**
+  (1) feishu-flow-kit main @ 39a0b3b ✅ (origin/main unchanged since 06:57 UTC)
+  (2) llm-chat-lab main @ bd9fe3d ✅ (origin/main unchanged)
+  (3) room-measure-kit main @ 0edff83 ✅ (origin/main unchanged, at publish/room-measure-kit/)
+  (4) feishu-flow-kit `npm run check` ✅ (tsc --noEmit, ~12s) + tests pass ✅ (0 fail)
+
+**Output files/results:** None (no changes needed)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** None. All repos stable. NPM_TOKEN has been sole blocker for 22+ hours — no code changes possible until human sets it.
