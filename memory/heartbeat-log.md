@@ -403,7 +403,28 @@
 
 ---
 
-## 2026-04-07 22:42 UTC
+## 2026-04-07 22:57 UTC
+**Current mainline:** feishu-flow-kit @ 65d5144 (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **publish-npm.yml setup-node v4→v6 fix + plugin-template README doc-integrity sweep** —
+  (1) Found publish-npm.yml still on `actions/setup-node@v4` while ci.yml + lint.yml were bumped to v6 at 22:12 UTC
+  (2) Applied `sed -i` to publish-npm.yml: v4 → v6
+  (3) git push rejected (remote advanced: 45ebed0 → df7d7de with heartbeat-log.md commits) — pulled with `--rebase` and pushed successfully: `65d5144`
+  (4) npm test 130/130 ✅ (10.9s)
+  (5) Plugin-template README link/doc sweep: all referenced files exist (`docs/assets/plugin-commands-demo.png` ✅, `docs/plugin-example-walkthrough.md` ✅, `docs/plugin-system.md` ✅)
+  (6) `npm run demo` → 8/8 checks ✅ (prerequisites, quick start, server startup, webhook event, command pipeline, card response, available commands, architecture)
+  (7) plugin-template version: 1.0.0 (package.json)
+
+**Output files/results:**
+- `.github/workflows/publish-npm.yml`: `actions/setup-node@v4` → `v6` (now consistent with ci.yml + lint.yml)
+- feishu-flow-kit git commit `65d5144` pushed to origin/main
+
+**Problems:** None. git push required rebase (remote had diverging heartbeat-log.md commits).
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. All CI workflows now consistently on setup-node@v6. Plugin-template docs fully intact. Nothing to deploy until NPM_TOKEN added by human.
 **Current mainline:** feishu-flow-kit @ 45ebed0 (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
 
 **What was completed:**
