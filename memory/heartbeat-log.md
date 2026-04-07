@@ -25,8 +25,28 @@
 
 **Direction adjustment:** None. Mainline repos healthy. Version fix was a real consistency bug found and resolved.
 
-## 2026-04-07 19:27 UTC
-**Current mainline:** feishu-flow-kit @ 8098fd9 (main ✅, v1.0.3 published) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not present in workspace)
+## 2026-04-07 19:42 UTC
+**Current mainline:** feishu-flow-kit @ 2554cc6 (main ✅, v1.0.3 published + fix commit pending release) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not present in workspace)
+
+**What was completed:**
+- **Fixed plugin card-reply bug: plugins returning Feishu interactive cards as `replyText` were sent as plain text** —
+  (1) `buildReplyMessageDraft` always hardcoded `msg_type: 'text'`, so plugins like greeting and poll that returned `JSON.stringify(cardObject)` as `replyText` sent text messages containing JSON instead of actual Feishu interactive cards
+  (2) Added `isFeishuCardPayload()` detection: parses `replyText` as JSON and checks for `msg_type === 'interactive'` or a top-level `card` key
+  (3) When a card is detected, `msg_type` is set to `'interactive'` and raw card JSON is sent as `content`
+  (4) Plain text replies and non-card JSON objects continue to work exactly as before (backwards compatible)
+  (5) Added 2 new test cases in `test/reply-draft.test.ts`: card payloads → interactive mode; plain JSON objects → text mode
+  (6) Committed: `2554cc6` pushed to origin/main
+  (7) Full test suite: 130/130 ✅ (was 128 before adding 2 new tests)
+
+**Output files/results:**
+- `feishu-flow-kit/src/adapters/build-reply-message-draft.ts`: added `isFeishuCardPayload()` + card detection in `buildReplyMessageDraft()`
+- `feishu-flow-kit/test/reply-draft.test.ts`: added 2 new test cases for card vs text mode
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret still needed to publish `@feishu/plugin-template` npm package. Plugin card-reply fix (2554cc6) is pushed but not yet released as a patch version (v1.0.4 would capture it).
+
+**Direction adjustment:** None. Real bug found and fixed. Plugin greeting/poll card output now actually sends interactive Feishu cards instead of JSON-as-text.
 
 **What was completed:**
 - **Full health check — no code changes since last heartbeat (19:12 UTC, ~15 min ago)**
