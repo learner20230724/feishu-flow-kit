@@ -403,6 +403,31 @@
 
 ---
 
+## 2026-04-07 23:12 UTC
+**Current mainline:** feishu-flow-kit @ 5d8cc1d (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **Implemented option-name→option_id lookup for single/multi-select Bitable fields (Issue 21 remaining gap)** —
+  (1) Added `BitableFieldOption` and `BitableFieldProperty` interfaces to capture schema option lists
+  (2) Updated `fetchBitableTableSchema` to include `property` from the Feishu API response (was previously dropped)
+  (3) Added `buildFieldOptionsMap()`: builds `field_id → Map<option_name_lower → option_id>` from schema property options
+  (4) Added `transformOptionValue()`: converts `{ name: "..." }` → `{ id: "..." }` using the option map; falls back to original value if option name not found
+  (5) Updated `transformDraftWithSchema` to use `transformOptionValue` for all select fields (types 3 and 4)
+  (6) Feishu accepts both name and id for select fields; id is more reliable than name-based resolution
+  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` 130/130 ✅ (11.3s)
+  (8) Committed + pushed: `5d8cc1d` ("feat(bitable): option name→id lookup for single/multi-select fields")
+
+**Output files/results:**
+- `src/adapters/create-table-record-with-schema.ts`: +81/-5 lines (new types, helper functions, option mapping logic)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** Issue 21 field mapping is now fully implemented. All known Bitable field types (text, number, date, checkbox, user, attachment, linked_record, single_select, multi_select) are handled with proper type transformation. Remaining: option-name→option_id lookup was the last documented gap and is now resolved.
+
+---
+
 ## 2026-04-07 22:57 UTC
 **Current mainline:** feishu-flow-kit @ 65d5144 (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
 
