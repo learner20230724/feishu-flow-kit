@@ -20,3 +20,30 @@ test('buildReplyMessageDraft falls back to a minimal acknowledgement for blank r
 
   assert.equal(draft.body.content, JSON.stringify({ text: 'Acknowledged.' }));
 });
+
+test('buildReplyMessageDraft sends msg_type=interactive for Feishu card payloads', () => {
+  const cardPayload = JSON.stringify({
+    msg_type: 'interactive',
+    card: {
+      header: {
+        title: { tag: 'plain_text', content: 'Hello' },
+        template: 'green',
+      },
+      elements: [{ tag: 'markdown', content: 'Welcome' }],
+    },
+  });
+
+  const draft = buildReplyMessageDraft('om_demo', cardPayload);
+
+  assert.equal(draft.body.msg_type, 'interactive');
+  assert.equal(draft.body.content, cardPayload);
+});
+
+test('buildReplyMessageDraft uses text mode for plain JSON objects without card field', () => {
+  // A plain JSON object that is NOT a Feishu card should still be sent as text
+  const plainJson = JSON.stringify({ foo: 'bar', count: 42 });
+  const draft = buildReplyMessageDraft('om_demo', plainJson);
+
+  assert.equal(draft.body.msg_type, 'text');
+  assert.equal(draft.body.content, JSON.stringify({ text: plainJson }));
+});
