@@ -1,5 +1,22 @@
 # Heartbeat Log
 
+## 2026-04-07 00:12 UTC
+- 当前主线：`feishu-flow-kit`（main @ a263160 🆕，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：修复 feishu-flow-kit TypeScript 编译错误——
+  (1) feishu-flow-kit worktree 发现 origin/main 已推进至 ae303a5（5个新commits：h4/h5/h6标题/嵌套列表/代码块语言映射/callout块/中文API文档）
+  (2) git pull fast-forward 同步 → main @ ae303a5
+  (3) `npm run check` → TS error: line 424 `ListBlockStyle.indent_level` 为 required，但 ternary `indentLevel > 0 ? {...} : {}` 当 indentLevel===0 时产生 `{}`，类型不兼容
+  (4) 修复：接口层将 `indent_level: number` 改为 `indent_level?: number`（ListBlockStyle），runtime behavior 不变（顶层列表仍省略 indent_level）
+  (5) `npm run check` ✅ / `npm test` 128/128 ✅
+  (6) 提交 a263160 → 推送到 origin/main ✅
+- 产出文件/结果：
+  - `src/adapters/build-doc-block-children-draft.ts` — `indent_level?: number` in ListBlockStyle interface
+  - feishu-flow-kit main @ a263160 已推送到 GitHub
+- 遇到的问题：无
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
 ## 2026-04-06 20:42 UTC
 - 当前主线：`feishu-flow-kit`（main @ ee45926 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：全项目健康检查确认——
@@ -470,3 +487,23 @@
 - 下一步部署（唯一剩余项，唯一阻塞项）：
   - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
 - 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
+## 2026-04-06 23:42 UTC
+**Current mainline:** feishu-flow-kit @ 17aceaf (master branch, merged from main)
+
+**What was completed:**
+- **TS bug fix: `indent_level` optional in `ListBlockStyle`** — `src/adapters/build-doc-block-children-draft.ts`
+  - `git merge origin/main` brought master up to speed with main (ae303a5: h4/h5/h6, nested lists, callouts, language mapping)
+  - Found pre-existing TS error: `classifyLine` spreads `{ ...(indentLevel > 0 ? { indent_level: indentLevel } : {}) }` — when `indentLevel===0`, spread `{}` is not assignable to `ListBlockStyle` (which required `indent_level: number`)
+  - Fix: make `indent_level` optional in `ListBlockStyle` interface (`indent_level?: number`)
+  - TypeScript check passes, all 128 tests pass
+  - Pushed to 17aceaf
+
+**Output files/results:**
+- `src/adapters/build-doc-block-children-draft.ts` — `indent_level?: number` in ListBlockStyle
+
+**Problems:** None.
+
+**Next deployment:** No deployment — bug fix only. master (17aceaf) now has all main features + fix. Still awaiting NPM_TOKEN for `@feishu/plugin-template` publish and live Feishu workspace E2E credentials.
+
+**Direction adjustment:** None.
