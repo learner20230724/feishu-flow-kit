@@ -54,15 +54,9 @@ Notes:
 - Current M5 posture: `/table` is already useful as a draft-first starter path, and the repo now has a fuller schema-handoff surface for real-table review before enabling writes.
 
 ## Current next step
-M5 is complete. M6 is fully done (M6.1–M6.8 all checked). feishu-flow-kit v1.0.2 is the current release, with GHCR Docker publish workflow verified working. Developer guide (M6.7) and multi-tenant guide (M6.8) cover all production patterns.
+M5 is complete. M6 is fully done (M6.1–M6.9 all checked). feishu-flow-kit v1.0.3 is the current release, with GHCR Docker publish workflow verified working. Developer guide (M6.7) and multi-tenant guide (M6.8) cover all production patterns.
 
 **feishu-flow-kit v1.0.3** (2026-04-06) is the current release. All M1–M6.9 items are complete. The plugin ecosystem is fully operational. Next horizon: real Feishu workspace E2E testing, npm publish of `@feishu/plugin-template` (awaiting NPM_TOKEN secret), or richer `/doc` block type coverage (nested structures, tables inside docs).
-
-**M6.9 — Plugin ecosystem scaffolding** ✅
-- `plugins/template/` — complete plugin template with all lifecycle hooks documented
-- `scripts/create-plugin.mjs` — CLI scaffolder: `node scripts/create-plugin.mjs <name>` generates a new plugin from the template
-- `plugins/template/README.md` — per-plugin usage guide
-- `docs/plugin-system.md` updated with template + scaffolder documentation
 
 **v1.0.3 release** (2026-04-06) — full plugin ecosystem shipped:
 - `@feishu/plugin-template` npm package (`packages/plugin-template/`) — publishable standalone plugin package
@@ -93,11 +87,6 @@ No blocking roadmap items. Optional future directions: real Feishu workspace E2E
 - [x] Health-check endpoint (`GET /healthz`) — done
 - [x] Environment-variable validation on startup (fail-fast with clear messages) — done
 - [x] Developer guide (EN + ZH): architecture overview, adding slash commands, adapter patterns, retry/resilience, testing, project structure, Docker reference — see docs/developer-guide.md
-- [x] Docker image (`Dockerfile`) with multi-stage build
-- [x] `docker-compose.yml` for local full-stack mock
-- [x] VPS/deployment how-to (Railway / Render / fly.io / manual Ubuntu) — see docs/deployment.md
-- [x] Health-check endpoint (`GET /healthz`) — done
-- [x] Environment-variable validation on startup (fail-fast with clear messages) — done
 
 ### M6.2 — GitHub Actions CI
 - [x] `test.yml` — run `npm test` + `npm run typecheck` on every PR and push to `main`
@@ -142,12 +131,6 @@ No blocking roadmap items. Optional future directions: real Feishu workspace E2E
 - [x] `scripts/create-plugin.mjs` — CLI scaffolder: `node scripts/create-plugin.mjs <name>` generates a new plugin from the template
 - [x] `plugins/template/README.md` — per-plugin usage guide
 - [x] `docs/plugin-system.md` updated with template + scaffolder documentation
-
-### M6.6 — GHCR Docker publish workflow (post-v1.0.0 fixes)
-- [x] Full rewrite of `.github/workflows/publish.yml` — fix YAML parsing of `}}`, permissions, checkout/buildx steps, digest output
-- [x] Switch to manual `docker login` via `GITHUB_TOKEN` for reliable GHCR authentication
-- [x] Docker documentation: multi-stage Dockerfile, `docker-compose.yml` with healthcheck, deployment guide (Railway/Render/fly.io/Ubuntu), Docker usage section in README (EN/ZH)
-- [x] v1.0.1 patch release with CHANGELOG entry
 
 ### Notes
 - M6 is designed to be parallelizable where possible (e.g. Docker and CI can be done independently)
