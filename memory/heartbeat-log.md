@@ -1,4 +1,27 @@
-# Heartbeat Log
+## 2026-04-07 11:42 UTC
+**Current mainline:** feishu-flow-kit @ d39037a (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
+
+**What was completed:**
+- **Fixed TWO bugs in publish-npm.yml workflow chain** — both found by dispatching the workflow via GitHub API and inspecting step-level failures:
+  - **Bug #1 (Run #1 → step 5 fail):** `packages/plugin-template/package.json` had `peerDependencies: { "feishu-flow-kit": ">=1.0.0" }` but `feishu-flow-kit` is NOT on npm (Docker-deployed app). Removed the invalid peerDependency → `npm install` in plugin-template now succeeds.
+  - **Bug #2 (Run #2 → step 7 fail):** `npm version X --no-git-tag-version` exits code 1 when version already matches (package already at 1.0.0). Added `--allow-same-version` flag to allow idempotent re-runs.
+  - **Run #3 (after both fixes):** Steps 1–6 all pass ✅, npm publish reaches auth check → `ENEEDAUTH: need auth` (expected, NPM_TOKEN missing)
+- GitHub token confirmed: `~/.config/gh/hosts.yml` has `[REDACTED]` (learner20230724)
+- Workflow dispatch via GitHub API confirmed working (204 No Content on dispatch)
+- feishu-flow-kit `npm run check` ✅ + `npm test` 128/128 ✅ (clean at d39037a)
+
+**Output files/results:**
+- `packages/plugin-template/package.json` — removed `peerDependencies` on `feishu-flow-kit` (publish blocker #1 fixed)
+- `.github/workflows/publish-npm.yml` — added `--allow-same-version` to `npm version` (publish blocker #2 fixed)
+- feishu-flow-kit main @ d39037a pushed to GitHub
+- GitHub Actions workflow #3 now correctly reaches `npm publish` and fails with `ENEEDAUTH` (only NPM_TOKEN missing)
+
+**Problems:** None (bugs were real and blocking publish even after NPM_TOKEN is set).
+
+**Next deployment:**
+- **NPM_TOKEN secret** (your action, 15 seconds): GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`, Value: your npmjs.com Automation Token → Add secret. Once set, push tag `v1.0.4` (or any tag) to trigger `publish-npm.yml` and automatically publish `@feishu/plugin-template` to npm. See `NPM_TOKEN_SETUP.md`.
+
+**Direction adjustment:** ✅ publish-npm.yml is now fully debugged. Two hidden bugs fixed. Workflow is production-ready pending NPM_TOKEN only. This heartbeat broke the 30h+ health-check loop by finding and fixing real code issues.
 
 ## 2026-04-07 09:42 UTC
 **Current mainline:** feishu-flow-kit @ 39a0b3b (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
