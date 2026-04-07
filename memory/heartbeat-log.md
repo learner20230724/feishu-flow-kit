@@ -918,3 +918,25 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** None. All repos stable. NPM_TOKEN has been sole blocker for 28+ hours — no code changes possible until human sets it.
+
+## 2026-04-07 15:42 UTC
+**Current mainline:** feishu-flow-kit @ 80e1c7c (main ✅, v1.0.3 published) + llm-chat-lab @ bd9fe3d (v1.3.1 published) + room-measure-kit @ 0edff83 (v0.1.2 published)
+
+**What was completed:**
+- **Demo verification + workspace sync** —
+  (1) `npm run demo` → 8/8 steps ✅ (animated TTY demo: prerequisites, quick start, server startup, webhook event, command pipeline, Feishu card response, commands, architecture)
+  (2) feishu-flow-kit origin/main already at 80e1c7c (heartbeat commit from 15:27 UTC), worktree in sync ✅
+  (3) `npm run check` ✅ (tsc --noEmit, 12s) + `npm test` 128/128 ✅ (no failures)
+  (4) llm-chat-lab @ bd9fe3d ✅, room-measure-kit @ 0edff83 ✅ (no changes)
+  (5) Workspace root git: merged origin/main into local main (80e1c7c ← 6e91f22) → pushed ✅
+  (6) All repos clean, no zombie processes
+
+**Output files/results:**
+- `npm run demo` → 8/8 ✅ (all demo steps passing)
+- feishu-flow-kit `npm test` → 128/128 ✅
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** None. All repos stable. Demo verified working. NPM_TOKEN remains the only blocker for 35+ hours.
