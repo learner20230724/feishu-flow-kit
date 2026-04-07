@@ -514,3 +514,21 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. Test coverage for Issue 21 feature (option name→id lookup) now verified. 141/141 tests. NPM_TOKEN remains sole blocker for 115+ hours.
+
+## 2026-04-07 23:57 UTC
+**Current mainline:** feishu-flow-kit @ c557b59 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **Sync + npm registry check for @feishu/plugin-template — still not published** —
+  (1) `git pull origin main` → fast-forward 73d33ce → c557b59 (heartbeat-log.md commit) ✅
+  (2) npm test 141/141 ✅ (12.3s)
+  (3) npmjs.com registry check for `@feishu/plugin-template` → **still 404 Not Found** (unchanged since 22:12 UTC, ~1h45m ago)
+  (4) llm-chat-lab @ c57fe2b ✅ (no changes), room-measure-kit not in workspace
+
+**Output files/results:** None (sync + registry check only)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. 141/141 tests. NPM_TOKEN sole blocker for 120+ hours. Nothing actionable until human adds NPM_TOKEN.
