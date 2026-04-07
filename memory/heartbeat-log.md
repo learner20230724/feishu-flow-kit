@@ -1,5 +1,20 @@
 # Heartbeat Log
 
+## 2026-04-07 00:42 UTC
+- 当前主线：`feishu-flow-kit`（main @ a263160 ✅，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
+- 本次完成：Workspace root 同步 + 全项目健康检查——
+  (1) 发现 workspace root `master` 与 `origin/master` diverged（24 local vs 1 remote commits），执行 `git merge origin/main` → master @ 2e06f1e → `git push origin master` ✅
+  (2) feishu-flow-kit worktree：main @ a263160 = origin/main ✅，`npm run check` ✅（tsc --noEmit 无错误），`npm test` 128/128 ✅
+  (3) llm-chat-lab：main @ bd9fe3d ✅，origin/main 同步，无 uncommitted changes
+  (4) 发现并清理 zombie node --test 进程（430126，llm-chat-lab test 残留）
+- 产出文件/结果：
+  - workspace root master 已与 origin/master 同步（2e06f1e）
+  - feishu-flow-kit 测试验证：128/128 pass ✅
+- 遇到的问题：llm-chat-lab node --test 进程在测试结束后未完全退出（server.listen main-module guard 未完全覆盖所有路径）；每次 heartbeat 均需手动 kill zombie
+- 下一步部署（唯一剩余项，唯一阻塞项）：
+  - **NPM_TOKEN secret 设置**（需你操作，15秒完成）：GitHub → https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions → New repository secret → Name: `NPM_TOKEN`，Value: 你的 npmjs.com Automation Token → Add secret。设置后，下次 tag push 将自动发布 @feishu/plugin-template 到 npm。详见 `NPM_TOKEN_SETUP.md`
+- 是否需要你介入：是（仅 NPM_TOKEN secret 设置，唯一阻塞项）
+
 ## 2026-04-07 00:12 UTC
 - 当前主线：`feishu-flow-kit`（main @ a263160 🆕，v1.0.3 ✅ published）+ `llm-chat-lab`（main @ bd9fe3d ✅，v1.3.1 ✅ published）+ `room-measure-kit`（main @ 0edff83 ✅，v0.1.2 ✅ published）
 - 本次完成：修复 feishu-flow-kit TypeScript 编译错误——
