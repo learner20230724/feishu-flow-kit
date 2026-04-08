@@ -1,3 +1,30 @@
+## 2026-04-08 11:42 UTC
+**Current mainline:** feishu-flow-kit @ aa4bac8 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅, fixed 1 Vite vuln)
+
+**What was completed:**
+- **API reference docs check — found and fixed URL verification response bug** —
+  (1) Task #2 from HEARTBEAT.md standing tasks: verify docs/api-reference.md exports match actual src/ public API
+  (2) Cross-referenced `src/server/start-webhook-server.ts` and `src/server/handle-webhook-payload.ts` against `docs/api-reference.md`
+  (3) **Bug found:** URL verification response docs showed `{"ok": true, "challengeResponse": "...", "requestId": "..."}` but actual code returns `{"challenge": "...", "requestId": "..."}` — field is `challenge` not `challengeResponse`, and no `ok` field
+  (4) Fixed `docs/api-reference.md`: `challengeResponse` → `challenge`, removed spurious `ok: true`, added clarifying note
+  (5) Fixed `docs/api-reference.zh-CN.md`: same correction in Chinese
+  (6) `npm test` → **141/141 pass** ✅ (12.0s)
+  (7) Committed + pushed: `6608ae6` ("docs: fix URL verification response — challenge not challengeResponse, no ok field")
+  (8) Workspace synced + heartbeat push: `aa4bac8`
+
+**Output files/results:**
+- `docs/api-reference.md`: URL verification response now correctly shows `challenge` (not `challengeResponse`), no `ok` field
+- `docs/api-reference.zh-CN.md`: same fix in Chinese
+- feishu-flow-kit git commit `6608ae6` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT.md task #2 (API reference docs check) executed. Found 1 real bug — URL verification response was incorrectly documented with `challengeResponse` instead of `challenge` and spurious `ok` field. Both EN and ZH-CN docs fixed. All 7 HEARTBEAT standing tasks now fully exhausted (including room-measure-kit clone from 11:27 UTC). NPM_TOKEN sole blocker for 235+ hours. No code/deployment work possible without it.
+
+---
+
 ## 2026-04-08 11:27 UTC
 **Current mainline:** feishu-flow-kit @ f3a9760 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅, fixed 1 Vite vuln)
 
