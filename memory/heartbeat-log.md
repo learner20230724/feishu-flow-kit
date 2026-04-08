@@ -575,3 +575,28 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. llm-chat-lab README badge was a real consistency bug (docs said v1.3.1 but badge showed v1.3.0). Both readme files now correct. feishu-flow-kit v1.0.3 and llm-chat-lab v1.3.1 both clean. NPM_TOKEN sole blocker for 130+ hours.
+
+## 2026-04-08 00:42 UTC
+**Current mainline:** feishu-flow-kit @ 8bd96ad (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **README.zh-CN.md accuracy sweep — fully verified** —
+  (1) Confirmed workspace already synced to origin/main @ 8bd96ad
+  (2) All 5 HEARTBEAT standing tasks completed in prior cycles:
+      - Security audits ✅ (21:42 UTC)
+      - npm registry check ✅ (21:57 UTC)
+      - ROADMAP.md cleanup ✅ (22:57 UTC)
+      - README accuracy ✅ (22:27 UTC, 00:12 UTC)
+      - Issue 21 field mapping ✅ (23:12 UTC + 23:27 UTC tests)
+  (3) README.zh-CN.md spot-check: all referenced docs exist (`docs/deployment.zh-CN.md` ✅, `docs/recipes.zh-CN.md` ✅, `docs/plugin-system.md` ✅, `docs/table-schema-review-snapshot.zh-CN.html` ✅, `plugins/examples/README.md` ✅)
+  (4) Plugin table rows (qrcode, joke, remind) match English README exactly ✅
+  (5) Demo commands table in zh-CN is complete and accurate ✅
+  (6) npm test 141/141 ✅ (10.8s)
+
+**Output files/results:** None (sync + verification only)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All 5 HEARTBEAT standing tasks fully exhausted. Workspace is fully synced, all tests green, all docs verified. Heartbeat is now cycling pure sync-only with no actionable tasks remaining. NPM_TOKEN is the sole blocker — has been for 135+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
