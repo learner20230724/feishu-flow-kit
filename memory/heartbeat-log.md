@@ -1033,3 +1033,24 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All 7 HEARTBEAT standing tasks fully exhausted. All repos stable. 141/141 tests green. room-measure-kit in workspace and healthy. NPM_TOKEN sole blocker for 255+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
+
+## 2026-04-08 13:12 UTC
+**Current mainline:** feishu-flow-kit @ 0a7f988 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Postman collection bug fix — URL verification changed from GET query-params to POST JSON body** —
+  (1) Found `GET /webhook (URL Verification)` in `docs/postman-collection.json` — used query params `?challenge=xxx&verify_token=xxx&type=url_verification`
+  (2) Server code at `src/server/start-webhook-server.ts` lines 111-121: GET/HEAD/OPTIONS to `/webhook` → 405 "Method not allowed. Use POST /webhook."
+  (3) Actual URL verification flow: POST with JSON body `{type: 'url_verification', challenge: '...'}` returns `{challenge: '...'}` (confirmed in `src/server/handle-webhook-payload.ts` line 146)
+  (4) Fixed Postman entry: renamed to `POST /webhook (URL Verification)`, changed method GET→POST, removed query params, added raw JSON body, updated description
+  (5) JSON validated ✅ + npm test **141/141 pass** ✅ (11.7s)
+  (6) Committed + pushed: `0a7f988` ("fix(postman): correct URL verification from GET query-params to POST JSON body")
+
+**Output files/results:**
+- `docs/postman-collection.json`: GET → POST, query params → JSON body for URL verification entry
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. 141/141 tests green. Postman collection URL verification bug is a real correctness issue — GET to `/webhook` always returned 405. All 7 HEARTBEAT tasks exhausted + 1 Postman bug fixed this cycle. NPM_TOKEN sole blocker for 260+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
