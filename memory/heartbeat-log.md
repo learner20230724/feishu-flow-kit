@@ -1,3 +1,29 @@
+## 2026-04-08 21:27 UTC
+**Current mainline:** feishu-flow-kit @ 3cfbf24 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/developer-guide accuracy — 1 real bug found and fixed (HEARTBEAT task #4)** —
+  (1) Systematic cross-check of docs/developer-guide.md and docs/developer-guide.zh-CN.md against actual workspace structure
+  (2) All npm scripts referenced in dev guide verified against package.json: `npm test`, `npm run dev`, `npm run build`, `npm test -- --coverage` ✅; no `npm start` typo (prior bug fixed) ✅
+  (3) All referenced docs files verified: deployment.md, deployment.zh-CN.md, developer-guide.md, developer-guide.zh-CN.md, recipes.md, recipes.zh-CN.md, troubleshooting.md all exist ✅
+  (4) All referenced scripts verified: test-webhook-local.sh, verify-release-ready.sh, demo-interactive.mjs, generate-table-mapping-env.mjs all exist ✅
+  (5) docker-compose.yml exists ✅; docker commands (build, run, pull, compose up/down) all valid ✅
+  (6) .github/workflows/ tree verified: ci.yml, lint.yml, publish.yml all exist and match descriptions ✅
+  (7) **Bug found in docs/plugin-system.md (linked from dev guide):** line 248 `plugins/examples/` link used `./plugins/examples/README.md` — relative to docs/ directory, resolves to `docs/plugins/examples/README.md` (does NOT exist). Actual file is at `plugins/examples/README.md` (project root)
+  (8) Fixed: `./plugins/examples/README.md` → `../plugins/examples/README.md` (up to root, then into plugins/examples/) ✅
+  (9) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.1s)
+  (10) Committed + pushed: `3cfbf24` ("docs: fix plugin-system.md broken link to plugins/examples/README.md")
+
+**Output files/results:**
+- `docs/plugin-system.md`: fixed broken relative link `./plugins/examples/README.md` → `../plugins/examples/README.md`
+- feishu-flow-kit git commit `3cfbf24` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #4 (docs/developer-guide accuracy) completed — found 1 real broken link bug in docs/plugin-system.md (referenced from developer-guide). HEARTBEAT cycle progress: #1✅ (llm-chat-lab health, 20:30), #2✅ (webhook event examples, 21:02), #3✅ (git history secret scan, 21:12), #4✅ (developer-guide accuracy, 21:27), #5-#8 pending. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 510+ hours.
+
 ## 2026-04-08 19:12 UTC
 **Current mainline:** feishu-flow-kit @ 2bff5dc (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
