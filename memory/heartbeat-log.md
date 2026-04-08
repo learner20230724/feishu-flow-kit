@@ -1246,3 +1246,27 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** HEARTBEAT task #3 (Git history secret scan) completed — repo is clean. Remaining HEARTBEAT tasks: #5 (src/ type coverage sweep), #6 (package.json dependency freshness), #7 (README feature table accuracy), #8 (docs/releases/ checklist compliance). All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 290+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-08 15:57 UTC
+**Current mainline:** feishu-flow-kit @ b06b335 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/releases/ checklist compliance — 1 real bug fixed (HEARTBEAT task #8)** —
+  (1) Read `docs/releases/v1.0.3-release-notes.md` and systematically verified all checklist items against actual workspace
+  (2) Found: "**Built-in Plugins** | `/ping`, `/poll`, `/help`" — INCORRECT. These are example/reference plugins in `plugins/examples/`, NOT built-in
+  (3) Evidence: `plugins/examples/README.md` says "Ready-to-copy reference plugins. Copy any file to `plugins/`, add its path to `FEISHU_PLUGINS`" — they don't auto-load
+  (4) `src/` has no `/ping`, `/poll`, or `/help` implementations — grep found zero hits for these as built-in commands
+  (5) Only built-in commands are `/doc` and `/table` (workflow-based, in `src/workflows/run-message-workflow.ts`)
+  (6) Fixed: "**Built-in Plugins**" → "**Plugin Examples**" with clarification note: "in `plugins/examples/`; copy to `plugins/` and add path to `FEISHU_PLUGINS` to activate"
+  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` **141/141 pass** ✅ (11.9s)
+  (8) Committed + pushed: `b06b335` ("docs: fix v1.0.3 release notes — Plugin Examples not Built-in (require FEISHU_PLUGINS setup)")
+
+**Output files/results:**
+- `docs/releases/v1.0.3-release-notes.md`: "Built-in Plugins" → "Plugin Examples" + activation note for `/ping`, `/poll`, `/help`
+- feishu-flow-kit git commit `b06b335` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All 8 HEARTBEAT standing tasks now fully exhausted this cycle. Real bug found: release notes mislabeled Plugin Examples as "Built-in Plugins" — could mislead users into expecting `/ping`, `/poll`, `/help` to work out of the box. All repos stable. 141/141 + 9/9 tests green. NPM_TOKEN sole blocker for 330+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
