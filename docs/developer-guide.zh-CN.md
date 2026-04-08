@@ -504,3 +504,23 @@ replyText: s.taskCreated(task),
 
 ### 测试使用 `loadMockMessageEvent()`
 不要手工构造原始 webhook payload——使用 fixture loader 获取正确类型的 `FeishuMessageEvent`。
+
+## 故障排除
+
+常见问题（包括 webhook 配置、认证错误、Docker 问题、插件加载和调试技巧）请参见[故障排除 FAQ](../docs/troubleshooting.md)。
+
+关键命令：
+
+```bash
+# 检查服务器是否响应
+curl https://your-domain/status
+
+# 启用详细日志
+LOG_LEVEL=debug npm run dev
+
+# 本地测试 webhook 事件
+bash ./scripts/test-webhook-local.sh all
+
+# 检查插件加载（在启动日志中寻找 "Plugin system loaded"）
+npm run dev 2>&1 | grep plugin
+```
