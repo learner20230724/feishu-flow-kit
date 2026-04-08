@@ -1,3 +1,32 @@
+## 2026-04-08 16:27 UTC
+**Current mainline:** feishu-flow-kit @ 9f61b1d (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Webhook event examples accuracy — 1 real bug fixed in loadMockMessageEvent (HEARTBEAT task #2)** —
+  (1) Systematic cross-reference of `examples/webhook-events/*.json` raw Feishu webhook payloads against `src/types/feishu-event.ts` normalized type + `src/adapters/adapt-webhook-message-event.ts` transformation
+  (2) Bug found: `loadMockMessageEvent()` in `src/adapters/load-mock-message-event.ts` used `isFeishuMessageEvent()` (normalized internal validator) to validate mock event files — but all `examples/mock-*.json` files are in raw Feishu `im.message.receive_v1` webhook envelope format with `header.event_type`, `event.message.message_id`, `event.sender.sender_id.open_id`
+  (3) These two formats are completely incompatible — `isFeishuMessageEvent` checks for `type === 'message.received'` (top-level) and `message.messageId` (camelCase), while raw format has `header.event_type: 'im.message.receive_v1'` and `event.message.message_id` (snake_case nested) — validator would always reject raw payloads
+  (4) Fix: updated `loadMockMessageEvent` to use `adaptWebhookMessageEvent()` (the actual transformation function) instead of `isFeishuMessageEvent()`, matching how webhook payloads are handled in production
+  (5) Updated all 4 `examples/mock-*.json` files to raw Feishu webhook envelope format (consistent with `examples/webhook-events/*.json`); now any webhook-events file can be used as `FEISHU_MOCK_EVENT_PATH` for local development
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (10.9s)
+  (7) Committed + pushed: `9f61b1d` ("fix(adapter): loadMockMessageEvent now uses adaptWebhookMessageEvent")
+
+**Output files/results:**
+- `src/adapters/load-mock-message-event.ts`: now uses `adaptWebhookMessageEvent()` instead of `isFeishuMessageEvent()`, proper error message for invalid payloads
+- `examples/mock-message-event.json`: converted from normalized to raw Feishu webhook format
+- `examples/mock-doc-message-event.json`: same format conversion
+- `examples/mock-table-message-event.json`: same format conversion
+- `examples/mock-table-rich-message-event.json`: same format conversion
+- feishu-flow-kit git commit `9f61b1d` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #2 (Webhook event examples accuracy) completed — found 1 real bug in `loadMockMessageEvent` where `isFeishuMessageEvent` (normalized internal validator) was used instead of `adaptWebhookMessageEvent` (transformation function) for mock file loading. Mock example files and webhook-events files now use consistent raw Feishu format. All 8 HEARTBEAT tasks fully exhausted this cycle. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 355+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+---
+
 ## 2026-04-08 15:42 UTC
 **Current mainline:** feishu-flow-kit @ 3d3ddf0 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
