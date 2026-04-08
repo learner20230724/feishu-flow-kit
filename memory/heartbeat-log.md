@@ -1,3 +1,27 @@
+## 2026-04-08 22:12 UTC
+**Current mainline:** feishu-flow-kit @ 5bffcf1 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **README accuracy + package freshness — 1 real bug fixed (HEARTBEAT tasks #6 + #7)** —
+  (1) Task #6 (package.json dep freshness): `npm outdated` in feishu-flow-kit → clean (no outdated packages ✅); `npm outdated` in llm-chat-lab → clean ✅
+  (2) Task #7 (README feature table accuracy): spot-checked 5 rows against actual implementation
+  (3) Bug found: `/doc` row in both README.md and README.zh-CN.md claimed "11 block types" but `src/adapters/build-doc-block-children-draft.ts` BLOCK_TYPE enum defines 14 distinct types: paragraph(2), h1(3), h2(4), h3(5), h4(6), h5(7), h6(8), bullet(12), todo(13), ordered(14), code(17), quote(18), divider(22), callout(34)
+  (4) Fixed: EN README "11 block types" → "14 block types"; ZH-CN README "11 种" → "14 种"
+  (5) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.9s)
+  (6) Committed + pushed: `5bffcf1` ("docs: fix /doc block type count — 11→14 actual types in EN+ZH-CN README")
+  (7) HEARTBEAT cycle progress: #1✅ (llm-chat-lab health, 20:30), #2✅ (webhook event examples, 21:02), #3✅ (git history secret scan, 21:12), #4✅ (developer-guide accuracy, 21:27), #5✅ (src/ type coverage, 21:57), #6✅ (dep freshness, 22:12), #7✅ (README accuracy, 22:12), #8🔜 (docs/releases checklist compliance)
+
+**Output files/results:**
+- `README.md`: /doc "11 block types" → "14 block types"
+- `README.zh-CN.md`: /doc "11 种 block 类型" → "14 种 block 类型"
+- feishu-flow-kit git commit `5bffcf1` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT tasks #6 ✅ (dep freshness — both repos clean) and #7 ✅ (README accuracy — 11→14 block type count bug). Remaining task this cycle: #8 (docs/releases/ checklist compliance for v1.0.3 — already ran once at 15:57 UTC last cycle). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 560+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 21:27 UTC
 **Current mainline:** feishu-flow-kit @ 3cfbf24 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
