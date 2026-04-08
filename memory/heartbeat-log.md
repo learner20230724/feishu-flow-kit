@@ -1324,6 +1324,29 @@
 
 ---
 
+## 2026-04-08 17:27 UTC
+**Current mainline:** feishu-flow-kit @ 47df2e2 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **.gitignore review + docs/ directory integrity (HEARTBEAT tasks #8 + #3)** —
+  - Task #8 (.gitignore): Found `.openclaw/workspace-state.json` tracked in git (workspace-specific state shouldn't be in repo). Added `.openclaw/` to .gitignore and `git rm --cached`d it. Also added missing common dev artifacts: `.env.local`, `.env.development`, `*.swp`, `*.swo`, `.DS_Store`, `__pycache__/`, `coverage/`, `.history/`. Committed + pushed: `b5e29d3`
+  - Task #3 (docs/ integrity): Found broken link in `docs/troubleshooting.md`: `See [Webhook Testing Guide](./webhook-testing-guide.md)` — file didn't exist. Created `docs/webhook-testing-guide.md` covering: test-webhook-local.sh usage, mock events (examples/mock-*.json), Postman collection, log inspection, local signature bypass. Committed + pushed: `47df2e2`
+  - Task #6 (GitHub issues/PRs via REST API): 0 open issues, 0 open PRs — repo is clean ✅
+  - Task #4 (lint check): skipped — no lint script configured in package.json
+  - `npm test` → **141/141 pass** ✅ (12.4s)
+
+**Output files/results:**
+- `.gitignore`: added `.openclaw/`, `coverage/`, `.env.local`, `.env.development`, `*.swp`, `*.swo`, `.DS_Store`, `__pycache__/`, `.history/`; removed tracked `.openclaw/workspace-state.json`
+- `docs/webhook-testing-guide.md`: new file (73 lines) — test-webhook-local.sh guide, mock events, Postman, debug logs, local dev signature bypass
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** 3 real tasks completed this cycle (#8 .gitignore fix, #3 docs integrity, #6 GitHub API check). Lint script not configured — not a bug, just absent. HEARTBEAT task #5 (Docker smoke test) still unavailable in this environment. Remaining tasks this cycle: none actionable. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 395+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+---
+
 ## 2026-04-08 17:12 UTC
 **Current mainline:** feishu-flow-kit @ acdb78a (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
