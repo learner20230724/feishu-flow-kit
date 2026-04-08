@@ -125,6 +125,33 @@
       "name": "🔍 Health & Status",
       "item": [
         {
+          "name": "GET /healthz",
+          "request": {
+            "url": "{{base_url}}/healthz",
+            "method": "GET",
+            "description": "Lightweight health check. Returns ok=true if server is up. No auth, no webhook secret required. Use for load-balancer probes or smoke tests.",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "url": "{{base_url}}/healthz",
+                "method": "GET"
+              },
+              "status": "200 OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n    \"ok\": true,\n    \"service\": \"feishu-flow-kit\",\n    \"mode\": \"webhook\",\n    \"requestId\": \"req_01Jx4k7mf9p2qr3zt5bw\"\n}"
+            }
+          ]
+        },
+        {
           "name": "GET /status",
           "request": {
             "url": "{{base_url}}/status",
@@ -147,19 +174,9 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n    \"uptimeSeconds\": 3723,\n    \"eventCount\": 147,\n    \"lastEventAt\": \"2026-04-04T15:30:00.000Z\",\n    \"flags\": {\n        \"feishuWebhookVerified\": true,\n        \"pluginsLoaded\": true,\n        \"sentryEnabled\": false\n    },\n    \"requestId\": \"req_01Jx4k7mf9p2qr3zt5bw\""
+              "body": "{\n    \"uptimeSeconds\": 3723,\n    \"eventCount\": 147,\n    \"lastEventAt\": \"2026-04-04T15:30:00.000Z\",\n    \"flags\": {\n        \"feishuWebhookVerified\": true,\n        \"pluginsLoaded\": true,\n        \"sentryEnabled\": false\n    },\n    \"requestId\": \"req_01Jx4k7mf9p2qr3zt5bw\"\n}"
             }
           ]
-        },
-        {
-          "name": "GET / (root)",
-          "request": {
-            "url": "{{base_url}}/",
-            "method": "GET",
-            "description": "Root endpoint. Returns a simple welcome / 404 depending on routing config.",
-            "header": []
-          },
-          "response": []
         }
       ]
     },
@@ -196,8 +213,18 @@
             {
               "name": "200 — Challenge Response",
               "originalRequest": {
-                "url": "{{base_url}}{{webhook_path}}?challenge=xxx&verify_token=xxx&type=url_verification",
-                "method": "GET"
+                "url": "{{base_url}}{{webhook_path}}",
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"url_verification\",\n  \"challenge\": \"test_challenge_string\",\n  \"header\": {\n    \"tenant_key\": \"test_tenant\"\n  }\n}"
+                }
               },
               "status": "200 OK",
               "code": 200,
