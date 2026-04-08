@@ -1034,6 +1034,30 @@
 
 **Direction adjustment:** All 7 HEARTBEAT standing tasks fully exhausted. All repos stable. 141/141 tests green. room-measure-kit in workspace and healthy. NPM_TOKEN sole blocker for 255+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
 
+## 2026-04-08 13:42 UTC
+**Current mainline:** feishu-flow-kit @ ce7312b (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Postman collection — 2 more bugs found and fixed (HEARTBEAT task #8 deeper sweep)** —
+  (1) Systematically verified all Postman entries against actual `src/server/start-webhook-server.ts` routes
+  (2) Bug #1: `GET / (root)` — no such server endpoint exists. Server only has `GET /healthz`, `GET /status`, `POST /webhook`. Removed spurious `GET /` entry from "Health & Status" folder
+  (3) Bug #2: URL Verification response's `originalRequest` still showed old `GET + query params` format (notably: the 13:12 UTC fix updated the request definition but the saved response template's originalRequest still showed GET). Fixed to show POST + JSON body
+  (4) Added proper `GET /healthz` entry with correct response body: `{ok: true, service: 'feishu-flow-kit', mode: 'webhook', requestId: '...'}`
+  (5) All other endpoints verified correct: `GET /status` ✅, `POST /webhook` ×5 (URL verification, message simulation, /doc, /table, /help) ✅, Feishu API entries ✅
+  (6) JSON validated ✅ + npm test **141/141 pass** ✅ (11.8s)
+  (7) Committed + pushed: `ce7312b` ("fix(postman): remove GET / (nonexistent), add GET /healthz, fix URL verification response originalRequest")
+
+**Output files/results:**
+- `docs/postman-collection.json`: removed `GET / (root)`, added `GET /healthz` with proper response template, fixed URL verification `originalRequest` from GET+queryParams to POST+JSON
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #8 (Postman collection accuracy) was added as task #8 in the previous heartbeat. The initial pass only caught the GET→POST URL verification bug. This deeper sweep found 2 more real bugs: nonexistent `GET /` route and stale response template `originalRequest`. All Postman endpoints now verified against actual server code. llm-chat-lab submodule has untracked `package-lock.json` (created 21:57 UTC 2026-04-07, never committed to llm-chat-lab repo — separate from workspace sync). NPM_TOKEN sole blocker for 270+ hours.
+
+---
+
 ## 2026-04-08 13:12 UTC
 **Current mainline:** feishu-flow-kit @ 0a7f988 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
 
