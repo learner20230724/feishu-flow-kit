@@ -98,6 +98,26 @@ function handleMyCommand(argsText: string, event: FeishuMessageEvent, s: Strings
 }
 ```
 
+#### `WorkflowOptions` — 多维表格 / i18n 配置
+
+`runMessageWorkflow` 的第三个参数接受 `WorkflowOptions` 对象。处理器不需要构造此对象——它由服务器根据环境变量和租户配置构建。如果你直接调用 `runMessageWorkflow`（例如从插件中），可用的字段如下：
+
+```typescript
+export interface WorkflowOptions {
+  lang?: string;                                          // 'en' | 'zh'，传递给 i18n
+  bitableListFieldMode?: TableListFieldMode;             // 'text' | 'single_select' | 'multi_select'
+  bitableOwnerFieldMode?: TableOwnerFieldMode;           // 'text' | 'user'
+  bitableEstimateFieldMode?: TableEstimateFieldMode;     // 'text' | 'number'
+  bitableDueFieldMode?: TableDueFieldMode;               // 'text' | 'date' | 'datetime'
+  bitableDoneFieldMode?: TableDoneFieldMode;             // 'text' | 'checkbox'
+  bitableAttachmentFieldMode?: TableAttachmentFieldMode; // 'text' | 'attachment'
+  bitableLinkFieldMode?: TableLinkFieldMode;             // 'text' | 'linked_record'
+  bitableFieldNames?: Partial<TableFieldNames>;          // 覆盖启动器字段名（如 { titleFieldName: '任务' }）
+}
+```
+
+大多数用户通过环境变量设置这些值（`FEISHU_BITABLE_LIST_FIELD_MODE`、`FEISHU_BITABLE_FIELD_NAMES` 等）。它们也出现在上方[每个租户功能覆盖](#每个租户功能覆盖)部分的 per-tenant 配置 JSON 中。
+
 ### 第三步——添加 i18n 字符串
 
 在 `src/i18n/en.ts` 和 `src/i18n/zh.ts` 中添加新字符串：

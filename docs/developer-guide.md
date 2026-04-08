@@ -100,6 +100,26 @@ function handleMyCommand(argsText: string, event: FeishuMessageEvent, s: Strings
 }
 ```
 
+#### `WorkflowOptions` — Bitable / i18n configuration
+
+The third parameter of `runMessageWorkflow` accepts a `WorkflowOptions` object. Handlers do not need to construct this — it is built by the server from environment variables and per-tenant config. If you are calling `runMessageWorkflow` directly (e.g. from a plugin), here are the available fields:
+
+```typescript
+export interface WorkflowOptions {
+  lang?: string;                                          // 'en' | 'zh', passed to i18n
+  bitableListFieldMode?: TableListFieldMode;             // 'text' | 'single_select' | 'multi_select'
+  bitableOwnerFieldMode?: TableOwnerFieldMode;           // 'text' | 'user'
+  bitableEstimateFieldMode?: TableEstimateFieldMode;     // 'text' | 'number'
+  bitableDueFieldMode?: TableDueFieldMode;               // 'text' | 'date' | 'datetime'
+  bitableDoneFieldMode?: TableDoneFieldMode;             // 'text' | 'checkbox'
+  bitableAttachmentFieldMode?: TableAttachmentFieldMode; // 'text' | 'attachment'
+  bitableLinkFieldMode?: TableLinkFieldMode;             // 'text' | 'linked_record'
+  bitableFieldNames?: Partial<TableFieldNames>;          // override starter field names (e.g. { titleFieldName: 'Task' })
+}
+```
+
+Most users set these via environment variables (`FEISHU_BITABLE_LIST_FIELD_MODE`, `FEISHU_BITABLE_FIELD_NAMES`, etc.). They appear in the per-tenant config JSON as shown in the [Per-tenant feature overrides](#per-tenant-feature-overrides) section above.
+
 ### Step 3 — Add i18n strings
 
 Add the new strings to both `src/i18n/en.ts` and `src/i18n/zh.ts`:
