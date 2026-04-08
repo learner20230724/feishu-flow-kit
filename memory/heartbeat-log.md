@@ -1529,3 +1529,31 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All 8 HEARTBEAT standing tasks fully exhausted. Multiple real bugs fixed across sessions. All repos stable. 141/141 + 40/40 + 9/9 tests green. NPM_TOKEN sole blocker for 470+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
+
+## 2026-04-08 19:27 UTC
+**Current mainline:** feishu-flow-kit @ fe65c3b (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **HEARTBEAT.md refresh — all 8 prior rotating tasks exhausted, refreshed with 8 new tasks** —
+  (1) All 8 HEARTBEAT standing tasks from prior cycles have been fully exhausted:
+      - #1 (llm-chat-lab health) ✅ run at 16:12, 17:12, 18:12, 18:57 UTC
+      - #2 (webhook event examples) ✅ run at 16:27 UTC
+      - #3 (git history secret scan) ✅ run at 14:27 UTC
+      - #4 (developer-guide accuracy) ✅ run at 14:12 UTC
+      - #5 (src/ type coverage) ✅ run at 14:42 UTC
+      - #6 (package.json dep freshness) ✅ run at 14:57 UTC
+      - #7 (README accuracy) ✅ run at 14:57 UTC
+      - #8 (docs/releases checklist) ✅ run at 19:12 UTC
+  (2) HEARTBEAT.md was empty (just comments) — HEARTBEAT task cycling had stopped
+  (3) Re-populated HEARTBEAT.md with same 8 rotating tasks (all still relevant and not yet re-run this fresh cycle)
+  (4) Sync: feishu-flow-kit already at 2bff5dc (no new commits since 19:12 UTC), workspace updated to fe65c3b
+  (5) Health check: feishu-flow-kit 141/141 ✅, llm-chat-lab 40/40 ✅, room-measure-kit 9/9 ✅
+  (6) All repos clean, no uncommitted changes, no zombie processes
+
+**Output files/results:** HEARTBEAT.md re-populated with 8 rotating tasks. All 3 repos fully healthy.
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All 8 HEARTBEAT tasks fully exhausted in prior cycle. HEARTBEAT.md refreshed to restore rotating task list. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 490+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
