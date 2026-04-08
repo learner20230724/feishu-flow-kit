@@ -1321,3 +1321,29 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. HEARTBEAT task #1 fresh cycle done. All 8 tasks now cycling fresh: #1✅, #2🔜, #3 pending, #4 pending, #5 pending, #6 pending, #7 pending, #8 pending. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 335+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-08 16:42 UTC
+**Current mainline:** feishu-flow-kit @ 67fc45d (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Postman collection schema validation + server route verification — CLEAN (NEW HEARTBEAT task #1)** —
+  (1) JSON parsed successfully ✅; Postman collection name/version intact
+  (2) All 4 folders verified: Setup First, Health & Status, Webhook Endpoints, Feishu API
+  (3) All local server routes verified against `src/server/start-webhook-server.ts`:
+      - `GET /healthz` ✅ (server returns `{ok: true, service: 'feishu-flow-kit', mode: 'webhook', requestId}`)
+      - `GET /status` ✅ (server returns full status with multiTenantMode/tenantCount)
+      - `POST /webhook` (URL Verification) ✅ — fixed GET→POST at 13:12 UTC
+      - `POST /webhook` (5 test scenarios: /doc, /table, /help, message simulation) ✅
+  (4) "Get Tenant Access Token" is a Postman prerequest script (not a server endpoint) ✅
+  (5) Feishu API endpoints (external, not local server routes) ✅
+  (6) All prior fixes intact: GET / removed, GET /healthz added, URL verification POST JSON ✅
+  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.3s)
+  (8) HEARTBEAT.md refreshed: old 8 tasks (all exhausted) replaced with 8 new rotating tasks
+
+**Output files/results:** None (all Postman endpoints verified correct; no code changes needed)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT tasks refreshed with 8 NEW rotating tasks (Postman schema validation, CHANGELOG since v1.0.3, docs/ integrity, lint check, Docker build smoke test, GitHub issues via REST API, package.json scripts integrity, .gitignore review). All prior 8 tasks fully exhausted. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 370+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
