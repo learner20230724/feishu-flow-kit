@@ -720,6 +720,30 @@
 
 **Direction adjustment:** All repos stable. All HEARTBEAT standing tasks exhausted. 141/141 tests green. NPM_TOKEN sole blocker for 155+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
 
+## 2026-04-08 04:12 UTC
+**Current mainline:** feishu-flow-kit @ b3443fe (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **Fixed stale setup-node@v4 in ci.yml and lint.yml — all workflows now on v6**
+  (1) Found ci.yml and lint.yml still had `actions/setup-node@v4` while publish-npm.yml was already on v6 (bumped at 22:57 UTC)
+  (2) Applied `sed -i` to ci.yml + lint.yml: v4 → v6 (all 3 workflows now consistent)
+  (3) Committed + pushed: `b3443fe` ("ci(deps): bump actions/setup-node from v4 to v6 in ci.yml and lint.yml")
+  (4) npm test → **141/141 pass** ✅ (12.0s)
+  (5) All repos clean, 141/141 tests green
+
+**Output files/results:**
+- `.github/workflows/ci.yml`: `actions/setup-node@v4` → `v6`
+- `.github/workflows/lint.yml`: `actions/setup-node@v4` → `v6`
+- feishu-flow-kit git commit `b3443fe` pushed to origin/main (all 3 CI workflows now on setup-node@v6)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. All HEARTBEAT standing tasks exhausted. 141/141 tests green. All CI workflows now consistently on setup-node@v6. NPM_TOKEN sole blocker for 165+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
+
+---
+
 ## 2026-04-08 03:42 UTC
 **Current mainline:** feishu-flow-kit @ 951e983 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
 
