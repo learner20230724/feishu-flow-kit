@@ -33,7 +33,7 @@
 
 | 功能 | 内置 | 说明 |
 |---|---|---|
-| `/doc` — 创建飞书文档 | ✅ | 丰富的 block 创作，支持粗体/斜体/代码/链接 |
+| `/doc` — 创建飞书文档 | ✅ | 11 种 block 类型：段落、标题（1–6级）、无序列表、有序列表、待办事项、代码块（17种语言）、引用、分割线、标注 + 内联样式（粗体/斜体/代码/链接） |
 | `/table` — 创建 Bitable 记录 | ✅ | Schema-aware，支持 18 种字段类型，env 变量字段映射 |
 | `/todo` — 结构化任务草稿 | ✅ | 纯文本，无凭证即可体验 |
 | `/help`、`/ping`、`/poll` 插件 | ✅ | 同时提供完整插件系统，支持自定义命令 |
@@ -51,6 +51,7 @@
 | 插件脚手架 CLI | ✅ | `node scripts/create-plugin.mjs <name>` |
 | Table schema 映射预检 | ✅ | `npm run table:validate-mapping-config` |
 | 环境安装验证脚本 | ✅ | `node scripts/verify-setup.mjs` |
+| REST API 参考文档 | ✅ | `docs/api-reference.md` — 完整的端点文档 + cURL 示例 |
 
 ![Webhook 消息生命周期 — 时序图](./docs/assets/webhook-sequence-diagram.svg)
 
