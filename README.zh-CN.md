@@ -34,7 +34,7 @@
 | 功能 | 内置 | 说明 |
 |---|---|---|
 | `/doc` — 创建飞书文档 | ✅ | 11 种 block 类型：段落、标题（1–6级）、无序列表、有序列表、待办事项、代码块（17种语言）、引用、分割线、标注 + 内联样式（粗体/斜体/代码/链接） |
-| `/table` — 创建 Bitable 记录 | ✅ | Schema-aware，支持 18 种字段类型，env 变量字段映射 |
+| `/table` — 创建 Bitable 记录 | ✅ | Schema-aware，支持 10 种字段类型（text、number、date、checkbox、user、attachment、single/multi-select、linked_record），env 变量字段映射 |
 | `/todo` — 结构化任务草稿 | ✅ | 纯文本，无凭证即可体验 |
 | `/help`、`/ping`、`/poll` 插件 | ✅ | 同时提供完整插件系统，支持自定义命令 |
 | i18n — 中英文自动检测 | ✅ | 根据 `event.sender.language` 自动切换 |
