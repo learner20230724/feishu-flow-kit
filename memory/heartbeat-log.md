@@ -1,3 +1,27 @@
+## 2026-04-08 23:12 UTC
+**Current mainline:** feishu-flow-kit @ 551a1eb (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **API reference error format consistency — 2 real bugs fixed (HEARTBEAT task #2)** —
+  (1) Systematic cross-check of all server routes in `src/server/start-webhook-server.ts` and `src/server/handle-webhook-payload.ts` against `docs/api-reference.md` and `docs/api-reference.zh-CN.md`
+  (2) Bug #1: 400 Bad Request (invalid payload) response was completely undocumented. Code at `handle-webhook-payload.ts:102` returns `{ ok: false, error: 'Unsupported or invalid webhook payload.' }`. Added full 400 section to both EN and ZH-CN docs with cause explanation.
+  (3) Bug #2: 403 Forbidden (unknown tenant) response was completely undocumented. Code at `handle-webhook-payload.ts:89` returns `{ ok: false, error: 'Unknown tenant: "${tenantKey}". This bot is not configured for that tenant.' }`. Added full 403 section to both EN and ZH-CN docs.
+  (4) Bug #3: 404 Not Found response was completely undocumented. Code at `start-webhook-server.ts:122` returns `{ ok: false, error: 'Not found', requestId }`. Added full 404 section to both EN and ZH-CN docs.
+  (5) Bug #4: Intro overview incorrectly stated "All responses include an `ok: boolean` field" — URL verification (200) only returns `{ challenge, requestId }` with no `ok`. Fixed overview in both EN and ZH-CN to note the exception.
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.3s)
+  (7) Committed + pushed: `551a1eb` ("docs: add missing 400/403/404 error responses to api-reference (EN+ZH-CN)")
+
+**Output files/results:**
+- `docs/api-reference.md`: +38 lines — added 400 Bad Request, 403 Forbidden, 404 Not Found sections; fixed overview statement
+- `docs/api-reference.zh-CN.md`: same fixes in Chinese
+- feishu-flow-kit git commit `551a1eb` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #2 (src/server/ route + error format consistency) completed — found 4 real documentation gaps. Fresh HEARTBEAT cycle: #1✅ (22:27 UTC), #2✅ (23:12 UTC), #3-#8 pending. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 600+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 22:12 UTC
 **Current mainline:** feishu-flow-kit @ 5bffcf1 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
