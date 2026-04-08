@@ -532,3 +532,23 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. 141/141 tests. NPM_TOKEN sole blocker for 120+ hours. Nothing actionable until human adds NPM_TOKEN.
+
+## 2026-04-08 00:12 UTC
+**Current mainline:** feishu-flow-kit @ 7646713 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **README.zh-CN.md parity fix — 2 gaps resolved** —
+  (1) `/doc` row note was truncated vs English: expanded to list all 11 block types (段落、标题、列表、代码块等) matching English detail level
+  (2) Missing `REST API 参考文档` row — English has it but Chinese didn't; added with full Chinese translation of note
+  (3) Both tables now have exactly 21 rows (header + 20 data rows), structural parity achieved
+  (4) `npm run check` ✅ (tsc --noEmit) — no type errors
+  (5) Committed + pushed: `7646713` ("docs: fix README.zh-CN.md parity gaps — expand /doc note, add REST API reference row")
+
+**Output files/results:**
+- `README.zh-CN.md`: +2 lines (expanded /doc note, added REST API row)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. README zh-CN/EN structural parity restored. 141/141 tests. NPM_TOKEN sole blocker for 125+ hours. Nothing actionable until human adds NPM_TOKEN.
