@@ -1,3 +1,30 @@
+## 2026-04-08 14:42 UTC
+**Current mainline:** feishu-flow-kit @ 0743fd1 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/ type coverage sweep — eliminated 2x `as any` casts, fixed type gap (HEARTBEAT task #5)** —
+  (1) Grepped all `src/` for `as any` and `// @ts-ignore` — found 2 `as any` casts in `src/adapters/create-table-record-with-schema.ts` lines 146 and 158
+  (2) Both were in `transformOptionValue()`: returning `{ id: string }` for single/multi-select options but typed as `any` because `TableSingleSelectFieldValue` only had `name: string`
+  (3) Root cause: `TableSingleSelectFieldValue` interface (in `build-table-record-draft.ts`) had `name: string` but Feishu API accepts both `name` and `id` for select fields; the code transforms name→id but the type didn't allow it
+  (4) Fixed: `TableSingleSelectFieldValue` now has `name?: string; id?: string` (both optional, matching Feishu's actual API)
+  (5) Both `as any` casts replaced with proper `TableSingleSelectFieldValue` type cast
+  (6) `npm run check` ✅ (tsc --noEmit, clean)
+  (7) `npm test` → **141/141 pass** ✅ (12.1s, no regressions)
+  (8) Committed + pushed: `0743fd1` ("fix(types): add id to TableSingleSelectFieldValue, eliminate as any casts")
+
+**Output files/results:**
+- `src/adapters/build-table-record-draft.ts`: `TableSingleSelectFieldValue.name` now optional, added `id?: string`
+- `src/adapters/create-table-record-with-schema.ts`: 2x `as any` casts eliminated (lines 146 and 158), both eslint-disable comments removed
+- feishu-flow-kit git commit `0743fd1` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #5 (src/ type coverage sweep) completed — found 2 real `as any` casts in select field option transform. Fixed with proper typing. Remaining HEARTBEAT tasks: #6 (package.json dependency freshness), #7 (README feature table accuracy), #8 (docs/releases/ checklist compliance). All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 295+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+---
+
 ## 2026-04-08 11:42 UTC
 **Current mainline:** feishu-flow-kit @ aa4bac8 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅, fixed 1 Vite vuln)
 
