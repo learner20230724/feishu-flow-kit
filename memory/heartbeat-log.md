@@ -1,3 +1,26 @@
+## 2026-04-08 19:12 UTC
+**Current mainline:** feishu-flow-kit @ 2bff5dc (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/releases/ checklist compliance — 1 real bug fixed (HEARTBEAT task #8)** —
+  (1) Systematic check of all items in `docs/releases/v1.0.3-release-notes.md` against actual workspace
+  (2) Bug found: "Plugin Examples" row said `/ping`, `/poll`, `/help` were all "in `plugins/examples/`" — but `ping-plugin.ts` and `help-plugin.ts` are actually in `plugins/` root, while only `/poll` is in `plugins/examples/`
+  (3) Evidence: `ls plugins/` → help-plugin.ts, ping-plugin.ts, poll-plugin.ts in root; `ls plugins/examples/` → joke, poll, qrcode, remind, weather (no ping, no help)
+  (4) `plugins/examples/README.md` confirms: FEISHU_PLUGINS example uses `./plugins/ping-plugin.js` (root path, not examples/)
+  (5) Fixed: row now correctly describes `/ping` and `/help` as being in `plugins/` root, `/poll` as being in `plugins/examples/`
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.4s)
+  (7) Committed + pushed: `2bff5dc` ("docs: fix v1.0.3 release notes — Plugin Examples location (/ping, /help in plugins/ root, /poll in plugins/examples/)")
+
+**Output files/results:**
+- `docs/releases/v1.0.3-release-notes.md`: Plugin Examples row corrected — `/ping` (latency echo) and `/help` (dynamic command lister) are in `plugins/` root; `/poll` (interactive card) is in `plugins/examples/`
+- feishu-flow-kit git commit `2bff5dc` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #8 (docs/releases/ checklist compliance) executed — found 1 real bug: release notes misstated Plugin Examples locations for /ping and /help. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 490+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 17:57 UTC
 **Current mainline:** feishu-flow-kit @ 32ccf92 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
