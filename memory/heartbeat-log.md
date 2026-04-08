@@ -971,3 +971,25 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. All HEARTBEAT standing tasks exhausted. 141/141 tests green. All CI workflows consistently on setup-node@v6. Demo verified working. NPM_TOKEN sole blocker for 220+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
+
+## 2026-04-08 11:57 UTC
+**Current mainline:** feishu-flow-kit @ 1343b83 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅, now in workspace)
+
+**What was completed:**
+- **TODO/FIXME review — 3 Sentry stub TODOs assessed as intentional design, not actionable** —
+  (1) Grepped all `src/` for TODO/FIXME/XXX/HACK/BUG → found only 3 results in `src/core/sentry.ts`
+  (2) All 3 are intentional Sentry stub placeholders: lines 33, 70, 89 — the entire file is a documented no-op stub awaiting `@sentry/node` installation
+  (3) docs/plugin-scaffolder-walkthrough.md has `// TODO: implement your command logic here` — this is a scaffold template comment in docs, expected behavior
+  (4) docs/recipes*.md contain literal `'TODO'` string in code examples, not actual TODO comments
+  (5) No bugs found. No quick wins found. Sentry stubs are intentional design, not refactoring targets.
+  (6) Git pull: fast-forward 6608ae6 → 1343b83 (llm-chat-lab + room-measure-kit gitlinks + heartbeat-log)
+  (7) npm test → **141/141 pass** ✅ (12.4s)
+  (8) room-measure-kit now present in workspace (gitlink at a142a33)
+
+**Output files/results:** None (no code changes — TODOs assessed as intentional stubs)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All 7 HEARTBEAT standing tasks now fully exhausted across the cycle: CHANGELOG ✅, API reference ✅ (URL verification bug), test coverage ✅, TODO/FIXME ✅ (intentional stubs), plugin example ✅, dependency health ✅, room-measure-kit ✅. All repos stable. 141/141 tests green. room-measure-kit now in workspace. NPM_TOKEN sole blocker for 240+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN.
