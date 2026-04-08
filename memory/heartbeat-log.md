@@ -1036,6 +1036,32 @@
 
 ---
 
+## 2026-04-08 14:12 UTC
+**Current mainline:** feishu-flow-kit @ 7cfcc4a (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/developer-guide accuracy sweep — 3 bugs fixed (HEARTBEAT task #4)** —
+  (1) Systematic check of all npm scripts, file paths, and commands in docs/developer-guide.md and docs/developer-guide.zh-CN.md against actual workspace
+  (2) Bug #1: EN Troubleshooting section used `npm start` twice — no such script (only `npm run dev`). Fixed: `npm start` → `npm run dev` in both locations
+  (3) Bug #2: zh-CN developer-guide.zh-CN.md was entirely missing the Troubleshooting section (EN 527 lines vs zh-CN 506 lines). Added full translated Troubleshooting section
+  (4) Bug #3: v1.0.3-release-notes.md linked to `docs/plugin-architecture.md` which doesn't exist. Fixed: `plugin-architecture.md` → `docs/plugin-system.md` (actual file)
+  (5) Additional verifications: all scripts referenced in dev guide exist (`test-webhook-local.sh` ✅, `verify-setup.mjs` ✅, `demo-interactive.mjs` ✅, `create-plugin.mjs` ✅); docker-compose.yml ✅; deploy/README.md ✅
+  (6) npm run check ✅ (tsc --noEmit) + npm test **141/141 pass** ✅ (12.5s)
+  (7) Committed + pushed: `7cfcc4a` ("docs: fix developer-guide npm start typo + add zh-CN troubleshooting + fix release notes plugin-architecture link")
+
+**Output files/results:**
+- `docs/developer-guide.md`: `npm start` → `npm run dev` (2 occurrences in Troubleshooting)
+- `docs/developer-guide.zh-CN.md`: +21 lines (added missing Troubleshooting section)
+- `docs/releases/v1.0.3-release-notes.md`: `plugin-architecture.md` → `plugin-system.md` in docs link
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #4 (docs/developer-guide accuracy) completed — found 3 real bugs. All 8 HEARTBEAT tasks now fully exhausted this cycle. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 280+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+---
+
 ## 2026-04-08 13:57 UTC
 **Current mainline:** feishu-flow-kit @ 71fd26b (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, package-lock.json now tracked) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
 
