@@ -1,3 +1,28 @@
+## 2026-04-08 23:42 UTC
+**Current mainline:** feishu-flow-kit @ 04088ab (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/workflows/ completeness — 1 real bug fixed (HEARTBEAT task #4)** —
+  (1) Verified all exported items from `src/workflows/run-message-workflow.ts`: `WorkflowResult` ✅, `WorkflowOptions` ✅, `runMessageWorkflow` ✅
+  (2) `WorkflowResult` (interface) documented in developer-guide.md line 77 ✅; `runMessageWorkflow` documented architecturally (flow diagram, line 21) ✅
+  (3) **Bug found:** `WorkflowOptions` interface is exported but **never named or documented** anywhere in EN or ZH-CN developer guide — it only appears anonymously inside the per-tenant config JSON example (developer-guide.md:376, developer-guide.zh-CN.md:374). Anyone extending the workflow (plugin author, direct caller of `runMessageWorkflow`) would have no reference for what fields are available
+  (4) Fixed: Added new `#### WorkflowOptions — Bitable / i18n configuration` subsection in EN developer-guide.md (after WorkflowResult section, before Step 3) with full interface signature, all field descriptions, and note linking to env var / per-tenant config
+  (5) Fixed: Added parallel Chinese section in developer-guide.zh-CN.md with full translation
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.5s)
+  (7) Committed + pushed: `04088ab` ("docs: add WorkflowOptions interface reference to developer-guide (EN+ZH-CN)")
+  (8) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 22:57 UTC), #2✅ (src/server route consistency, 23:12 UTC), #3✅ (docs/recipes.md accuracy, 23:27 UTC), #4✅ (src/workflows/ completeness, 23:42 UTC), #5-#8 pending
+
+**Output files/results:**
+- `docs/developer-guide.md`: +22 lines — added WorkflowOptions interface documentation section
+- `docs/developer-guide.zh-CN.md`: +22 lines — added parallel Chinese WorkflowOptions section
+- feishu-flow-kit git commit `04088ab` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #4 (src/workflows/ completeness) completed — found 1 real documentation gap: `WorkflowOptions` interface was exported but never named or documented in either EN or ZH-CN developer guide. Remaining tasks this cycle: #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 600+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 23:27 UTC
 **Current mainline:** feishu-flow-kit @ 498106a (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
