@@ -165,11 +165,12 @@ X-Lark-Signature: <signature>
 
 ```json
 {
-  "ok": true,
-  "challengeResponse": "test-challenge-string",
+  "challenge": "test-challenge-string",
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
+
+> **注意：** 响应使用 `challenge` 字段（而非 `challengeResponse`），不包含 `ok` 字段。飞书期望 `challenge` 原样回传用于 URL 验证。
 
 ### 消息事件处理
 

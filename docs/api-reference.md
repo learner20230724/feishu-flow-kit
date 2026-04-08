@@ -165,11 +165,12 @@ X-Lark-Signature: <signature>
 
 ```json
 {
-  "ok": true,
-  "challengeResponse": "test-challenge-string",
+  "challenge": "test-challenge-string",
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
+
+> **Note:** The response uses the `challenge` key (not `challengeResponse`) and does not include an `ok` field. Feishu expects `challenge` to be echoed back verbatim for URL verification.
 
 ### Message Event Processing
 
