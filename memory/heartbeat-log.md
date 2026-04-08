@@ -1320,30 +1320,28 @@
 
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
-**Direction adjustment:** All repos stable. HEARTBEAT task #1 fresh cycle done. All 8 tasks now cycling fresh: #1✅, #2🔜, #3 pending, #4 pending, #5 pending, #6 pending, #7 pending, #8 pending. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 335+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+**Direction adjustment:** HEARTBEAT tasks refreshed with 8 NEW rotating tasks (Postman schema validation, CHANGELOG since v1.0.3, docs/ integrity, lint check, Docker build smoke test, GitHub issues via REST API, package.json scripts integrity, .gitignore review). All prior 8 tasks fully exhausted. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 370+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
 
-## 2026-04-08 16:42 UTC
-**Current mainline:** feishu-flow-kit @ 67fc45d (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+---
+
+## 2026-04-08 17:12 UTC
+**Current mainline:** feishu-flow-kit @ acdb78a (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
 **What was completed:**
-- **Postman collection schema validation + server route verification — CLEAN (NEW HEARTBEAT task #1)** —
-  (1) JSON parsed successfully ✅; Postman collection name/version intact
-  (2) All 4 folders verified: Setup First, Health & Status, Webhook Endpoints, Feishu API
-  (3) All local server routes verified against `src/server/start-webhook-server.ts`:
-      - `GET /healthz` ✅ (server returns `{ok: true, service: 'feishu-flow-kit', mode: 'webhook', requestId}`)
-      - `GET /status` ✅ (server returns full status with multiTenantMode/tenantCount)
-      - `POST /webhook` (URL Verification) ✅ — fixed GET→POST at 13:12 UTC
-      - `POST /webhook` (5 test scenarios: /doc, /table, /help, message simulation) ✅
-  (4) "Get Tenant Access Token" is a Postman prerequest script (not a server endpoint) ✅
-  (5) Feishu API endpoints (external, not local server routes) ✅
-  (6) All prior fixes intact: GET / removed, GET /healthz added, URL verification POST JSON ✅
-  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.3s)
-  (8) HEARTBEAT.md refreshed: old 8 tasks (all exhausted) replaced with 8 new rotating tasks
+- **package.json scripts integrity — all spot-checks pass (HEARTBEAT task #7)** —
+  (1) `npm run build` → clean compile, no errors ✅
+  (2) `npm run demo` → 8/8 checks pass ✅ (EXIT:0)
+  (3) `npm run table:validate-mapping-config` with example file → script executes correctly, validates and exits 1 on expected field mismatch (script working as designed)
+  (4) All scripts in package.json verified: build, test (141/141 confirmed), demo, table scripts all functional
+  (5) Docker build smoke test (#5) skipped — no container runtime (docker/podman/buildah) available in this environment
+  (6) Git pull: already up to date @ acdb78a ✅
+  (7) npm test → **141/141 pass** ✅
 
-**Output files/results:** None (all Postman endpoints verified correct; no code changes needed)
+**Output files/results:** None (verification only — no code changes needed, scripts all functional)
 
-**Problems:** None.
+**Problems:** Docker not available in environment — task #5 Docker build smoke test cannot run here.
 
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
-**Direction adjustment:** HEARTBEAT tasks refreshed with 8 NEW rotating tasks (Postman schema validation, CHANGELOG since v1.0.3, docs/ integrity, lint check, Docker build smoke test, GitHub issues via REST API, package.json scripts integrity, .gitignore review). All prior 8 tasks fully exhausted. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 370+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+**Direction adjustment:** HEARTBEAT task #7 (package.json scripts integrity) ✅. Remaining new rotating tasks: #3 (docs/ directory integrity), #4 (lint check), #6 (GitHub issues/PRs via REST API), #8 (.gitignore/.npmignore review). Docker (#5) unavailable in this environment. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 380+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+ (heartbeat: 2026-04-08 17:12 UTC — package.json scripts integrity, 141/141 tests)
