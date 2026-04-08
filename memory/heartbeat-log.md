@@ -1,3 +1,28 @@
+## 2026-04-08 23:27 UTC
+**Current mainline:** feishu-flow-kit @ 498106a (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/recipes.md accuracy — 1 real bug fixed (HEARTBEAT task #3)** —
+  (1) Systematic cross-check of all commands, code snippets, and file paths in `docs/recipes.md` and `docs/recipes.zh-CN.md` against actual implementation
+  (2) Verified all adapter imports in recipe code snippets exist: `build-reply-message-draft.js` ✅, `build-doc-create-draft.js` ✅, `build-doc-block-children-draft.js` ✅, `get-tenant-access-token.js` ✅, `maybe-send-reply-message.js` ✅, `maybe-create-doc.js` ✅, `src/core/retry.js` ✅
+  (3) Verified all recipe-env vars in .env.example: `FEISHU_APP_ID` ✅, `FEISHU_APP_SECRET` ✅, `FEISHU_ENABLE_OUTBOUND_REPLY` ✅, `FEISHU_ENABLE_DOC_CREATE` ✅
+  (4) **Bug found:** Recipe 5 (Cross-Channel Relay Bot) references `FEISHU_SOURCE_CHAT_ID` and `FEISHU_TARGET_CHAT_ID` in both the config snippet and the Environment Variables Reference table — but BOTH variables are completely absent from `.env.example`
+  (5) Users following Recipe 5 would not find these variables and wouldn't know how to configure them
+  (6) Fixed: Added both vars to `.env.example` under new "Cross-channel relay (Recipe 5)" section with empty defaults and clarifying comment
+  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.3s)
+  (8) Committed + pushed: `498106a` ("fix(env): add FEISHU_SOURCE_CHAT_ID and FEISHU_TARGET_CHAT_ID to .env.example")
+  (9) Fresh HEARTBEAT cycle: #1✅ (22:27 UTC), #2✅ (23:12 UTC), #3✅ (23:27 UTC), #4-#8 pending
+
+**Output files/results:**
+- `.env.example`: +6 lines — added `FEISHU_SOURCE_CHAT_ID=` and `FEISHU_TARGET_CHAT_ID=` under new cross-channel relay section
+- feishu-flow-kit git commit `498106a` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #3 (docs/recipes.md accuracy) completed — found 1 real bug: Recipe 5 env vars `FEISHU_SOURCE_CHAT_ID` and `FEISHU_TARGET_CHAT_ID` were missing from `.env.example`. Remaining tasks this cycle: #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 600+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 23:12 UTC
 **Current mainline:** feishu-flow-kit @ 551a1eb (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
