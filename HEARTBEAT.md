@@ -43,3 +43,43 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All 8 HEARTBEAT tasks fully exhausted in prior cycle. HEARTBEAT.md refreshed to restore rotating task list. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 490+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-08 20:30 UTC
+
+**Task #1 (llm-chat-lab health) — ✅ COMPLETE**
+- git fetch + pull: already up to date (30e40d1)
+- npm test: **40/40 ✅** (duration: ~70s)
+- npm audit: **0 vulnerabilities ✅**
+- package-lock.json: **tracked in git ✅**
+
+**Problems:** None.
+
+**Next heartbeat:** Task #2 — webhook event examples accuracy (feishu-flow-kit/examples/webhook-events/ vs src/types/feishu-event.ts).
+
+## 2026-04-08 21:02 UTC
+
+**Task #2 (webhook event examples accuracy) — ✅ COMPLETE**
+
+- Schema under test: `src/types/feishu-event.ts` (`FeishuMessageEvent` + `FeishuWebhookEnvelope` adapter interface)
+- Adapter: `src/adapters/adapt-webhook-message-event.ts`
+- All 10 example JSONs cross-checked against `FeishuWebhookEnvelope` interface:
+
+| File | event_type | tenant_key | message_id | chat_id | sender.open_id | language | content/text | chat_type |
+|------|-----------|-----------|-----------|---------|---------------|---------|-------------|-----------|
+| message-text-p2p.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-greeting-plugin.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-group-chat.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ group |
+| message-zh-lang.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ zh | ✅ | ✅ p2p |
+| message-table-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-help-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-poll-plugin.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-todo-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-doc-command-doc.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-table-command-no-arg.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+
+- No field name mismatches, no type mismatches, no missing required fields, no stale fields.
+- README.md accurately documents the format with correct field names.
+
+**Problems:** None.
+
+**Next heartbeat:** Task #3 — git history secret scan (`git log -S "NPM_TOKEN|GH_TOKEN|SECRET|PRIVATE_KEY"`).

@@ -1578,3 +1578,81 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. HEARTBEAT task #1 (llm-chat-lab health) fresh cycle complete. Remaining tasks this cycle: #2 (webhook event examples accuracy), #3 (git history secret scan), #4 (developer-guide accuracy), #5 (src/ type coverage sweep), #6 (package.json dep freshness), #7 (README feature table accuracy), #8 (docs/releases checklist compliance). 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 505+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-08 20:30 UTC
+**Current mainline:** feishu-flow-kit @ 2bff5dc (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **llm-chat-lab health check — all green (HEARTBEAT task #1, fresh cycle)** —
+  (1) feishu-flow-kit: no new commits since 19:57 UTC ✅
+  (2) llm-chat-lab `npm test` → **40/40 pass** ✅ (duration_ms=69603, fail=0) ✅
+  (3) llm-chat-lab `npm audit` → **0 vulnerabilities** ✅
+  (4) package-lock.json: tracked in git ✅
+  (5) feishu-flow-kit `npm test` → **141/141 pass** ✅ (fail=0)
+  (6) All repos clean, no uncommitted changes, no zombie processes
+  (7) Fresh HEARTBEAT cycle: #1✅, #2-#8 pending
+
+**Output files/results:** None (health check only — all green)
+
+**Problems:** None.
+
+**Next heartbeat:** Task #2 — webhook event examples accuracy (feishu-flow-kit/examples/webhook-events/ vs src/types/feishu-event.ts).
+
+---
+
+## 2026-04-08 21:02 UTC
+**Current mainline:** feishu-flow-kit @ 2bff5dc (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Webhook event examples accuracy — ✅ CLEAN, no bugs (HEARTBEAT task #2)** —
+  (1) Schema under test: `src/types/feishu-event.ts` (`FeishuMessageEvent` + `FeishuWebhookEnvelope` adapter interface)
+  (2) Adapter: `src/adapters/adapt-webhook-message-event.ts`
+  (3) All 10 example JSONs cross-checked against `FeishuWebhookEnvelope` interface:
+
+| File | event_type | tenant_key | message_id | chat_id | sender.open_id | language | content/text | chat_type |
+|------|-----------|-----------|-----------|---------|---------------|---------|-------------|-----------|
+| message-text-p2p.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-greeting-plugin.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-group-chat.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ group |
+| message-zh-lang.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ zh | ✅ | ✅ p2p |
+| message-table-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-help-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-poll-plugin.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-todo-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-doc-command-doc.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+| message-table-command-no-arg.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
+
+  (4) No field name mismatches, no type mismatches, no missing required fields, no stale fields
+  (5) README.md accurately documents the format with correct field names
+  (6) feishu-flow-kit `npm test` → **141/141 pass** ✅ (fail=0)
+
+**Output files/results:** None (all webhook event examples verified correct — no changes needed)
+
+**Problems:** None.
+
+**Next heartbeat:** Task #3 — git history secret scan (`git log -S "NPM_TOKEN|GH_TOKEN|SECRET|PRIVATE_KEY"`).
+
+---
+
+## 2026-04-08 21:12 UTC
+**Current mainline:** feishu-flow-kit @ a3e55b6 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Git history secret scan — ✅ CLEAN + 1 real bug found and fixed (HEARTBEAT task #3)** —
+  (1) feishu-flow-kit fast-forwarded: f2e845b → a3e55b6 (1 heartbeat commit from 19:57 UTC)
+  (2) Secret scan: `git log --all --source --remotes -S "NPM_TOKEN|GH_TOKEN|SECRET|PRIVATE_KEY"` → only heartbeat log entries, no actual secrets
+  (3) True positives assessed clean:
+      - `NPM_TOKEN_SETUP.md`: legitimate documentation with token placeholder ✅
+      - No actual credential strings (sk_live_, pk_live_, ghp_, npm_, xoxb-, AKIA...) in code ✅
+      - No committed `.env` files with real credentials ✅
+  (4) **Bug found during scan (working directory dirty):** `examples/webhook-events/README.md` referenced `message-doc-command.json` — file doesn't exist; correct name is `message-doc-command-doc.json`
+  (5) Fixed and pushed: `a3e55b6` ("docs: fix example script path — message-doc-command.json → message-doc-command-doc.json")
+  (6) feishu-flow-kit `npm test` → **141/141 pass** ✅ (12.8s, fail=0)
+
+**Output files/results:**
+- `examples/webhook-events/README.md`: fixed script path from `message-doc-command.json` → `message-doc-command-doc.json`
+- feishu-flow-kit git commit `a3e55b6` pushed to origin/main
+
+**Problems:** None.
+
+**Next heartbeat:** Task #4 — docs/developer-guide accuracy (feishu-flow-kit/docs/developer-guide.md vs workspace structure).
