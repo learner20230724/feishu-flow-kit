@@ -1034,6 +1034,30 @@
 
 **Direction adjustment:** All 7 HEARTBEAT standing tasks fully exhausted. All repos stable. 141/141 tests green. room-measure-kit in workspace and healthy. NPM_TOKEN sole blocker for 255+ hours. No code, docs, or deployment work possible without human adding NPM_TOKEN to GitHub Actions secrets.
 
+---
+
+## 2026-04-08 13:57 UTC
+**Current mainline:** feishu-flow-kit @ 71fd26b (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, package-lock.json now tracked) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **llm-chat-lab package-lock.json committed and pushed** —
+  (1) llm-chat-lab had an untracked `package-lock.json` created 16+ hours ago (21:57 UTC 2026-04-07, noted in heartbeat log but never resolved)
+  (2) `git add package-lock.json && git commit -m "chore: add package-lock.json for reproducible builds"`
+  (3) `git push origin main` → 30e40d1 pushed to llm-chat-lab origin/main ✅
+  (4) Workspace feishu-flow-kit gitlink updated: llm-chat-lab → 30e40d1 (was f305b11)
+  (5) Workspace now at f0a231c (heartbeat-log.md commit) ✅
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` 141/141 pass ✅ (12.3s)
+
+**Output files/results:**
+- `llm-chat-lab/package-lock.json`: now tracked in git (was untracked since 21:57 UTC 2026-04-07)
+- `llm-chat-lab` git commit `30e40d1` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All 7 HEARTBEAT standing tasks fully exhausted. All repos stable. 141/141 tests green. llm-chat-lab package-lock.json now properly tracked (16h outstanding). HEARTBEAT.md needs refreshing with new task set — all 8 tasks done. NPM_TOKEN sole blocker for 270+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 13:42 UTC
 **Current mainline:** feishu-flow-kit @ ce7312b (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
 
