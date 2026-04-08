@@ -1,3 +1,26 @@
+## 2026-04-08 02:12 UTC
+**Current mainline:** feishu-flow-kit @ 70313a7 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **Bumped docker/setup-buildx-action from v3 → v4 in publish.yml (dependabot PR #1 equivalent)** —
+  (1) GitHub API confirmed PR #1 still open: `ci(deps): bump docker/setup-buildx-action from 3 to 4` (dependabot[bot])
+  (2) Applied `sed -i` to `.github/workflows/publish.yml`: v3 → v4
+  (3) Committed + pushed: `e73abe5` ("ci(deps): bump docker/setup-buildx-action from v3 to v4") ✅
+  (4) npm test 141/141 ✅ (12.9s) — no regressions
+  (5) Commit + heartbeat-log.md push: `70313a7`
+
+**Output files/results:**
+- `.github/workflows/publish.yml`: `docker/setup-buildx-action@v3` → `v4`
+- feishu-flow-kit git commit `e73abe5` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret still needed for @feishu/plugin-template npm publishing. Docker image publish workflow (ghcr.io) ready with updated buildx action.
+
+**Direction adjustment:** Breaking sync-only cycle with another dependabot PR equivalent fix. PR #1 (docker/setup-buildx-action) now manually merged. feishu-flow-kit has no pending dependabot PRs. All CI action versions are current. NPM_TOKEN remains the sole blocker for npm package publishing.
+
+---
+
 ## 2026-04-07 21:42 UTC
 **Current mainline:** feishu-flow-kit @ 8d11451 (main ✅, v1.0.3 published, 130/130 tests) + llm-chat-lab @ c57fe2b (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
 
