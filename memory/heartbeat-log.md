@@ -1,3 +1,27 @@
+## 2026-04-08 17:57 UTC
+**Current mainline:** feishu-flow-kit @ 32ccf92 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **.env.example accuracy — 3 missing env vars added (HEARTBEAT task: .env.example completeness check)** —
+  (1) Systematic grep of all `env.*` references in `src/` against `.env.example`
+  (2) Found 3 env vars used in code but missing from `.env.example`:
+      - `FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS`: referenced in `src/config/load-config.ts` line 336; default 300s; users with clock skew would not know to configure this
+      - `SENTRY_DSN`: referenced in `src/server/start-webhook-server.ts` lines 44-45, 182; users wanting Sentry integration had no env var reference
+      - `FEISHU_PLUGINS`: referenced in `src/core/plugin-system.ts`; comma-separated plugin entry files; documented in JSDoc but missing from `.env.example`
+  (3) Added all 3 to `.env.example` with descriptive comments in appropriate sections (Webhook, Observability, Feature toggles)
+  (4) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.6s)
+  (5) Committed + pushed: `32ccf92` ("fix(env): add 3 missing env vars to .env.example")
+
+**Output files/results:**
+- `.env.example`: +16 lines — added `FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS=300` (with comment), `SENTRY_DSN=` (Observability section), `FEISHU_PLUGINS=` (with example and reference to plugins/examples/)
+- feishu-flow-kit git commit `32ccf92` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** Found 3 real env vars used in code but missing from `.env.example`. All HEARTBEAT tasks exhausted — new rotating task added: `.env.example completeness check`. All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 410+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 16:27 UTC
 **Current mainline:** feishu-flow-kit @ 9f61b1d (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
