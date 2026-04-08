@@ -33,7 +33,7 @@ This project is a cleaner starting point:
 
 | Capability | Built-in | Notes |
 |---|---|---|
-| `/doc` — Feishu doc creation | ✅ | 11 block types: para, h1–h6, bullet, ordered, todo, fenced code (17 languages), quote, divider, callout + inline styles (bold/italic/code/link) |
+| `/doc` — Feishu doc creation | ✅ | 14 block types: para, h1–h6, bullet, ordered, todo, fenced code (17 languages), quote, divider, callout + inline styles (bold/italic/code/link) |
 | `/table` — Bitable record creation | ✅ | Schema-aware, 10 field types (text, number, date, checkbox, user, attachment, single/multi-select, linked_record), env-var field mapping |
 | `/todo` — structured task drafting | ✅ | Text-first, no credentials needed |
 | `/help`, `/ping`, `/poll` plugins | ✅ | Also a full plugin system for custom commands |
