@@ -14,7 +14,7 @@ feishu-flow-kit 暴露的所有 HTTP 端点的完整参考文档。
 | `GET` | `/status` | 服务器及配置完整状态 |
 | `POST` | `/webhook` | 飞书事件接收器 |
 
-所有端点均返回 `Content-Type: application/json`，所有响应均包含 `ok: boolean` 字段。
+所有端点均返回 `Content-Type: application/json`，所有响应均包含 `requestId: string` 字段用于日志关联。大多数响应包含 `ok: boolean` 字段，唯一例外是 URL 验证挑战响应（200），该响应仅返回 `challenge` 和 `requestId`，不包含 `ok`。
 
 ---
 
@@ -265,6 +265,42 @@ X-Lark-Signature: <signature>
 - `FEISHU_WEBHOOK_SECRET` 环境变量配置错误
 - 请求体在传输过程中被篡改
 - 时间戳容忍度超出限制（参见 `FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS`）
+
+#### `400 Bad Request` — 无效或不支持的载荷
+
+```json
+{
+  "ok": false,
+  "error": "Unsupported or invalid webhook payload.",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**原因：** 无法将 Webhook 载荷解析为飞书事件。当 JSON 结构有效，但 `isUrlVerificationPayload` 和 `adaptWebhookMessageEvent` 都无法处理该载荷时返回（如未知的事件类型）。
+
+#### `403 Forbidden` — 未知租户
+
+```json
+{
+  "ok": false,
+  "error": "Unknown tenant: \"tenant-key\". This bot is not configured for that tenant.",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**原因：** Webhook 载荷 `header` 中的 `tenant_key` 与 `FEISHU_TENANTS` 中注册的任何租户都不匹配。仅在多租户模式下：请确保为此租户配置了正确的飞书机器人，并将其 `tenantKey` 包含在 `FEISHU_TENANTS` 中。
+
+#### `404 Not Found`
+
+```json
+{
+  "ok": false,
+  "error": "Not found",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**原因：** 请求 URL 与任何已注册的路由都不匹配。请确保您的飞书 Webhook URL 指向此服务器的 `/webhook` 路径。
 
 #### `405 Method Not Allowed`
 

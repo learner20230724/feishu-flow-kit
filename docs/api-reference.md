@@ -14,7 +14,7 @@ Complete reference for all HTTP endpoints exposed by feishu-flow-kit.
 | `GET` | `/status` | Full server + config status |
 | `POST` | `/webhook` | Feishu event receiver |
 
-All endpoints return `Content-Type: application/json`. All responses include an `ok: boolean` field.
+All endpoints return `Content-Type: application/json`. All responses include a `requestId: string` field for log correlation. Most responses include an `ok: boolean` field — the exception is the URL verification challenge response (200), which returns only `challenge` and `requestId`.
 
 ---
 
@@ -265,6 +265,42 @@ X-Lark-Signature: <signature>
 - `FEISHU_WEBHOOK_SECRET` env var is wrong
 - The request body was modified in transit
 - Timestamp tolerance exceeded (see `FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS`)
+
+#### `400 Bad Request` — Invalid or unsupported payload
+
+```json
+{
+  "ok": false,
+  "error": "Unsupported or invalid webhook payload.",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Cause:** The webhook payload could not be parsed as a Feishu event. This occurs when the JSON is structurally valid but neither `isUrlVerificationPayload` nor `adaptWebhookMessageEvent` can process it (e.g., an unknown event type).
+
+#### `403 Forbidden` — Unknown tenant
+
+```json
+{
+  "ok": false,
+  "error": "Unknown tenant: \"tenant-key\". This bot is not configured for that tenant.",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Cause:** The `tenant_key` in the webhook payload's `header` does not match any registered tenant in `FEISHU_TENANTS`. Multi-tenant mode only: ensure the correct Feishu bot is configured for this tenant and its `tenantKey` is included in `FEISHU_TENANTS`.
+
+#### `404 Not Found`
+
+```json
+{
+  "ok": false,
+  "error": "Not found",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Cause:** The request URL does not match any registered route. Ensure your Feishu webhook URL points to the `/webhook` path on this server.
 
 #### `405 Method Not Allowed`
 
