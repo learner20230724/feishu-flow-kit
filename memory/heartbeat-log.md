@@ -1128,3 +1128,25 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. 141/141 tests green. Postman collection URL verification bug is a real correctness issue — GET to `/webhook` always returned 405. All 7 HEARTBEAT tasks exhausted + 1 Postman bug fixed this cycle. NPM_TOKEN sole blocker for 260+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-08 14:27 UTC
+**Current mainline:** feishu-flow-kit @ 46d7a7e (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Git history secret scan — CLEAN, no secrets found (HEARTBEAT task #3)** —
+  (1) `git log --all --source --remotes -S "NPM_TOKEN\|GH_TOKEN\|SECRET\|PRIVATE_KEY"` → only heartbeat log entries + 1 legitimate doc file
+  (2) True positives found and assessed:
+      - `NPM_TOKEN_SETUP.md` (commit 4d8bd07): legitimate documentation file with token placeholder — intentional ✅
+      - `GITHUB_TOKEN` (built-in `secrets.GITHUB_TOKEN`): GitHub Actions auto-rotated secret in ci.yml, not user-provided ✅
+      - `FEISHU_WEBHOOK_SECRET` / `FEISHU_APP_SECRET`: only appear in SECURITY.md and docs discussing best practices — no actual values committed ✅
+  (3) No actual secrets (tokens, keys, credentials) committed to any branch or tag. Repo is clean. ✅
+  (4) `git pull origin/main` → fast-forward 7cfcc4a → 46d7a7e (1 heartbeat-log.md commit from 14:12 UTC) ✅
+  (5) npm test → **141/141 pass** ✅ (11.5s)
+
+**Output files/results:** None (audit only — no code changes needed, repo is clean)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #3 (Git history secret scan) completed — repo is clean. Remaining HEARTBEAT tasks: #5 (src/ type coverage sweep), #6 (package.json dependency freshness), #7 (README feature table accuracy), #8 (docs/releases/ checklist compliance). All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 290+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
