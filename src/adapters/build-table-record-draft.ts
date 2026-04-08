@@ -7,7 +7,8 @@ export type TableAttachmentFieldMode = 'text' | 'attachment';
 export type TableLinkFieldMode = 'text' | 'linked_record';
 
 export interface TableSingleSelectFieldValue {
-  name: string;
+  name?: string;
+  id?: string;
 }
 
 export type TableMultiSelectFieldValue = TableSingleSelectFieldValue[];

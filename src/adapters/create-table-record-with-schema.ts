@@ -142,8 +142,7 @@ function transformOptionValue(
     const name = (fieldValue as unknown as Record<string, unknown>).name;
     if (typeof name === 'string') {
       const id = optionMap.get(name.toLowerCase());
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return id ? ({ id } as any) : fieldValue;
+      return id ? ({ id } as import('./build-table-record-draft.js').TableSingleSelectFieldValue) : fieldValue;
     }
   }
 
@@ -154,8 +153,7 @@ function transformOptionValue(
         const name = (item as unknown as Record<string, unknown>).name;
         if (typeof name === 'string') {
           const id = optionMap.get(name.toLowerCase());
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return id ? ({ id } as any) : item;
+          return id ? ({ id } as import('./build-table-record-draft.js').TableSingleSelectFieldValue) : item;
         }
       }
       return item;
