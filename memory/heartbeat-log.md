@@ -1629,6 +1629,32 @@
 
 **Direction adjustment:** All repos stable. HEARTBEAT task #1 (llm-chat-lab health) fresh cycle complete. Remaining tasks this cycle: #2 (webhook event examples accuracy), #3 (git history secret scan), #4 (developer-guide accuracy), #5 (src/ type coverage sweep), #6 (package.json dep freshness), #7 (README feature table accuracy), #8 (docs/releases checklist compliance). 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 505+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
 
+## 2026-04-08 22:42 UTC
+**Current mainline:** feishu-flow-kit @ 556acbe (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **Webhook event examples accuracy — ✅ CLEAN, no bugs (HEARTBEAT task #2)** —
+  (1) All 10 webhook-events JSONs verified against `FeishuWebhookEnvelope` interface (src/adapters/adapt-webhook-message-event.ts):
+      - `header.event_type`: all `im.message.receive_v1` ✅
+      - `header.tenant_key`: all present ✅
+      - `event.message.message_id`: all present ✅
+      - `event.message.chat_id`: all present ✅
+      - `event.message.chat_type`: all present ✅
+      - `event.sender.sender_id.open_id`: all present ✅
+  (2) All 4 mock JSONs (examples/mock-*.json) verified — same envelope format ✅
+  (3) README.md command descriptions cross-checked against actual file contents — all match (minor truncations in README table are intentional for readability) ✅
+  (4) README.md file listing verified — all 10 files exist, names correct (message-doc-command-doc.json confirmed as correct name post prior-cycle fix) ✅
+  (5) `npm test` → **141/141 pass** ✅ (10.6s, fail=0)
+  (6) Fresh HEARTBEAT cycle: #1✅ (22:27 UTC), #2✅ (22:42 UTC), #3-#8 pending
+
+**Output files/results:** None (all webhook event examples verified correct — no changes needed)
+
+**Problems:** None.
+
+**Next heartbeat:** Task #3 — git history secret scan (git log -S "NPM_TOKEN|GH_TOKEN|SECRET|PRIVATE_KEY").
+
+---
+
 ## 2026-04-08 22:27 UTC
 **Current mainline:** feishu-flow-kit @ 5bffcf1 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
