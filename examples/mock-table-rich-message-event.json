@@ -1,16 +1,22 @@
 {
-  "type": "message.received",
-  "timestamp": "2026-03-30T18:45:00Z",
-  "tenantKey": "tenant_demo",
-  "message": {
-    "messageId": "msg_table_rich_1",
-    "chatId": "chat_demo",
-    "chatType": "group",
-    "senderId": "user_demo",
-    "text": "/table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true / attachment_token=file_v2_demo123,file_v2_demo456 / link_record_id=rec_demo_task_1,rec_demo_task_2"
+  "header": {
+    "event_type": "im.message.receive_v1",
+    "create_time": "2026-03-30T18:45:00Z",
+    "tenant_key": "tenant_demo"
   },
-  "context": {
-    "source": "mock-example",
-    "notes": "Richer /table example showing multi-select list, user owner payload, numeric estimate, datetime due field, checkbox done field, attachment tokens, and linked-record IDs"
+  "event": {
+    "message": {
+      "message_id": "msg_table_rich_1",
+      "chat_id": "chat_demo",
+      "chat_type": "group",
+      "content": "{\"text\":\"/table add sprint,urgent flaky webhook tests / owner_open_id=ou_demo_alex / estimate=5 / due=2026-04-01T09:30:00Z / done=true / attachment_token=file_v2_demo123,file_v2_demo456 / link_record_id=rec_demo_task_1,rec_demo_task_2\"}",
+      "create_time": "1743351900"
+    },
+    "sender": {
+      "sender_id": {
+        "open_id": "user_demo"
+      },
+      "language": "en"
+    }
   }
 }

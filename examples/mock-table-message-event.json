@@ -1,16 +1,22 @@
 {
-  "type": "message.received",
-  "timestamp": "2026-03-30T05:20:00Z",
-  "tenantKey": "tenant_demo",
-  "message": {
-    "messageId": "msg_table_1",
-    "chatId": "chat_demo",
-    "chatType": "group",
-    "senderId": "user_demo",
-    "text": "/table add backlog item: improve webhook errors / owner=alex"
+  "header": {
+    "event_type": "im.message.receive_v1",
+    "create_time": "2026-03-30T05:20:00Z",
+    "tenant_key": "tenant_demo"
   },
-  "context": {
-    "source": "mock-example",
-    "notes": "Minimal /table example for local workflow debugging"
+  "event": {
+    "message": {
+      "message_id": "msg_table_1",
+      "chat_id": "chat_demo",
+      "chat_type": "group",
+      "content": "{\"text\":\"/table add backlog item: improve webhook errors / owner=alex\"}",
+      "create_time": "1743310800"
+    },
+    "sender": {
+      "sender_id": {
+        "open_id": "user_demo"
+      },
+      "language": "en"
+    }
   }
 }

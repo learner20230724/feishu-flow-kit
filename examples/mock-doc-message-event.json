@@ -1,16 +1,22 @@
 {
-  "type": "message.received",
-  "timestamp": "2026-03-29T14:40:00Z",
-  "tenantKey": "local-dev-tenant",
-  "message": {
-    "messageId": "om_mock_doc_001",
-    "chatId": "oc_mock_chat",
-    "chatType": "p2p",
-    "senderId": "ou_mock_user",
-    "text": "/doc weekly launch review"
+  "header": {
+    "event_type": "im.message.receive_v1",
+    "create_time": "2026-03-29T14:40:00Z",
+    "tenant_key": "local-dev-tenant"
   },
-  "context": {
-    "source": "local-mock",
-    "notes": "Stable example input for the /doc workflow demo."
+  "event": {
+    "message": {
+      "message_id": "om_mock_doc_001",
+      "chat_id": "oc_mock_chat",
+      "chat_type": "p2p",
+      "content": "{\"text\":\"/doc weekly launch review\"}",
+      "create_time": "1743256800"
+    },
+    "sender": {
+      "sender_id": {
+        "open_id": "ou_mock_user"
+      },
+      "language": "en"
+    }
   }
 }
