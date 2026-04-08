@@ -57,7 +57,7 @@ All files use the official Feishu `im.message.receive_v1` envelope structure:
 npm start
 
 # Send one specific event
-./scripts/test-webhook-local.sh examples/webhook-events/message-doc-command.json
+./scripts/test-webhook-local.sh examples/webhook-events/message-doc-command-doc.json
 
 # Or send all events in sequence
 ./scripts/test-webhook-local.sh all
