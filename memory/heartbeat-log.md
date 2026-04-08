@@ -552,3 +552,26 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All repos stable. README zh-CN/EN structural parity restored. 141/141 tests. NPM_TOKEN sole blocker for 125+ hours. Nothing actionable until human adds NPM_TOKEN.
+
+## 2026-04-08 00:27 UTC
+**Current mainline:** feishu-flow-kit @ c580be7 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ f305b11 (v1.3.1 published ✅) + room-measure-kit @ 0edff83 (not in workspace)
+
+**What was completed:**
+- **llm-chat-lab README release badge v1.3.0→v1.3.1 fix** —
+  (1) Found stale `v1.3.0` release badge in both README.md and README.zh-CN.md
+      (link pointed to GitHub Release tag v1.3.0; repo is at v1.3.1 since 23:12 UTC)
+  (2) Updated both files: badge URL + shield src updated from v1.3.0 → v1.3.1
+  (3) Historical `docs/releases/v1.3.0-release-notes.md` left unchanged (correct — documents v1.3.0 release)
+  (4) Committed + pushed: `f305b11` ("docs: update release badge from v1.3.0 to v1.3.1 in README files")
+  (5) feishu-flow-kit sync: pulled origin/main (heartbeat-log.md commit → c580be7), 141/141 tests ✅ (11.5s)
+
+**Output files/results:**
+- `llm-chat-lab/README.md`: release badge v1.3.0 → v1.3.1
+- `llm-chat-lab/README.zh-CN.md`: release badge v1.3.0 → v1.3.1
+- `llm-chat-lab` git commit `f305b11` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. llm-chat-lab README badge was a real consistency bug (docs said v1.3.1 but badge showed v1.3.0). Both readme files now correct. feishu-flow-kit v1.0.3 and llm-chat-lab v1.3.1 both clean. NPM_TOKEN sole blocker for 130+ hours.
