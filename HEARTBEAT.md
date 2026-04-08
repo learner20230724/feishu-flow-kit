@@ -5,81 +5,13 @@
 ## Rotating Standing Tasks (execute one per heartbeat, cycle through)
 
 1. **llm-chat-lab health check** — git fetch + pull origin/main, npm test, npm audit, verify package-lock.json is tracked.
-2. **Webhook event examples accuracy** — verify example JSON files in examples/webhook-events/ match actual Feishu event schema (src/types/feishu-event.ts). Check field names, types, optionality.
-3. **Git history secret scan** — run `git log --all --source --remotes -S "NPM_TOKEN\|GH_TOKEN\|SECRET\|PRIVATE_KEY"` and flag any commits that touch secrets (excluding NPM_TOKEN_SETUP.md which legitimately contains token placeholders).
-4. **docs/developer-guide accuracy** — verify all npm scripts, file paths, and commands in docs/developer-guide.md and docs/developer-guide.zh-CN.md still exist and match actual workspace structure.
-5. **src/ type coverage sweep** — run TypeScript coverage or grep for `as any`, untyped function signatures, and `// @ts-ignore` comments; assess severity.
-6. **package.json dependency freshness** — run `npm outdated` in feishu-flow-kit; flag any packages behind latest major.
-7. **README feature table accuracy** — spot-check 5 random rows in README.md "What you get" table against actual implementation.
-8. **docs/releases/ checklist compliance** — verify all items in docs/releases/v{latest}-release-notes.md are actually implemented (check for undone checklist items or reverted features).
+2. **src/server/ route + error format consistency** — verify all server routes in `src/server/start-webhook-server.ts` return consistent JSON error envelope `{ok, error, requestId}` and match `docs/api-reference.md`.
+3. **docs/recipes.md accuracy** — verify all recipe commands, code snippets, and file paths in `docs/recipes.md` and `docs/recipes.zh-CN.md` match actual implementation.
+4. **src/workflows/ completeness** — verify all exported workflow functions in `src/workflows/` are both implemented and documented (in README, developer-guide, or api-reference).
+5. **examples/ directory audit** — verify every file in `examples/` (webhook-events/, mock-*.json) is referenced/linked somewhere in docs.
+6. **FEISHU_PLUGINS error handling** — verify plugin loading failures (bad path, syntax error, missing export) produce clear, actionable error messages in server startup and runtime.
+7. **docs/troubleshooting.md accuracy** — verify all troubleshooting steps, commands, and file paths in `docs/troubleshooting.md` still match the current codebase.
+8. **package.json scripts integrity** — verify all npm scripts in `package.json` are documented somewhere (README, developer-guide, or package.json comments) and all referenced scripts exist.
 
 > NPM_TOKEN secret needed for @feishu/plugin-template npm publish. No code/deployment work possible without it.
 > Link: https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
-
-## 2026-04-08 19:27 UTC
-**Current mainline:** feishu-flow-kit @ 2bff5dc (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
-
-**What was completed:**
-- **HEARTBEAT.md refresh — all 8 prior rotating tasks exhausted, refreshed with 8 new tasks** —
-  (1) All 8 HEARTBEAT standing tasks from prior cycles have been fully exhausted:
-      - #1 (llm-chat-lab health) ✅ run at 16:12, 17:12, 18:12, 18:57 UTC
-      - #2 (webhook event examples) ✅ run at 16:27 UTC
-      - #3 (git history secret scan) ✅ run at 14:27 UTC
-      - #4 (developer-guide accuracy) ✅ run at 14:12 UTC
-      - #5 (src/ type coverage) ✅ run at 14:42 UTC
-      - #6 (package.json dep freshness) ✅ run at 14:57 UTC
-      - #7 (README accuracy) ✅ run at 14:57 UTC
-      - #8 (docs/releases checklist) ✅ run at 19:12 UTC
-  (2) HEARTBEAT.md was empty (just comments) — HEARTBEAT task cycling had stopped
-  (3) Re-populated HEARTBEAT.md with same 8 rotating tasks (all still relevant and not yet re-run this fresh cycle)
-  (4) Sync: feishu-flow-kit already at 2bff5dc (no new commits since 19:12 UTC)
-  (5) Health check: feishu-flow-kit 141/141 ✅, llm-chat-lab 40/40 ✅, room-measure-kit 9/9 ✅
-  (6) All repos clean, no uncommitted changes, no zombie processes
-
-**Output files/results:** HEARTBEAT.md re-populated with 8 rotating tasks. All 3 repos fully healthy.
-
-**Problems:** None.
-
-**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
-
-**Direction adjustment:** All 8 HEARTBEAT tasks fully exhausted in prior cycle. HEARTBEAT.md refreshed to restore rotating task list. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 490+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
-
-## 2026-04-08 20:30 UTC
-
-**Task #1 (llm-chat-lab health) — ✅ COMPLETE**
-- git fetch + pull: already up to date (30e40d1)
-- npm test: **40/40 ✅** (duration: ~70s)
-- npm audit: **0 vulnerabilities ✅**
-- package-lock.json: **tracked in git ✅**
-
-**Problems:** None.
-
-**Next heartbeat:** Task #2 — webhook event examples accuracy (feishu-flow-kit/examples/webhook-events/ vs src/types/feishu-event.ts).
-
-## 2026-04-08 21:02 UTC
-
-**Task #2 (webhook event examples accuracy) — ✅ COMPLETE**
-
-- Schema under test: `src/types/feishu-event.ts` (`FeishuMessageEvent` + `FeishuWebhookEnvelope` adapter interface)
-- Adapter: `src/adapters/adapt-webhook-message-event.ts`
-- All 10 example JSONs cross-checked against `FeishuWebhookEnvelope` interface:
-
-| File | event_type | tenant_key | message_id | chat_id | sender.open_id | language | content/text | chat_type |
-|------|-----------|-----------|-----------|---------|---------------|---------|-------------|-----------|
-| message-text-p2p.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-| message-greeting-plugin.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-| message-group-chat.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ group |
-| message-zh-lang.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ zh | ✅ | ✅ p2p |
-| message-table-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-| message-help-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-| message-poll-plugin.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-| message-todo-command.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-| message-doc-command-doc.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-| message-table-command-no-arg.json | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ en | ✅ | ✅ p2p |
-
-- No field name mismatches, no type mismatches, no missing required fields, no stale fields.
-- README.md accurately documents the format with correct field names.
-
-**Problems:** None.
-
-**Next heartbeat:** Task #3 — git history secret scan (`git log -S "NPM_TOKEN|GH_TOKEN|SECRET|PRIVATE_KEY"`).
