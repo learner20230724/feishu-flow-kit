@@ -11,6 +11,7 @@
 5. **Plugin example completeness** — verify plugins/examples/ has all required files; check plugin-template dist completeness.
 6. **Dependency health** — npm outdated, npm audit (feishu-flow-kit + llm-chat-lab).
 7. **room-measure-kit clone** — attempt clone of room-measure-kit (0edff83) and run health check.
+8. **Postman collection accuracy** — verify all entries in docs/postman-collection.json match actual server routes (GET/POST methods, URL paths, request body formats). At 13:12 UTC found GET /webhook was wrong (server returns 405 for GET) — actual is POST with JSON body.
 
 > NPM_TOKEN secret needed for @feishu/plugin-template npm publish. No code/deployment work possible without it.
 > Link: https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
