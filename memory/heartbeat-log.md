@@ -1,24 +1,22 @@
 ## 2026-04-08 14:57 UTC
-**Current mainline:** feishu-flow-kit @ bf13666 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
+**Current mainline:** feishu-flow-kit @ e2a9185 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅) + room-measure-kit @ a142a33 (v0.1.2, 9/9 tests ✅)
 
 **What was completed:**
-- **package.json dependency freshness — node_modules synced, 0 outdated (HEARTBEAT task #6)** —
-  (1) `npm outdated` found 2 stale devDeps: `@types/node` 24.12.0 → 25.5.2, `typescript` 5.9.3 → 6.0.2
-  (2) Root cause: `package.json` already declared `^25.5.2` and `^6.0.2` (someone bumped it previously), but `npm install` was never re-run to sync `node_modules`
-  (3) `package-lock.json` was already correct (already locked to updated versions) — only `node_modules` was stale
-  (4) Ran `npm install` → synced node_modules: typescript 6.0.2, @types/node 25.5.2 ✅
-  (5) `npm outdated` now returns empty (0 outdated) ✅
-  (6) `npm run check` ✅ (tsc --noEmit, clean)
-  (7) `npm test` → **141/141 pass** ✅ (11.5s, no regressions — TypeScript 6.0.2 is fully backward-compatible)
-  (8) git status: nothing to commit (package.json and package-lock.json were already correct)
+- **package.json dependency freshness + README accuracy (HEARTBEAT tasks #6 + #7)**
+  - Task #6 (dep freshness): `npm outdated` found stale `@types/node` 24.12.0 and `typescript` 5.9.3. `package.json`/`package-lock.json` already declared `^25.5.2`/`^6.0.2` but `node_modules` was never synced. `npm install` → synced. `npm outdated` → clean. 141/141 tests ✅ (TypeScript 6.0.2 fully backward-compatible)
+  - Task #7 (README accuracy): Spot-checked 5 rows — 4 accurate (retry/resilience, signature verification, Postman collection, REST API reference). **Bug found:** `/table` row claimed "18 field types" but code only handles 10 types (text, number, date, checkbox, user, attachment, single-select, multi-select, linked_record, duplex_link). Fixed EN README: "18→10"; fixed ZH-CN README: "18 种→10 种"
+  - Committed + pushed: `e2a9185` ("docs: fix /table field type count — 18→10 actual types in EN+ZH-CN README")
 
-**Output files/results:** feishu-flow-kit node_modules synced to package.json declarations — no new git commits needed
+**Output files/results:**
+- `README.md`: /table "18 field types" → "10 field types (text, number, date, checkbox, user, attachment, single/multi-select, linked_record)"
+- `README.zh-CN.md`: same fix in Chinese
+- feishu-flow-kit node_modules synced: typescript 6.0.2, @types/node 25.5.2
 
 **Problems:** None.
 
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
-**Direction adjustment:** HEARTBEAT task #6 (package.json dependency freshness) completed — found stale node_modules (not package.json/package-lock.json), fixed with `npm install`. Remaining HEARTBEAT tasks: #7 (README feature table accuracy), #8 (docs/releases/ checklist compliance). All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 295+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+**Direction adjustment:** HEARTBEAT tasks #6 ✅ (dep freshness) and #7 ✅ (README accuracy — 18→10 field type bug). Remaining: #8 (docs/releases/ checklist compliance). All repos stable. 141/141 tests green. NPM_TOKEN sole blocker for 295+ hours.
 
 ---
 
