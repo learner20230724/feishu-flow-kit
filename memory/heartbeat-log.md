@@ -1,3 +1,27 @@
+## 2026-04-09 15:27 UTC
+**Current mainline:** feishu-flow-kit @ d69ea5f (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/server/ route + error format consistency — CLEAN, no bugs (HEARTBEAT task #2, fresh cycle)** —
+  (1) Systematic cross-check of all server routes in `src/server/start-webhook-server.ts` + `src/server/handle-webhook-payload.ts` against `docs/api-reference.md` and `docs/api-reference.zh-CN.md`
+  (2) GET /healthz ✅: `{ok, service, mode, requestId}` matches docs exactly (both EN and ZH-CN)
+  (3) GET /status ✅: all fields verified correct — `startedAt`, `uptimeSeconds`, `mode`, `flags{}` (including `sentry: Boolean(process.env.SENTRY_DSN)` from 11:42 UTC fix), `lastEventAt`, `eventCount`, `multiTenantMode`, `tenantCount`, `tenantKeys`; ZH-CN docs at lines 74+118 show sentry examples ✅
+  (4) POST /webhook URL verification ✅: `{challenge, requestId}` (no `ok`) — documented correctly with note about `challenge` not `challengeResponse`
+  (5) POST /webhook success response ✅: all 14 fields (`ok`, `eventType`, `tenantKey`, `messageId`, `tags`, `replyText`, `replyDraft`, `docCreateDraft`, `tableRecordDraft`, `docCreate`, `tableCreate`, `outboundReply`, `loadedPlugins`, `requestId`) verified correct in both EN and ZH-CN; nested `{attempted, skippedReason?, response?}` shape for docCreate/tableCreate/outboundReply ✅
+  (6) All 6 error responses verified correct `{ok: false, error, requestId}` in both EN and ZH-CN: 401 ✅, 400 ✅, 403 ✅, 404 ✅, 405 ✅, 500 ✅
+  (7) Environment variables verified: `FEISHU_WEBHOOK_PORT` ✅ (docs/api-reference EN+ZH-CN line 387), `SENTRY_DSN` ✅ (EN+ZH-CN lines 389-390)
+  (8) `npm run check` ✅ (tsc --noEmit, clean) + `npm test` → **141/141 pass** ✅ (12.0s, fail=0)
+  (9) No code changes needed — all docs accurate. All prior fixes holding correctly.
+  (10) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 15:12 UTC), #2✅ (15:27 UTC), #3-#8 pending
+
+**Output files/results:** None (docs already accurate — no changes needed)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #2 (src/server/ route + error format consistency) completed — clean, no bugs. All prior fixes holding correctly (sentry flag wiring at 11:42 UTC, PORT→FEISHU_WEBHOOK_PORT at 09:57 UTC, nested docCreate/tableCreate/outboundReply shapes at 03:27 UTC, etc.). Remaining tasks this cycle: #3 (docs/recipes.md accuracy), #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 1325+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 15:12 UTC
 **Current mainline:** feishu-flow-kit @ 6f6628e (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
