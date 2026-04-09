@@ -237,7 +237,7 @@ node scripts/demo-interactive.mjs
 
 Before opening a PR:
 
-- [ ] `npm test` passes (130/130)
+- [ ] `npm test` passes (141/141)
 - [ ] `npm run check` passes (no new TypeScript errors)
 - [ ] New commands have i18n strings in both `en.ts` and `zh.ts`
 - [ ] New adapters include a "maybe" variant that degrades gracefully
