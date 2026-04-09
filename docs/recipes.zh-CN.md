@@ -79,7 +79,8 @@ if (command === 'poll') {
 // 在 run-message-workflow.ts 中添加分支：
 if (result.type === 'poll') {
   const draft = buildPollCardDraft(result.question, result.options);
-  await maybeSendReplyMessage(draft, token, tenantPath);
+  // 注意：跨频道发送卡片消息请参考食谱 5 的模式。
+  // 同频道投票返回 replyText，由调用方处理发送。
   return { ok: true, replyText: `📊 投票"${result.question}"已创建。` };
 }
 ```
@@ -119,12 +120,9 @@ export async function runMessageWorkflow(
     const lower = rawText.toLowerCase();
     for (const faq of FAQ_MAP) {
       if (faq.keywords.some((kw) => lower.includes(kw))) {
-        await maybeSendReplyMessage(
-          buildReplyMessageDraft(faq.reply),
-          token,
-          tenantPath
-        );
-        return { ok: true, replyText: '[自动回复]' };
+        // 返回 replyText，由调用方通过 maybeSendReplyMessage 发送。
+        // 注意：buildReplyMessageDraft(messageId, replyText) 需要源消息的 messageId。
+        return { ok: true, replyText: faq.reply };
       }
     }
   }
@@ -212,8 +210,6 @@ export async function sendDailySummary(channelId: string): Promise<void> {
 import { buildDocCreateDraft } from '../adapters/build-doc-create-draft.js';
 import { buildDocBlockChildrenDraft } from '../adapters/build-doc-block-children-draft.js';
 import { maybeCreateDoc } from '../adapters/maybe-create-doc.js';
-import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
-import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
 
 export interface DocTemplateOptions {
   title: string;
@@ -263,8 +259,7 @@ export async function createProjectDoc(
 // if (command === 'newdoc') {
 //   const title = remainder.trim();
 //   const result = await createProjectDoc({ title }, token, tenantPath);
-//   await maybeSendReplyMessage(buildReplyMessageDraft(result.replyText), token, tenantPath);
-//   return { ok: true, replyText: result.replyText, hasDocCreateDraft: true };
+//   return { ok: true, replyText: result.replyText, docCreateDraft: result.docUrl ? { topic: title } : undefined };
 // }
 ```
 
@@ -289,8 +284,6 @@ FEISHU_TARGET_CHAT_ID=oc_yyyyy   # 转发目标
 // src/jobs/relay-messages.ts
 import { getTenantAccessToken } from '../adapters/get-tenant-access-token.js';
 import { loadConfig } from '../config/load-config.js';
-import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
-import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
 
 const SOURCE_CHAT = process.env.FEISHU_SOURCE_CHAT_ID!;
 const TARGET_CHAT = process.env.FEISHU_TARGET_CHAT_ID!;
@@ -333,8 +326,25 @@ export async function relayNewMessages(): Promise<number> {
     // 仅转发包含 [relay] 标记的消息
     if (text.includes('[relay]')) {
       const relayText = text.replace('[relay]', '').trim();
-      const draft = buildReplyMessageDraft(`🔄 转发：${relayText}`);
-      await maybeSendReplyMessage(draft, token, TARGET_CHAT);
+      // 注意：buildReplyMessageDraft(messageId, replyText) 用于同频道回复，
+      // 跨频道转发需使用 POST /im/v1/messages 接口发送新消息。
+      const relayPayload = {
+        receive_id_type: 'chat_id',
+        msg_type: 'text',
+        content: JSON.stringify({ text: `🔄 转发：${relayText}` }),
+      };
+      const relayResp = await fetch(
+        'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(relayPayload),
+        }
+      );
+      if (!relayResp.ok) throw new Error(`转发失败: ${relayResp.status}`);
       relayed++;
     }
   }
@@ -400,7 +410,7 @@ if (command === 'translate') {
   const [text, targetLang = 'en'] = remainder.split('|').map(s => s.trim());
   const result = await translateText(text, targetLang, process.env.TRANSLATION_API_KEY!);
   const reply = `🌐 ${result.detectedLanguage ?? '自动检测'} → ${targetLang}：\n${result.translatedText}`;
-  await maybeSendReplyMessage(buildReplyMessageDraft(reply), token, tenantPath);
+  // 返回 replyText，由调用方通过 maybeSendReplyMessage 发送。
   return { ok: true, replyText: reply };
 }
 ```
@@ -461,8 +471,8 @@ if (command === 'summarize') {
     ...summary.nextSteps.map(n => `- ${n}`),
   ].join('\n');
 
-  await maybeSendReplyMessage(buildReplyMessageDraft(reply), token, tenantPath);
-  return { ok: true, replyText: '[会议摘要已生成]' };
+  // 返回 replyText，由调用方通过 maybeSendReplyMessage 发送。
+  return { ok: true, replyText: reply };
 }
 ```
 

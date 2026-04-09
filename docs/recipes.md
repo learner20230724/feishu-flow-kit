@@ -79,8 +79,9 @@ if (command === 'poll') {
 // In run-message-workflow.ts, add a case:
 if (result.type === 'poll') {
   const draft = buildPollCardDraft(result.question, result.options);
-  // Send it:
-  await maybeSendReplyMessage(draft, token, tenantPath);
+  // Note: sending an interactive card to a different chat (cross-channel) requires
+  // POST /im/v1/messages with receive_id_type=chat_id — see Recipe 5 for the pattern.
+  // For same-chat polls, return replyText and let the caller handle sending.
   return { ok: true, replyText: `📊 Poll "${result.question}" created.` };
 }
 ```
@@ -120,12 +121,10 @@ export async function runMessageWorkflow(
     const lower = rawText.toLowerCase();
     for (const faq of FAQ_MAP) {
       if (faq.keywords.some((kw) => lower.includes(kw))) {
-        await maybeSendReplyMessage(
-          buildReplyMessageDraft(faq.reply),
-          token,
-          tenantPath
-        );
-        return { ok: true, replyText: '[auto-replied]' };
+        // Return replyText and the caller handles sending via maybeSendReplyMessage.
+        // Note: buildReplyMessageDraft(messageId, replyText) requires the source
+        // messageId — use event.message.messageId for same-chat replies.
+        return { ok: true, replyText: faq.reply };
       }
     }
   }
@@ -230,8 +229,6 @@ jobs:
 import { buildDocCreateDraft } from '../adapters/build-doc-create-draft.js';
 import { buildDocBlockChildrenDraft } from '../adapters/build-doc-block-children-draft.js';
 import { maybeCreateDoc } from '../adapters/maybe-create-doc.js';
-import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
-import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
 
 export interface DocTemplateOptions {
   title: string;
@@ -284,8 +281,7 @@ export async function createProjectDoc(
 // if (command === 'newdoc') {
 //   const title = remainder.trim();
 //   const result = await createProjectDoc({ title }, token, tenantPath);
-//   await maybeSendReplyMessage(buildReplyMessageDraft(result.replyText), token, tenantPath);
-//   return { ok: true, replyText: result.replyText, hasDocCreateDraft: true };
+//   return { ok: true, replyText: result.replyText, docCreateDraft: result.docUrl ? { topic: title } : undefined };
 // }
 ```
 
@@ -310,8 +306,6 @@ FEISHU_TARGET_CHAT_ID=oc_yyyyy
 // src/jobs/relay-messages.ts
 import { getTenantAccessToken } from '../adapters/get-tenant-access-token.js';
 import { loadConfig } from '../config/load-config.js';
-import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
-import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
 
 const SOURCE_CHAT = process.env.FEISHU_SOURCE_CHAT_ID!;
 const TARGET_CHAT = process.env.FEISHU_TARGET_CHAT_ID!;
@@ -355,8 +349,25 @@ export async function relayNewMessages(): Promise<number> {
     // Relay only messages containing specific keywords
     if (text.includes('[relay]')) {
       const relayText = text.replace('[relay]', '').trim();
-      const draft = buildReplyMessageDraft(`🔄 Relayed: ${relayText}`);
-      await maybeSendReplyMessage(draft, token, TARGET_CHAT);
+      // Note: buildReplyMessageDraft(messageId, replyText) is for same-chat REPLIES.
+      // For cross-channel relay, send a new message via POST /im/v1/messages.
+      const relayPayload = {
+        receive_id_type: 'chat_id',
+        msg_type: 'text',
+        content: JSON.stringify({ text: `🔄 Relayed: ${relayText}` }),
+      };
+      const relayResp = await fetch(
+        'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(relayPayload),
+        }
+      );
+      if (!relayResp.ok) throw new Error(`Failed to relay: ${relayResp.status}`);
       relayed++;
     }
   }
@@ -420,7 +431,7 @@ if (command === 'translate') {
   const [text, targetLang = 'en'] = remainder.split('|').map(s => s.trim());
   const result = await translateText(text, targetLang, process.env.TRANSLATION_API_KEY!);
   const reply = `🌐 ${result.detectedLanguage ?? 'auto'} → ${targetLang}:\n${result.translatedText}`;
-  await maybeSendReplyMessage(buildReplyMessageDraft(reply), token, tenantPath);
+  // Return replyText and let the caller handle sending via maybeSendReplyMessage.
   return { ok: true, replyText: reply };
 }
 ```
@@ -481,8 +492,8 @@ if (command === 'summarize') {
     ...summary.nextSteps.map(n => `- ${n}`),
   ].join('\n');
 
-  await maybeSendReplyMessage(buildReplyMessageDraft(reply), token, tenantPath);
-  return { ok: true, replyText: '[meeting summarized]' };
+  // Return replyText and let the caller handle sending via maybeSendReplyMessage.
+  return { ok: true, replyText: reply };
 }
 ```
 
