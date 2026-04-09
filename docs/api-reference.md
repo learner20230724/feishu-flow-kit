@@ -205,49 +205,45 @@ X-Lark-Signature: <signature>
 }
 ```
 
-**Response `200 OK` (example for `/doc` command)**
+**Response `200 OK` — Message event processed**
+
+All successful message event processing responses share the same structure:
 
 ```json
 {
   "ok": true,
-  "replyText": "Created document: **Project Roadmap**\n[View in Feishu](https://.feishu.cn/docx/xxx) · Added to Bitable · Tagged: doc, created",
+  "eventType": "message.received",
+  "tenantKey": "tenant-key-xxx",
+  "messageId": "om_xxxxxxxxxxxxxxxx",
   "tags": ["doc", "created"],
+  "replyText": "Created document: **Project Roadmap**\n[View in Feishu](https://.feishu.cn/docx/xxx) · Added to Bitable · Tagged: doc, created",
+  "replyDraft": { "msg_type": "interactive", "card": { ... } },
+  "docCreateDraft": { "title": "...", "markdown": "..." },
+  "tableRecordDraft": { "fields": { "title": "...", ... } },
+  "docCreate": { "ok": true, "docId": "MsNxXxXxXxXx", "url": "https://..." },
+  "tableCreate": { "ok": true, "recordId": "recxxxxxx" },
+  "outboundReply": { "ok": true, "messageId": "om_yyyyyyyyyyyyyyyy" },
+  "loadedPlugins": ["ping", "poll"],
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
-**Response `200 OK` (example for `/table` command)**
-
-```json
-{
-  "ok": true,
-  "replyText": "Created Bitable record: **Sprint Planning** in table **Project Tracker**\n[View record](https://.feishu.cn/bitable/xxx) · Tagged: table, bitable",
-  "tags": ["table", "bitable"],
-  "requestId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
-
-**Response `200 OK` (example for `/help` command)**
-
-```json
-{
-  "ok": true,
-  "replyText": "Available commands:\n/doc <title> — Create a Feishu document\n/table <args> — Add a record to a Bitable table\n/todo <text> — Quick note captured as a task\n/help — Show this message",
-  "tags": ["help"],
-  "requestId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
-
-**Response `200 OK` (example for unrecognized command)**
-
-```json
-{
-  "ok": true,
-  "replyText": "Unknown command. Try /help for available commands.",
-  "tags": [],
-  "requestId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `ok` | `boolean` | `true` if the workflow completed successfully |
+| `eventType` | `string` | Normalized event type, e.g. `message.received` |
+| `tenantKey` | `string` | Tenant key from the webhook envelope's `header.tenant_key` |
+| `messageId` | `string` | Feishu message ID of the incoming message |
+| `tags` | `string[]` | Tags set by the workflow and plugins (e.g. `["doc", "created"]`) |
+| `replyText` | `string \| undefined` | Plain-text reply rendered in the Feishu chat |
+| `replyDraft` | `object \| null` | Feishu message card draft (`msg_type: "interactive"`); `null` if no reply |
+| `docCreateDraft` | `object \| null` | Document creation draft (`title` + `markdown`); `null` if no doc creation |
+| `tableRecordDraft` | `object \| null` | Bitable record creation draft (`fields` map); `null` if no table creation |
+| `docCreate` | `object` | Result of document creation attempt: `{ok, docId?, url?, skippedReason?}` |
+| `tableCreate` | `object` | Result of Bitable record creation: `{ok, recordId?, skippedReason?}` |
+| `outboundReply` | `object` | Result of outbound reply: `{ok, messageId?, skippedReason?}` |
+| `loadedPlugins` | `string[]` | Names of all plugins loaded at startup via `FEISHU_PLUGINS` |
+| `requestId` | `string` | UUID for log correlation |
 
 ### Error Responses
 

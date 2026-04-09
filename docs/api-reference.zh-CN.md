@@ -205,49 +205,45 @@ X-Lark-Signature: <signature>
 }
 ```
 
-**响应 `200 OK`（`/doc` 命令示例）**
+**响应 `200 OK` — 消息事件已处理**
+
+所有成功的消息事件处理响应共享相同的结构：
 
 ```json
 {
   "ok": true,
-  "replyText": "Created document: **Project Roadmap**\n[View in Feishu](https://.feishu.cn/docx/xxx) · Added to Bitable · Tagged: doc, created",
+  "eventType": "message.received",
+  "tenantKey": "tenant-key-xxx",
+  "messageId": "om_xxxxxxxxxxxxxxxx",
   "tags": ["doc", "created"],
+  "replyText": "已创建文档：**Project Roadmap**\n[在飞书中查看](https://.feishu.cn/docx/xxx) · 已添加至多维表格 · 标签: doc, created",
+  "replyDraft": { "msg_type": "interactive", "card": { ... } },
+  "docCreateDraft": { "title": "...", "markdown": "..." },
+  "tableRecordDraft": { "fields": { "title": "...", ... } },
+  "docCreate": { "ok": true, "docId": "MsNxXxXxXxXx", "url": "https://..." },
+  "tableCreate": { "ok": true, "recordId": "recxxxxxx" },
+  "outboundReply": { "ok": true, "messageId": "om_yyyyyyyyyyyyyyyy" },
+  "loadedPlugins": ["ping", "poll"],
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
-**响应 `200 OK`（`/table` 命令示例）**
-
-```json
-{
-  "ok": true,
-  "replyText": "Created Bitable record: **Sprint Planning** in table **Project Tracker**\n[View record](https://.feishu.cn/bitable/xxx) · Tagged: table, bitable",
-  "tags": ["table", "bitable"],
-  "requestId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
-
-**响应 `200 OK`（`/help` 命令示例）**
-
-```json
-{
-  "ok": true,
-  "replyText": "Available commands:\n/doc <title> — Create a Feishu document\n/table <args> — Add a record to a Bitable table\n/todo <text> — Quick note captured as a task\n/help — Show this message",
-  "tags": ["help"],
-  "requestId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
-
-**响应 `200 OK`（未知命令示例）**
-
-```json
-{
-  "ok": true,
-  "replyText": "Unknown command. Try /help for available commands.",
-  "tags": [],
-  "requestId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| `ok` | `boolean` | 工作流成功完成时为 `true` |
+| `eventType` | `string` | 标准化事件类型，如 `message.received` |
+| `tenantKey` | `string` | 来自 Webhook  envelope `header.tenant_key` 的租户键 |
+| `messageId` | `string` | 飞书消息 ID |
+| `tags` | `string[]` | 工作流和插件设置的标签（如 `["doc", "created"]`） |
+| `replyText` | `string \| undefined` | 在飞书聊天中显示的纯文本回复 |
+| `replyDraft` | `object \| null` | 飞书消息卡片草稿（`msg_type: "interactive"`）；无回复时为 `null` |
+| `docCreateDraft` | `object \| null` | 文档创建草稿（`title` + `markdown`）；无文档创建时为 `null` |
+| `tableRecordDraft` | `object \| null` | 多维表格记录创建草稿（`fields` 映射）；无表格创建时为 `null` |
+| `docCreate` | `object` | 文档创建尝试结果：`{ok, docId?, url?, skippedReason?}` |
+| `tableCreate` | `object` | 多维表格记录创建结果：`{ok, recordId?, skippedReason?}` |
+| `outboundReply` | `object` | 出站回复结果：`{ok, messageId?, skippedReason?}` |
+| `loadedPlugins` | `string[]` | 启动时通过 `FEISHU_PLUGINS` 加载的插件名称列表 |
+| `requestId` | `string` | 用于日志关联的 UUID |
 
 ### 错误响应
 
