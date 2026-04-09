@@ -1,3 +1,52 @@
+## 2026-04-09 00:27 UTC
+**Current mainline:** feishu-flow-kit @ 86e938e (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **FEISHU_PLUGINS error handling — 1 real bug found and fixed (HEARTBEAT task #6)** —
+  (1) Verified plugin loading error scenarios: bad path ✅ caught, syntax error ✅ caught, missing exports ✅ warn+continue, non-conforming plugin ✅ throws caught, register() throws ✅ caught, command conflict ✅ throws caught
+  (2) **Bug found:** `import()` resolved relative paths relative to `dist/core/plugin-system.js` (module location), NOT project cwd — `FEISHU_PLUGINS=./plugins/ping-plugin.js` → `dist/core/plugins/ping-plugin.js` (WRONG)
+  (3) Fix: added `pathToFileURL(resolve(process.cwd(), moduleSpec)).href` for relative/absolute paths
+  (4) `npm run check` ✅ + `npm test` → **141/141 pass** ✅ (11.1s)
+  (5) Committed + pushed: `86e938e` ("fix(plugin): resolve FEISHU_PLUGINS paths relative to cwd, not dist/core/")
+  (6) Fresh HEARTBEAT cycle: #1✅, #2✅, #3✅, #4✅, #5✅, #6✅, #7-#8 pending
+
+**Output files/results:**
+- `src/core/plugin-system.ts`: +2 imports (pathToFileURL, resolve), +5 lines — relative paths now resolve from cwd
+- feishu-flow-kit git commit `86e938e` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #6 (FEISHU_PLUGINS error handling) completed — found 1 real path-resolution bug. Remaining tasks this cycle: #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 600+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-09 00:12 UTC
+**Current mainline:** feishu-flow-kit @ 7008378 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **examples/ directory audit — 2 real bugs found and fixed (HEARTBEAT task #5)** —
+  (1) Systematically verified every file in `examples/` is referenced/linked somewhere in docs
+  (2) All mock JSONs, feishu-fields, table-schema, table-api-error, and table-select-option files verified — each has 1+ doc references ✅
+  (3) All table-mapping-advanced.env references verified ✅
+  (4) **Bug #1:** `docs/troubleshooting.md` line 227 referenced `./examples/webhook-events/im-message-receive-hello.json` — file does NOT exist
+  (5) **Bug #2:** `docs/webhook-testing-guide.md` line 17 referenced `./examples/webhook-events/im-message-receive-hello.json` — file does NOT exist
+  (6) The actual files in `examples/webhook-events/` are: message-text-p2p.json, message-table-command.json, message-help-command.json, message-greeting-plugin.json, message-poll-plugin.json, message-zh-lang.json, message-group-chat.json, message-todo-command.json, message-doc-command-doc.json, message-table-command-no-arg.json
+  (7) Fixed both docs: `im-message-receive-hello.json` → `message-text-p2p.json` (a valid representative basic test event)
+  (8) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.7s)
+  (9) Committed + pushed: `7008378` ("docs: fix nonexistent im-message-receive-hello.json → message-text-p2p.json in troubleshooting and webhook-testing-guide")
+  (10) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 22:27 UTC prior cycle), #2✅ (src/server route consistency, 23:12), #3✅ (recipes.md accuracy, 23:27), #4✅ (workflows completeness, 23:42), #5✅ (examples/ audit, 00:12 UTC), #6-#8 pending
+
+**Output files/results:**
+- `docs/troubleshooting.md`: `im-message-receive-hello.json` → `message-text-p2p.json`
+- `docs/webhook-testing-guide.md`: `im-message-receive-hello.json` → `message-text-p2p.json`
+- feishu-flow-kit git commit `7008378` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #5 (examples/ directory audit) completed — found 2 real bugs: both `docs/troubleshooting.md` and `docs/webhook-testing-guide.md` referenced a nonexistent `im-message-receive-hello.json` file in `examples/webhook-events/`. All other example files were properly referenced. Remaining tasks this cycle: #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 600+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-08 23:42 UTC
 **Current mainline:** feishu-flow-kit @ 04088ab (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
