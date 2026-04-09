@@ -24,7 +24,7 @@ curl https://your-ngrok-url.ngrok.io/status
 
 ```bash
 npm run dev        # development
-node dist/index.js # production (after npm run build)
+npm run build && node dist/index.js # production
 docker compose up  # via Docker
 ```
 
@@ -123,7 +123,7 @@ docker compose logs -f
 ```
 
 Common causes:
-- **Missing `.env`**: Copy `.env.production.example` to `.env` and fill in your values
+- **Missing `.env`**: Copy `.env.example` to `.env` and fill in your values
 - **Port already in use**: Change `PORT` in `.env` (e.g., `PORT=8788`)
 - **ngrok URL not configured**: Webhook URL in Feishu console must match `VPS_FQDN`
 
