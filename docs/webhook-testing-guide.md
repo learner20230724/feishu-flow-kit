@@ -37,7 +37,7 @@ The script sends real Feishu webhook event payloads and prints the server's resp
 | `message-doc-command-doc.json` | `/doc` (no args) | p2p | en |
 | `message-table-command-no-arg.json` | `/table` (no args) | p2p | en |
 
-> **Note:** All sample events use the `local-dev-tenant` tenant key. See `examples/webhook-events/README.md` for the full payload format.
+> **Note:** All sample events use the `local-dev-tenant` tenant key. See `examples/webhook-events/README.md` for the full payload format. A Chinese translation is also available at `examples/webhook-events/README.zh-CN.md`.
 
 ## Using Mock Events
 
