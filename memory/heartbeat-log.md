@@ -1,3 +1,37 @@
+## 2026-04-09 09:42 UTC
+**Current mainline:** feishu-flow-kit @ 33bc855 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **FEISHU_PLUGINS error handling verification + docs/troubleshooting.md accuracy — 3 real bugs found and fixed (HEARTBEAT tasks #6 + #7)** —
+  (1) Task #6 (FEISHU_PLUGINS error handling): systematically verified all plugin failure scenarios against actual `src/core/plugin-system.ts` + runtime hooks in `handle-webhook-payload.ts`
+  (2) Verified all error scenarios produce clear, actionable messages:
+      - Bad path: `[plugin-system] Failed to load plugin "./x.js": Error [ERR_MODULE_NOT_FOUND]` ✅
+      - Syntax error: same prefix + SyntaxError ✅
+      - Missing exports: `[plugin-system] Module "./x.js" exports nothing recognised.` ✅
+      - Non-conforming plugin: `[plugin-system] Failed to load plugin: Error: Plugin does not conform (missing name/register)` ✅
+      - register() throws: `[plugin-system] Plugin "${name}" register() threw: ${err}` ✅
+      - Command conflict: `Error: Plugin "X" tried to register "/Y" but it is already registered by "Z"` ✅
+      - Runtime (beforeProcess/handle/onCommandResult/afterProcess): all caught + console.error ✅
+  (3) Bug found: docs/plugin-system.md "Debugging Plugins" section only showed handle()-throwing example; startup errors (bad path, syntax, missing export, non-conforming, register throws) were undocumented
+  (4) Fixed: added "Startup Errors" table to plugin-system.md documenting all 6 startup error scenarios with log prefix and example messages
+  (5) Task #7 (docs/troubleshooting.md accuracy): systematic cross-check of all commands, file paths, log references
+  (6) Bug #1 found: line 19 "ngrok URL mismatch" said "must respond to GET /webhook with challenge parameter" — wrong! Server accepts POST with JSON body per server code. Fixed to: "Required: HTTPS URL; server must handle POST /webhook with JSON body {type:'url_verification', challenge:'...'}"
+  (7) Bug #2 found: troubleshooting guide told users to look for "Plugin system loaded, plugins: greeting,poll,help" — no such log line exists. Actual log is "plugins loaded { names: [...], commands: [...] }" per start-webhook-server.ts:52. Fixed to match actual log format
+  (8) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.5s)
+  (9) Committed + pushed: `1da4450` ("docs(plugin-system): add Startup Errors table to Debugging Plugins section") + `33bc855` ("docs: fix 2 bugs in troubleshooting.md — GET→POST URL verification, nonexistent log message")
+  (10) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 09:12 UTC), #2✅ (src/server route consistency, 09:12 UTC), #3✅ (docs/recipes.md accuracy, 09:12 UTC), #4✅ (src/workflows/ completeness, 09:12 UTC), #5✅ (examples/ directory audit, 06:42 UTC), #6✅ (FEISHU_PLUGINS error handling, 09:42 UTC), #7✅ (docs/troubleshooting.md accuracy, 09:42 UTC), #8✅ (package.json scripts integrity, 04:57 UTC prior cycle)
+
+**Output files/results:**
+- `docs/plugin-system.md`: +15 lines — added "Startup Errors" table documenting all 6 plugin startup error scenarios
+- `docs/troubleshooting.md`: GET → POST URL verification description (line 19); fixed nonexistent log message format (line 216)
+- feishu-flow-kit git commits `1da4450` + `33bc855` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #6 (FEISHU_PLUGINS error handling) + #7 (docs/troubleshooting.md accuracy) completed. Found 3 real bugs: (1) plugin-system.md lacked startup error docs, (2) troubleshooting.md had wrong HTTP method for URL verification, (3) troubleshooting.md referenced nonexistent log message. All 8 HEARTBEAT rotating tasks now completed this cycle. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 920+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 06:42 UTC
 **Current mainline:** feishu-flow-kit @ 0e4fff3 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
