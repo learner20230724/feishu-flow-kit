@@ -1,3 +1,32 @@
+## 2026-04-09 11:57 UTC
+**Current mainline:** feishu-flow-kit @ 98a1a42 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/recipes.md accuracy — 4 real bugs found and fixed (HEARTBEAT task #3)** —
+  (1) Systematic cross-check of all commands, code snippets, and file paths in `docs/recipes.md` and `docs/recipes.zh-CN.md` against actual implementation
+  (2) All adapter imports verified exist: build-reply-message-draft ✅, build-doc-create-draft ✅, build-doc-block-children-draft ✅, get-tenant-access-token ✅, maybe-send-reply-message ✅, maybe-create-doc ✅, src/core/retry ✅
+  (3) All recipe env vars verified present in .env.example: FEISHU_APP_ID ✅, FEISHU_APP_SECRET ✅, FEISHU_ENABLE_OUTBOUND_REPLY ✅, FEISHU_ENABLE_DOC_CREATE ✅, FEISHU_SOURCE_CHAT_ID ✅, FEISHU_TARGET_CHAT_ID ✅ (added prior cycle), TRANSLATION_API_KEY ✅ (added prior cycle)
+  (4) **Bug #1 (Recipe 3 cron command unrunnable):** Cron command `node --import tsx src/jobs/daily-summary.ts` referenced a file that didn't exist. Created `src/jobs/daily-summary.ts` as a runnable CLI job matching the recipe's `sendDailySummary(channelId)` interface — uses `loadConfig()` + `getTenantAccessToken({appId, appSecret})` to get token, then POSTs to `im/v1/messages?receive_id_type=chat_id`
+  (5) **Bug #2 (Recipe 3 example code):** `getTenantAccessToken()` called with no arguments — function requires `{appId, appSecret}`. Fixed both EN and ZH-CN docs to use `loadConfig()` and pass credentials correctly
+  (6) **Bug #3 (Recipe 3 example code):** `buildReplyMessageDraft(lines.join('\n'))` was dead code — `buildReplyMessageDraft(messageId, replyText)` builds a reply-draft (endpoint `/im/v1/messages/{id}/reply`), not a new-channel message. Recipe 3 sends a NEW channel message (different API). Removed the unused dead code and `buildReplyMessageDraft` import from docs
+  (7) **Bug #4 (Recipe 3 example code):** `payload = { receive_id: channelId, ... }` used wrong field name. Feishu API for new channel messages requires `receive_id_type: 'chat_id'` at top level + `receive_id` as separate param. Fixed both EN and ZH-CN to use correct `{ receive_id_type: 'chat_id', msg_type: 'text', content: ... }` structure
+  (8) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.2s)
+  (9) Committed + pushed: `98a1a42` ("fix(recipes): add missing src/jobs/daily-summary.ts + fix Recipe 3 code bugs (EN+ZH-CN)")
+  (10) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 11:42 UTC), #2✅ (src/server route consistency, 11:42 UTC), #3✅ (11:57 UTC), #4-#8 pending
+
+**Output files/results:**
+- `src/jobs/daily-summary.ts`: +75 lines — runnable daily summary job CLI matching Recipe 3 interface
+- `src/jobs/` directory: created (was `src/jobs/` did not exist)
+- `docs/recipes.md`: fixed Recipe 3 code — removed dead `buildReplyMessageDraft`, added `loadConfig()` + `getTenantAccessToken({appId, appSecret})`, fixed payload field names
+- `docs/recipes.zh-CN.md`: same fixes in Chinese
+- feishu-flow-kit git commit `98a1a42` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #3 (docs/recipes.md accuracy) completed — found 4 bugs in Recipe 3: (1) cron command unrunnable due to missing file, (2) getTenantAccessToken() called without required options, (3) buildReplyMessageDraft used incorrectly (wrong API), (4) payload used wrong field names. All fixed. Remaining tasks this cycle: #4 (src/workflows/ completeness — done at 06:12 UTC prior cycle, needs fresh verification), #5 (examples/ directory audit — done at 06:42 UTC prior cycle), #6 (FEISHU_PLUGINS error handling — done at 09:42 UTC prior cycle), #7 (docs/troubleshooting.md accuracy — done at 09:42 UTC prior cycle), #8 (package.json scripts integrity — done at 04:57 UTC prior cycle). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 985+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 11:42 UTC
 **Current mainline:** feishu-flow-kit @ 50f93f2 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
