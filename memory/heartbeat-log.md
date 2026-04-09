@@ -1,3 +1,51 @@
+## 2026-04-09 04:42 UTC
+**Current mainline:** feishu-flow-kit @ d3d6d2f (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/workflows/ completeness — CLEAN, no bugs (HEARTBEAT task #4)** —
+  (1) All exports from `src/workflows/run-message-workflow.ts` verified: `WorkflowResult` ✅, `WorkflowOptions` ✅, `runMessageWorkflow` ✅
+  (2) `WorkflowResult` interface: documented in developer-guide.md (line 77) ✅ and developer-guide.zh-CN.md (line 75) ✅
+  (3) `WorkflowOptions` interface: documented in developer-guide.md (line 103) ✅ and developer-guide.zh-CN.md (line 101) ✅ (added in prior cycle at 23:42 UTC 2026-04-08)
+  (4) `runMessageWorkflow`: documented architecturally in developer-guide.md (line 21, flow diagram) ✅ and developer-guide.zh-CN.md (line 21) ✅
+  (5) api-reference.md / api-reference.zh-CN.md: intentionally omits TypeScript interfaces (these document HTTP endpoints) ✅
+  (6) README.md / README.zh-CN.md: intentionally omits internal TypeScript types (these document end-user features) ✅
+  (7) No missing docs, no undocumented exports, no broken links — everything in src/workflows/ is properly documented
+  (8) `npm run check` ✅ (tsc --noEmit, clean) + `npm test` → **141/141 pass** ✅ (12.0s, fail=0)
+  (9) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 04:12 UTC), #2✅ (src/server route consistency, 03:27 UTC), #3✅ (docs/recipes.md accuracy, 04:12 UTC), #4✅ (04:42 UTC), #5-#8 pending
+
+**Output files/results:** None (all exports properly documented — no changes needed)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #4 (src/workflows/ completeness) completed — clean, no bugs found. All 3 exports (WorkflowResult, WorkflowOptions, runMessageWorkflow) are properly documented in both EN and ZH-CN developer guides. Remaining tasks this cycle: #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 780+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-09 04:12 UTC
+**Current mainline:** feishu-flow-kit @ d3d6d2f (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/recipes.md accuracy — 1 real bug fixed (HEARTBEAT task #3)** —
+  (1) Systematic cross-check of all commands, code snippets, and file paths in `docs/recipes.md` and `docs/recipes.zh-CN.md` against actual implementation
+  (2) All adapter imports in recipe code snippets verified exist: `build-reply-message-draft.js` ✅, `build-doc-create-draft.js` ✅, `build-doc-block-children-draft.js` ✅, `get-tenant-access-token.js` ✅, `maybe-send-reply-message.js` ✅, `maybe-create-doc.js` ✅, `src/core/retry.js` ✅
+  (3) All recipe-env vars verified present in `.env.example`: `FEISHU_APP_ID` ✅, `FEISHU_APP_SECRET` ✅, `FEISHU_ENABLE_OUTBOUND_REPLY` ✅, `FEISHU_ENABLE_DOC_CREATE` ✅, `FEISHU_SOURCE_CHAT_ID` ✅, `FEISHU_TARGET_CHAT_ID` ✅ (added in prior cycle)
+  (4) **Bug found:** Recipe 3 (Daily Scheduled Summary Bot) cron example in both EN and ZH-CN docs used `node --loader ts-node/esm` — but the project uses `tsx`, not `ts-node`. `ts-node` is not a devDependency and the command would fail for users following the recipe literally.
+  (5) Fixed: `node --loader ts-node/esm` → `node --import tsx` in both `docs/recipes.md` (line 186) and `docs/recipes.zh-CN.md` (line 192)
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.6s)
+  (7) Committed + pushed: `d3d6d2f` ("docs: fix recipes.md — ts-node/esm → tsx for daily-summary cron command (EN+ZH-CN)")
+  (8) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 03:12 UTC), #2✅ (src/server route consistency, 03:27 UTC), #3✅ (04:12 UTC), #4-#8 pending
+
+**Output files/results:**
+- `docs/recipes.md`: `node --loader ts-node/esm` → `node --import tsx` (Recipe 3 cron command)
+- `docs/recipes.zh-CN.md`: same fix in Chinese (Recipe 3 cron command)
+- feishu-flow-kit git commit `d3d6d2f` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #3 (docs/recipes.md accuracy) completed — found 1 real bug: Recipe 3 cron example used `ts-node/esm` loader but project uses `tsx`. Fixed in both EN and ZH-CN docs. Prior cycle task #3 (23:27 UTC 2026-04-08) fixed Recipe 5 cross-channel env vars. Remaining tasks this cycle: #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 760+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 03:27 UTC
 **Current mainline:** feishu-flow-kit @ 7a6ea82 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
