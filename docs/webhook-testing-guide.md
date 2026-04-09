@@ -22,6 +22,23 @@ bash ./scripts/test-webhook-local.sh all
 
 The script sends real Feishu webhook event payloads and prints the server's response.
 
+### Available Sample Events
+
+| File | Command / Scenario | Chat type | Language |
+|------|--------------------|-----------|----------|
+| `message-text-p2p.json` | `/doc Q2 product launch plan` | p2p | en |
+| `message-table-command.json` | `/table Sprint tasks` | p2p | en |
+| `message-help-command.json` | `/help` | p2p | en |
+| `message-greeting-plugin.json` | `/greeting Alice` (plugin) | p2p | en |
+| `message-poll-plugin.json` | `/poll Which feature first?` (plugin) | p2p | en |
+| `message-zh-lang.json` | `/doc 每周项目进展报告` | p2p | zh |
+| `message-group-chat.json` | `/doc meeting notes` | group | en |
+| `message-todo-command.json` | `/todo Review PR #42` | p2p | en |
+| `message-doc-command-doc.json` | `/doc` (no args) | p2p | en |
+| `message-table-command-no-arg.json` | `/table` (no args) | p2p | en |
+
+> **Note:** All sample events use the `local-dev-tenant` tenant key. See `examples/webhook-events/README.md` for the full payload format.
+
 ## Using Mock Events
 
 For local development without a live Feishu connection, set the mock event path:
