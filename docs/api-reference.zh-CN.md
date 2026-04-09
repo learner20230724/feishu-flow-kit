@@ -384,7 +384,7 @@ Base64 编码 ──► 与 X-Lark-Signature 请求头比对
 |------|----------|------|
 | `FEISHU_WEBHOOK_SECRET` | `POST /webhook` | 启用 HMAC 签名验证 |
 | `FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS` | `POST /webhook` | 重放保护的时间戳容忍度（默认：300） |
-| `PORT` | 所有端点 | 服务器端口（默认：8787） |
+| `FEISHU_WEBHOOK_PORT` | 所有端点 | 服务器端口（默认：8787） |
 | `NODE_ENV` | 所有端点 | 设为 `production` 以启用 Sentry 面包屑 |
 | `SENTRY_DSN` | 所有端点 | 启用 Sentry 错误跟踪 |
 | `FEISHU_TENANTS` | `GET /status` | 多租户配置 JSON（参见 [部署指南](./deployment.zh-CN.md)） |

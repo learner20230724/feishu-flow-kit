@@ -384,7 +384,7 @@ Base64 encode ──► Compare to X-Lark-Signature header
 |----------|----------|--------|
 | `FEISHU_WEBHOOK_SECRET` | `POST /webhook` | Enables HMAC signature verification |
 | `FEISHU_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS` | `POST /webhook` | Timestamp tolerance for replay protection (default: 300) |
-| `PORT` | All | Server port (default: 8787) |
+| `FEISHU_WEBHOOK_PORT` | All | Server port (default: 8787) |
 | `NODE_ENV` | All | Set to `production` for Sentry breadcrumbs |
 | `SENTRY_DSN` | All | Enables Sentry error tracking |
 | `FEISHU_TENANTS` | `GET /status` | Multi-tenant config JSON (see [Deployment Guide](./deployment.md)) |
