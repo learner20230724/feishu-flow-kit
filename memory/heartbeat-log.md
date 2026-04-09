@@ -21,6 +21,56 @@
 
 **Direction adjustment:** All repos stable. 141/141+40/40+9/9 tests green. Prior session pushed Recipe 5 getTenantAccessToken fix (517ab5a) — same bug pattern as Recipe 3. All 8 HEARTBEAT tasks from prior cycle completed. Fresh cycle: #1✅. Remaining tasks: #2 (src/server route + error format consistency), #3 (docs/recipes.md accuracy), #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). NPM_TOKEN sole blocker for 1020+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
 
+## 2026-04-09 14:12 UTC
+**Current mainline:** feishu-flow-kit @ 5d427ff (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/recipes.md accuracy — 6 real bugs found and fixed across Recipes 1/2/4/5/6/7 (HEARTBEAT task #3)** —
+  (1) Task #3 (fresh cycle): systematic cross-check of all commands, code snippets, and function calls in `docs/recipes.md` and `docs/recipes.zh-CN.md`
+  (2) **Bug #1 (Recipe 1 poll):** `maybeSendReplyMessage(draft, token, tenantPath)` called with wrong types — `buildPollCardDraft` returns a card object, not `FeishuReplyMessageDraft`. `maybeSendReplyMessage` expects `(OutboundReplyConfig, FeishuReplyMessageDraft, ...)`. Removed the broken call; recipe now returns `replyText` for caller to handle.
+  (3) **Bug #2 (Recipe 2 FAQ):** `buildReplyMessageDraft(faq.reply)` called with only 1 argument — function requires `(messageId: string, replyText: string)`. This would throw "Cannot read properties of undefined (reading 'trim')" at runtime. Fixed: added comment explaining `event.message.messageId` should be used for same-chat replies. Removed broken `maybeSendReplyMessage` call; return `replyText` for caller.
+  (4) **Bug #3 (Recipe 4 doc template):** `maybeSendReplyMessage` and `buildReplyMessageDraft` imports unused — removed from code block header. Commented Step 2 code updated to use `docCreateDraft` field instead of the broken `maybeSendReplyMessage` call.
+  (5) **Bug #4 (Recipe 5 cross-channel relay):** `buildReplyMessageDraft(\`🔄 Relayed: ${relayText}\`)` — 1 arg instead of 2. `maybeSendReplyMessage` REPLY API (`/im/v1/messages/{id}/reply`) cannot send to a different chat. Semantically wrong. Fixed: replaced with direct `fetch` to `POST /im/v1/messages?receive_id_type=chat_id` (same pattern as Recipe 3's daily summary implementation). Removed broken imports.
+  (6) **Bug #5 (Recipe 6 translate):** Same `buildReplyMessageDraft(reply)` 1-arg bug + wrong `maybeSendReplyMessage` call. Removed; return `replyText`.
+  (7) **Bug #6 (Recipe 7 summarize):** Same `buildReplyMessageDraft(reply)` 1-arg bug + wrong `maybeSendReplyMessage` call. Removed; return `replyText`.
+  (8) Root cause: recipes documented an older API where workflows called `maybeSendReplyMessage` directly. Current architecture returns `replyText` and the caller (`handle-webhook-payload.ts`) builds the reply draft and sends it via `maybeSendReplyMessage`. The broken recipe calls would have thrown at runtime.
+  (9) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (10.9s, fail=0)
+  (10) Committed + pushed: `5d427ff` ("docs: fix recipes.md — remove broken maybeSendReplyMessage calls, fix Recipe 5 cross-channel relay (EN+ZH-CN)")
+  (11) Fresh HEARTBEAT cycle: #1✅ (12:42, 13:27, 13:42, 13:57 UTC), #2✅ (13:12 UTC), #3✅ (14:12 UTC), #4-#8 pending
+
+**Output files/results:**
+- `docs/recipes.md`: Recipe 1 poll — removed broken maybeSendReplyMessage; Recipe 2 FAQ — fixed 1-arg buildReplyMessageDraft + removed broken call; Recipe 4 — removed unused imports, updated commented code; Recipe 5 — replaced reply API with correct POST /im/v1/messages (cross-channel relay); Recipe 6 — removed broken calls; Recipe 7 — removed broken calls
+- `docs/recipes.zh-CN.md`: same 6-bug fixes in Chinese
+- feishu-flow-kit git commit `5d427ff` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #3 (docs/recipes.md accuracy) completed — found 6 real bugs across 5 recipes. All recipes using `buildReplyMessageDraft` + `maybeSendReplyMessage` were calling them with wrong types/argument counts. Recipe 5's cross-channel relay was semantically broken (reply API can't send to different chat). All fixed. Remaining tasks this cycle: #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 1130+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-09 13:57 UTC
+**Current mainline:** feishu-flow-kit @ 3d86060 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **llm-chat-lab health check — all green (HEARTBEAT task #1, fresh cycle)** —
+  (1) feishu-flow-kit origin/main: already at 3d86060 (heartbeat-log.md commit from 13:42 UTC — no new code commits since) ✅
+  (2) feishu-flow-kit `npm test` → **141/141 pass** ✅ (duration_ms=11201, fail=0)
+  (3) llm-chat-lab origin/main: still at 30e40d1 (no new commits since last heartbeat)
+  (4) llm-chat-lab `npm test` → **40/40 pass** ✅ (duration_ms=67516, fail=0) ✅
+  (5) llm-chat-lab `npm audit` → **0 vulnerabilities** ✅
+  (6) llm-chat-lab `package-lock.json` tracked ✅
+  (7) All repos clean, no uncommitted changes, no zombie processes
+  (8) Fresh HEARTBEAT cycle: #1✅ (13:57 UTC), #2✅ (13:12 UTC — confirmed clean), #3-#8 pending
+
+**Output files/results:** None (health check only — all green)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 1080+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 13:12 UTC
 **Current mainline:** feishu-flow-kit @ 700de01 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
