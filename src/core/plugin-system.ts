@@ -41,6 +41,9 @@
  * Sentry (if configured) without crashing the webhook handler.
  */
 
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'node:path';
+
 import type { FeishuMessageEvent } from '../types/feishu-event.js';
 import type { WorkflowOptions, WorkflowResult } from '../workflows/run-message-workflow.js';
 import type { AppConfig } from '../config/load-config.js';
@@ -184,7 +187,15 @@ export async function loadPlugins(
 
   for (const moduleSpec of specs) {
     try {
-      const mod = await import(/* @vite-ignore */ moduleSpec) as {
+      // Resolve relative paths (./, ../, /) against the process working directory
+      // so FEISHU_PLUGINS=./plugins/my-plugin.js works from the project root,
+      // not from where dist/core/plugin-system.js lives.
+      const isRelativePath = moduleSpec.startsWith('.') || moduleSpec.startsWith('/');
+      const resolvedSpec = isRelativePath
+        ? pathToFileURL(resolve(process.cwd(), moduleSpec)).href
+        : moduleSpec;
+
+      const mod = await import(/* @vite-ignore */ resolvedSpec) as {
         createPlugin?: (config: AppConfig) => FeishuPlugin | Promise<FeishuPlugin>;
         default?: FeishuPlugin;
         plugin?: FeishuPlugin;
