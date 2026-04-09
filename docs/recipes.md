@@ -309,6 +309,7 @@ FEISHU_TARGET_CHAT_ID=oc_yyyyy
 ```typescript
 // src/jobs/relay-messages.ts
 import { getTenantAccessToken } from '../adapters/get-tenant-access-token.js';
+import { loadConfig } from '../config/load-config.js';
 import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
 import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
 
@@ -323,7 +324,11 @@ interface FeishuMessage {
 }
 
 export async function relayNewMessages(): Promise<number> {
-  const token = await getTenantAccessToken();
+  const config = loadConfig();
+  const token = await getTenantAccessToken({
+    appId: config.appId,
+    appSecret: config.appSecret,
+  });
 
   // Fetch recent messages from source chat
   const resp = await fetch(
