@@ -17,7 +17,7 @@ Feishu requires your webhook URL to match exactly what your server sends in veri
 curl https://your-ngrok-url.ngrok.io/status
 
 # Update webhook URL in Feishu Open Platform console
-# Required: HTTPS URL, must respond to GET /webhook with challenge parameter
+# Required: HTTPS URL; server must handle POST /webhook with JSON body {type:'url_verification', challenge:'...'}
 ```
 
 **Check 2 — Server not running**
@@ -215,10 +215,10 @@ Returns JSON with `uptimeSeconds`, `eventCount`, `lastEventAt`, and server flags
 
 After server start, look for this log line:
 ```
-Plugin system loaded, plugins: greeting,poll,help
+plugins loaded { names: ['greeting', 'poll', 'help'], commands: ['greeting', 'poll', 'help'] }
 ```
 
-If empty, no plugins were found — check `FEISHU_PLUGINS` and plugin file paths.
+If no `plugins loaded` line appears, no plugins were found — check `FEISHU_PLUGINS` and plugin file paths.
 
 ### Test a webhook event locally
 
