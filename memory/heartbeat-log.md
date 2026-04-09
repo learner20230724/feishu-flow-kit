@@ -1,3 +1,27 @@
+## 2026-04-09 04:57 UTC
+**Current mainline:** feishu-flow-kit @ 4687c1d (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **package.json scripts integrity — 1 real bug found and fixed (HEARTBEAT task #8)** —
+  (1) All 16 npm scripts in `package.json` verified documented somewhere (README, developer-guide, or inline)
+  (2) **Bug found:** CONTRIBUTING.md line 240 (PR Checklist) still says "`npm test` passes (130/130)" — but the test count was updated to 141 in commit d7747d9 (02:57 UTC), which fixed lines 31 and 213 to 141/141, but missed line 240
+  (3) The stale 130/130 at line 240 was a direct remnant of the pre-d7747d9 test count (130) that was never updated when the count went from 130→141
+  (4) Fixed: `130/130` → `141/141` in PR Checklist (CONTRIBUTING.md line 240)
+  (5) All other npm script references verified correct: `npm run dev` ✅, `npm start` ✅ (start script added 01:27 UTC 181bdf5), `npm test` ✅, `npm run check` ✅, all table/docs/verify/demo scripts ✅
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (10.6s)
+  (7) Committed + pushed: `4687c1d` ("docs: fix CONTRIBUTING.md — PR checklist stale 130/130 → 141/141 test count")
+  (8) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 04:12 UTC), #2✅ (src/server route consistency, 03:27 UTC), #3✅ (docs/recipes.md accuracy, 04:12 UTC), #4✅ (src/workflows/ completeness, 04:42 UTC), #5-#7 pending, #8✅ (04:57 UTC)
+
+**Output files/results:**
+- `CONTRIBUTING.md`: line 240 PR checklist `130/130` → `141/141`
+- feishu-flow-kit git commit `4687c1d` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #8 (package.json scripts integrity) completed — found 1 real bug: PR checklist in CONTRIBUTING.md still had stale 130/130 test count (missed when d7747d9 updated lines 31+213 to 141 but not line 240). Remaining tasks this cycle: #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 800+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 04:42 UTC
 **Current mainline:** feishu-flow-kit @ d3d6d2f (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
