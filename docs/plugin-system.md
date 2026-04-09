@@ -342,6 +342,21 @@ If a plugin throws, the error is caught and logged without crashing the webhook:
 [plugin-system] Plugin "bad-plugin" handle() threw: Error: something went wrong
 ```
 
+### Startup Errors
+
+Plugin loading failures are **non-fatal** — the server starts with the remaining plugins. Each failure prints a clear message to stderr:
+
+| Scenario | Log prefix | Example message |
+|---|---|---|
+| Module not found / path error | `[plugin-system] Failed to load plugin` | `Failed to load plugin "./plugins/cat.js": Error [ERR_MODULE_NOT_FOUND]` |
+| Syntax error in module | `[plugin-system] Failed to load plugin` | `Failed to load plugin "./plugins/broken.js": SyntaxError: Unexpected token` |
+| No recognised exports | `[plugin-system] Module` (warn) | `Module "./plugins/empty.js" exports nothing recognised. Expected createPlugin, default, or plugin export.` |
+| Non-conforming plugin object | `[plugin-system] Failed to load plugin` | `Failed to load plugin "./plugins/bad-plugin.js": Error: Plugin does not conform to FeishuPlugin (missing name or register).` |
+| `register()` throws | `[plugin-system] Plugin` | `Plugin "my-plugin" register() threw: Error: DB connection failed` |
+| Duplicate command name | `Error` (unhandled) | `Plugin "plugin-b" tried to register "/ping" but it is already registered by "plugin-a".` |
+
+All paths in `FEISHU_PLUGINS` are resolved relative to the **project root** (where you run `npm start`), not relative to `dist/core/`.
+
 ---
 
 ## Migrating from v1.0 (no plugin system)
