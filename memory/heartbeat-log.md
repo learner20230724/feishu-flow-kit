@@ -1,3 +1,28 @@
+## 2026-04-09 05:57 UTC
+**Current mainline:** feishu-flow-kit @ aa7e7c6 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/recipes.md accuracy — 1 real bug found and fixed (HEARTBEAT task #3)** —
+  (1) Systematic cross-check of all commands, code snippets, and env vars in `docs/recipes.md` and `docs/recipes.zh-CN.md` against actual implementation
+  (2) All adapter imports verified exist: `build-reply-message-draft.ts` ✅, `build-doc-create-draft.ts` ✅, `build-doc-block-children-draft.ts` ✅, `get-tenant-access-token.ts` ✅, `maybe-send-reply-message.ts` ✅, `maybe-create-doc.ts` ✅, `src/core/retry.ts` ✅
+  (3) All recipe env vars verified present in `.env.example`: `FEISHU_APP_ID` ✅, `FEISHU_APP_SECRET` ✅, `FEISHU_ENABLE_OUTBOUND_REPLY` ✅, `FEISHU_ENABLE_DOC_CREATE` ✅, `FEISHU_SOURCE_CHAT_ID` ✅, `FEISHU_TARGET_CHAT_ID` ✅
+  (4) **Bug found:** Recipe 6 (`/translate` with External API) references `TRANSLATION_API_KEY` in both the env var table (docs/recipes.md line 497, docs/recipes.zh-CN.md line 480) and in code (`process.env.TRANSLATION_API_KEY!` at recipes.md line 402, recipes.zh-CN.md line 389), but `.env.example` did NOT have this variable
+  (5) Users following Recipe 6 would not find `TRANSLATION_API_KEY` in `.env.example` and wouldn't know to configure it
+  (6) Fixed: Added `TRANSLATION_API_KEY=` to `.env.example` under new "Custom Integrations (Recipe 6)" section with clarifying comment about DeepL and Google Translate API options
+  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.2s, fail=0)
+  (8) Committed + pushed: `aa7e7c6` ("fix(env): add TRANSLATION_API_KEY to .env.example (Recipe 6)")
+  (9) Prior cycle completed: #1✅ (llm-chat-lab health, 05:12 UTC), #2✅ (src/server route consistency, 05:42 UTC). Fresh cycle: #1✅, #2✅, #3✅ (05:57 UTC), #4-#8 pending
+
+**Output files/results:**
+- `.env.example`: +5 lines — added `TRANSLATION_API_KEY=` under new "Custom Integrations (Recipe 6)" section with DeepL/Google Translate comment
+- feishu-flow-kit git commit `aa7e7c6` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #3 (docs/recipes.md accuracy) completed — found 1 real bug: `TRANSLATION_API_KEY` for Recipe 6 was missing from `.env.example` despite being referenced in the env var table and code. Fixed same pattern as Recipe 5 `FEISHU_SOURCE/TARGET_CHAT_ID` fix from prior cycle. Remaining tasks this cycle: #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 830+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 05:12 UTC
 **Current mainline:** feishu-flow-kit @ 4687c1d (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
