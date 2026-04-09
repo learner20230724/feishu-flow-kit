@@ -1,5 +1,27 @@
+## 2026-04-09 14:57 UTC
+**Current mainline:** feishu-flow-kit @ d838df4 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **FEISHU_PLUGINS error handling — 1 documentation gap found and fixed (HEARTBEAT task #6)** —
+  (1) Systematic verification of all plugin failure scenarios against `src/core/plugin-system.ts` and `src/server/handle-webhook-payload.ts`
+  (2) All 6 Startup Errors (from prior cycle fix at 09:42 UTC) confirmed documented in `docs/plugin-system.md` Startup Errors table: Module not found ✅, Syntax error ✅, No recognised exports ✅, Non-conforming plugin object ✅, `register()` throws ✅, Duplicate command name ✅
+  (3) Path resolution fix (00:27 UTC: relative paths now resolve from cwd) confirmed documented: "All paths in `FEISHU_PLUGINS` are resolved relative to the project root" ✅
+  (4) **Gap found:** Runtime Errors section only showed `handle()` throwing as an explicit example, while the general "If a plugin throws" statement covered all hooks but without specifics for `beforeProcess()`, `onCommandResult()`, and `afterProcess()` — these are documented but users wouldn't know what log message to expect for each
+  (5) Fixed: added Runtime Errors table documenting all 4 lifecycle hook throwing scenarios with log prefix and workflow effect: `beforeProcess()` throws → error logged, workflow continues; `handle()` throws → error reply sent to user, workflow continues; `onCommandResult()` throws → error logged, reply/tags unchanged; `afterProcess()` throws → error logged, webhook response unaffected
+  (6) `npm run check` ✅ (tsc --noEmit, clean) + `npm test` → **141/141 pass** ✅ (12.7s, fail=0)
+  (7) Committed + pushed: `d838df4` ("docs(plugin-system): add Runtime Errors table for all lifecycle hook throwing scenarios")
+  (8) Fresh HEARTBEAT cycle: #1✅ (12:42, 13:27, 13:57, 14:12, 14:27, 14:42 UTC), #2✅ (12:57, 13:12, 14:27 UTC), #3✅ (11:57, 14:12 UTC), #4✅ (06:12, 12:12, 14:27 UTC), #5✅ (06:42, 14:42 UTC), #6✅ (14:57 UTC), #7-#8 pending
+
+**Output files/results:**
+- `docs/plugin-system.md`: +9 lines, -1 line — added Runtime Errors table (4 lifecycle hook throwing scenarios: beforeProcess, handle, onCommandResult, afterProcess) + updated intro sentence
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #6 (FEISHU_PLUGINS error handling) completed — found 1 documentation gap: Runtime Errors section only showed `handle()` throwing explicitly; `beforeProcess()`, `onCommandResult()`, and `afterProcess()` throwing were covered by a general "If a plugin throws" statement but users would not know the specific log prefix for each. Added a Runtime Errors table covering all 4 lifecycle hook throwing scenarios with log prefixes and workflow effects. All 6 Startup Errors already documented from prior cycle. Remaining tasks this cycle: #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 1195+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 14:42 UTC
-**Current mainline:** feishu-flow-kit @ 6f6628e (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
 **What was completed:**
 - **examples/ directory audit — 1 real bug found and fixed (HEARTBEAT task #5)** —
