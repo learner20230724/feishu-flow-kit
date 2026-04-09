@@ -44,6 +44,7 @@ export function getServerStatus(config: {
   enableOutboundReply: boolean;
   enableDocCreate: boolean;
   enableTableCreate: boolean;
+  sentry: boolean;
 }): ServerStatus {
   const uptimeMs = Date.now() - _startedAt;
   return {
@@ -55,7 +56,7 @@ export function getServerStatus(config: {
       outboundReply: config.enableOutboundReply,
       docCreate: config.enableDocCreate,
       tableCreate: config.enableTableCreate,
-      sentry: false,
+      sentry: config.sentry,
     },
     lastEventAt: _lastEventAt,
     eventCount: _eventCount,

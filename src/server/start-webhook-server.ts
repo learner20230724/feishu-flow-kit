@@ -93,6 +93,7 @@ export function startWebhookServer(
         enableOutboundReply: config.enableOutboundReply,
         enableDocCreate: config.enableDocCreate,
         enableTableCreate: config.enableTableCreate,
+        sentry: Boolean(process.env.SENTRY_DSN),
       });
       const tenants = config.tenants ?? [];
       const multiTenantMode = tenants.length > 0 ? 'multi-tenant' : 'single-app';
