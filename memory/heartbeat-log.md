@@ -1,3 +1,29 @@
+## 2026-04-09 02:57 UTC
+**Current mainline:** feishu-flow-kit @ d7747d9 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **package.json scripts integrity — 4 real bugs fixed in CONTRIBUTING.md (HEARTBEAT task #8)** —
+  (1) Verified all 16 npm scripts in `package.json` are documented somewhere (README, developer-guide, or inline)
+  (2) Bug #1: CONTRIBUTING.md line 24 — `npm run dev` comment said "ts-node-dev" but script uses `tsx src/index.ts`. Fixed: "ts-node-dev" → "tsx (auto-reload on file changes)"
+  (3) Bug #2: CONTRIBUTING.md lines 31 + 213 — stale "130 tests" (now 141). Fixed: "130 tests" → "141 tests" in both occurrences
+  (4) Bug #3: CONTRIBUTING.md line 32 — `npm run test:watch` referenced but this script does NOT exist in `package.json`. Removed + replaced with comment
+  (5) Bug #4: CONTRIBUTING.md line 38 — `npm run typecheck` but correct script name is `check`. Fixed: `npm run typecheck` → `npm run check`
+  (6) Bug #5: CONTRIBUTING.md line 214 — `npm run test:coverage` referenced but this script does NOT exist. Removed
+  (7) All 16 scripts now have valid doc references: dev ✅, build ✅, check ✅, test ✅, table:mapping-draft ✅, table:normalize-feishu-fields ✅, table:extract-select-option-review ✅, table:validate-select-option-override ✅, table:validate-mapping-config ✅, docs:export-svg-png ✅, docs:export-assets ✅, verify:table-schema-handoff ✅, verify:release ✅, demo ✅, demo:plugins ✅, start ✅
+  (8) `npm run check` ✅ + `npm test` → **141/141 pass** ✅ (12.5s)
+  (9) Committed + pushed: `d7747d9` ("docs: fix CONTRIBUTING.md — 4 script references corrected/removed")
+  (10) Fresh HEARTBEAT cycle: #1✅ (01:42 UTC), #2✅ (01:42 UTC), #3✅ (00:27 UTC prior cycle), #4✅ (23:42 UTC prior), #5✅ (00:12 UTC prior), #6✅ (00:27 UTC prior), #7✅ (01:27 UTC prior), #8✅ (02:57 UTC)
+
+**Output files/results:**
+- `CONTRIBUTING.md`: ts-node-dev→tsx (line 24), 130→141 tests (lines 31+213), `npm run test:watch` removed (line 32), `npm run typecheck`→`npm run check` (line 38), `npm run test:coverage` removed (line 214)
+- feishu-flow-kit git commit `d7747d9` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #8 (package.json scripts integrity) completed — found 4 real bugs in CONTRIBUTING.md. Fresh HEARTBEAT cycle complete: #1-#8 all ✅. All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 730+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 01:42 UTC
 **Current mainline:** feishu-flow-kit @ fd7efec/181bdf5 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
