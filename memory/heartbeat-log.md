@@ -1,3 +1,27 @@
+## 2026-04-09 06:42 UTC
+**Current mainline:** feishu-flow-kit @ 0e4fff3 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **examples/ directory audit — 1 real bug found and fixed (HEARTBEAT task #5)** —
+  (1) Systematically verified every file in `examples/` is referenced/linked somewhere in `docs/`
+  (2) All 4 mock-*.json files verified referenced in `docs/webhook-testing-guide.md` (lines 34-37): `mock-message-event.json` ✅, `mock-doc-message-event.json` ✅, `mock-table-message-event.json` ✅, `mock-table-rich-message-event.json` ✅
+  (3) `examples/webhook-events/README.md` documents all 10 files, but 8 of 10 were NOT referenced in any `docs/` file
+  (4) **Bug found:** `webhook-testing-guide.md` only listed `message-text-p2p.json` in the Quick Test section (line 17). The other 9 files were effectively invisible to docs readers: `message-table-command.json`, `message-help-command.json`, `message-greeting-plugin.json`, `message-poll-plugin.json`, `message-zh-lang.json`, `message-group-chat.json`, `message-todo-command.json`, `message-doc-command-doc.json`, `message-table-command-no-arg.json`
+  (5) Fixed: added "Available Sample Events" table to `docs/webhook-testing-guide.md` (after the `test-webhook-local.sh all` example) listing all 10 webhook-event files with their command/scenario, chat type, and language columns — matching the structure of `examples/webhook-events/README.md`
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.1s, fail=0)
+  (7) Committed + pushed: `0e4fff3` ("docs: add all 10 webhook-events to webhook-testing-guide table (examples/ audit)")
+  (8) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 03:12 UTC), #2✅ (src/server route consistency, 03:27 UTC), #3✅ (docs/recipes.md accuracy, 04:12 UTC), #4✅ (src/workflows/ completeness, 06:12 UTC), #5✅ (examples/ directory audit, 06:42 UTC), #6-#8 pending
+
+**Output files/results:**
+- `docs/webhook-testing-guide.md`: +17 lines — added "Available Sample Events" table listing all 10 webhook-event files with command/scenario, chat type, and language columns
+- feishu-flow-kit git commit `0e4fff3` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #5 (examples/ directory audit) completed — found 1 real bug: `webhook-testing-guide.md` only referenced `message-text-p2p.json` from 10 available webhook-event sample files; 9 others were documented in `examples/webhook-events/README.md` but invisible in docs. All mock-*.json files were already properly referenced. Fixed by adding full sample-events table to webhook-testing-guide. Remaining tasks this cycle: #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 890+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 06:12 UTC
 **Current mainline:** feishu-flow-kit @ cb02fd6 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
