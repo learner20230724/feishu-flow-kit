@@ -24,7 +24,7 @@ curl https://your-ngrok-url.ngrok.io/status
 
 ```bash
 npm run dev        # development
-npm run build && node dist/index.js  # production (compile then run)
+npm start          # production (after npm run build)
 docker compose up  # via Docker
 ```
 
@@ -82,7 +82,7 @@ Your `FEISHU_APP_ID` or `FEISHU_APP_SECRET` is incorrect. Double-check the value
 
 2. **Document creation is async**: The bot sends a draft reply immediately. Check the Feishu document list to confirm the doc was actually created.
 
-3. **If using `/doc outline`**: Ensure the outline format is valid Lark Markdown. See the [`/doc` block type syntax](./developer-guide.md#-doc-block-type-syntax) section in the developer guide for supported syntax.
+3. **If using `/doc outline`**: Ensure the outline format is valid Lark Markdown (see [Rich Content Format](./developer-guide.md#rich-content-format)).
 
 ---
 
@@ -123,7 +123,7 @@ docker compose logs -f
 ```
 
 Common causes:
-- **Missing `.env`**: For root Docker setup, `cp .env.example .env`; for production VPS deploy, `cd deploy && cp .env.production.example .env.production` and edit with your values
+- **Missing `.env`**: Copy `.env.production.example` to `.env` and fill in your values
 - **Port already in use**: Change `PORT` in `.env` (e.g., `PORT=8788`)
 - **ngrok URL not configured**: Webhook URL in Feishu console must match `VPS_FQDN`
 
@@ -198,7 +198,7 @@ The verification requires your server to respond to a GET request with the `chal
 ### Enable debug logging
 
 ```bash
-LOG_LEVEL=debug npm run dev
+LOG_LEVEL=debug npm start
 ```
 
 This outputs structured logs with `requestId` for tracing each event.

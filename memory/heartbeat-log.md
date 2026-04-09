@@ -1,28 +1,3 @@
-## 2026-04-09 00:42 UTC
-**Current mainline:** feishu-flow-kit @ 37df689 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
-
-**What was completed:**
-- **docs/troubleshooting.md accuracy — 4 bugs found and fixed (HEARTBEAT task #7)** —
-  (1) Systematic cross-check of all commands, file paths, and links in `docs/troubleshooting.md` against actual workspace
-  (2) **Bug #1 (line 28):** `npm start` — no such script in `package.json` (only `dev`, `build`, etc.). Fixed: `npm start` → `npm run build && node dist/index.js`
-  (3) **Bug #2 (line 201):** `LOG_LEVEL=debug npm start` — same nonexistent script. Fixed: `npm start` → `npm run dev`
-  (4) **Bug #3 (line 126):** `.env.production.example` at project root — file doesn't exist at root (it's at `deploy/.env.production.example`). Root docker-compose.yml uses `.env.example`. Fixed: split into two scenarios — root Docker (`cp .env.example .env`) and production VPS deploy (`cd deploy && cp .env.production.example .env.production`)
-  (5) **Bug #4 (line 37):** `./developer-guide.md#rich-content-format` — no such section in developer-guide.md. Actual section is `#### /doc block type syntax`. Fixed: updated link text and anchor to `./developer-guide.md#-doc-block-type-syntax`
-  (6) All other references verified: `./developer-guide.md` ✅, `./webhook-testing-guide.md` ✅, `./scripts/test-webhook-local.sh` ✅, `./examples/webhook-events/message-text-p2p.json` ✅, `../README.md#supported-bitable-field-types` ✅
-  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.8s)
-  (8) Committed + pushed: `37df689` ("docs: fix troubleshooting.md — npm start (x2), .env.production.example path, broken rich-content-format link")
-  (9) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 00:27 UTC), #2✅ (src/server route consistency, prior cycle), #3✅ (recipes.md accuracy, prior cycle), #4✅ (workflows completeness, prior cycle), #5✅ (examples/ audit, prior cycle), #6✅ (FEISHU_PLUGINS error handling, 00:27 UTC), #7✅ (this heartbeat, 00:42 UTC), #8🔜 (package.json scripts integrity)
-
-**Output files/results:**
-- `docs/troubleshooting.md`: `npm start` → `npm run build && node dist/index.js` (line 28); `npm start` → `npm run dev` (line 201); `.env.production.example` → clarified `cp .env.example .env` (root) or `cd deploy && cp .env.production.example .env.production` (VPS); `#rich-content-format` → `#-doc-block-type-syntax`
-- feishu-flow-kit git commit `37df689` pushed to origin/main
-
-**Problems:** None.
-
-**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
-
-**Direction adjustment:** HEARTBEAT task #7 (docs/troubleshooting.md accuracy) completed — found 4 bugs: two `npm start` references (no such script), wrong `.env.production.example` path, and broken `#rich-content-format` anchor. Remaining task this cycle: #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 600+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
-
 ## 2026-04-09 00:27 UTC
 **Current mainline:** feishu-flow-kit @ 86e938e (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
