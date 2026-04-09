@@ -144,12 +144,21 @@ export async function runMessageWorkflow(
 ```typescript
 // src/jobs/daily-summary.ts
 import { getTenantAccessToken } from '../adapters/get-tenant-access-token.js';
-import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
-import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
+import { loadConfig } from '../config/load-config.js';
 
 export async function sendDailySummary(channelId: string): Promise<void> {
-  const token = await getTenantAccessToken();
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const config = loadConfig();
+  const token = await getTenantAccessToken({
+    appId: config.appId,
+    appSecret: config.appSecret,
+  });
+
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
   const lines = [
     `📅 **Daily Summary — ${today}**`,
@@ -161,19 +170,24 @@ export async function sendDailySummary(channelId: string): Promise<void> {
     'Have a great day!',
   ];
 
-  const draft = buildReplyMessageDraft(lines.join('\n'));
   // Feishu channel message uses im/v1/messages API with receive_id_type='chat_id'
   const payload = {
-    receive_id: channelId,
+    receive_id_type: 'chat_id',
     msg_type: 'text',
-    content: JSON.stringify({ text: draft.content }),
+    content: JSON.stringify({ text: lines.join('\n') }),
   };
 
-  const resp = await fetch('https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  const resp = await fetch(
+    'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    }
+  );
 
   if (!resp.ok) throw new Error(`Failed to send summary: ${resp.status}`);
 }

@@ -143,11 +143,15 @@ export async function runMessageWorkflow(
 ```typescript
 // src/jobs/daily-summary.ts
 import { getTenantAccessToken } from '../adapters/get-tenant-access-token.js';
-import { maybeSendReplyMessage } from '../adapters/maybe-send-reply-message.js';
-import { buildReplyMessageDraft } from '../adapters/build-reply-message-draft.js';
+import { loadConfig } from '../config/load-config.js';
 
 export async function sendDailySummary(channelId: string): Promise<void> {
-  const token = await getTenantAccessToken();
+  const config = loadConfig();
+  const token = await getTenantAccessToken({
+    appId: config.appId,
+    appSecret: config.appSecret,
+  });
+
   const today = new Date().toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'long',
@@ -165,18 +169,21 @@ export async function sendDailySummary(channelId: string): Promise<void> {
     '祝你有美好的一天！',
   ];
 
-  const draft = buildReplyMessageDraft(lines.join('\n'));
+  // Feishu channel message uses im/v1/messages API with receive_id_type='chat_id'
   const payload = {
-    receive_id: channelId,
+    receive_id_type: 'chat_id',
     msg_type: 'text',
-    content: JSON.stringify({ text: draft.content }),
+    content: JSON.stringify({ text: lines.join('\n') }),
   };
 
   const resp = await fetch(
     'https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',
     {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(payload),
     }
   );
