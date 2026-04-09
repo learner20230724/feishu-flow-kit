@@ -1,3 +1,33 @@
+## 2026-04-09 03:27 UTC
+**Current mainline:** feishu-flow-kit @ 7a6ea82 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/server/ route + error format consistency — 1 critical bug fixed (HEARTBEAT task #2)** —
+  (1) Systematic cross-check of all server routes in `src/server/start-webhook-server.ts` + `src/server/handle-webhook-payload.ts` against `docs/api-reference.md` and `docs/api-reference.zh-CN.md`
+  (2) All error responses (401, 400, 403, 404, 405, 500) verified: correct `{ok, error, requestId}` envelope ✅
+  (3) GET /healthz: correctly documented ✅
+  (4) GET /status: correctly documented (fixed in prior cycle at 02:42 UTC) ✅
+  (5) URL verification: correctly documented as `{challenge, requestId}` (no `ok`) ✅
+  (6) **Bug found:** POST /webhook success response JSON example had incorrect `docCreate`, `tableCreate`, and `outboundReply` field shapes:
+      - Docs showed flat `{ok, docId?, url?, skippedReason?}` but actual code returns nested `{attempted, skippedReason?, response?: {ok, documentId?, url?, raw}}`
+      - Same pattern for `tableCreate` and `outboundReply` — `response` object contains the `ok` field, not top-level
+      - Confirmed by tracing `MaybeSendReplyMessageResult`, `MaybeCreateDocResult`, `MaybeCreateTableRecordResult` interfaces in `src/adapters/`
+  (7) Fixed both EN and ZH-CN api-reference docs: updated JSON examples and field type descriptions to match actual nested structure
+  (8) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.4s)
+  (9) Committed + pushed: `7a6ea82` ("docs: fix POST /webhook response — correct docCreate/tableCreate/outboundReply field shapes (EN+ZH-CN)")
+  (10) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 03:12 UTC), #2✅ (03:27 UTC), #3-#8 pending
+
+**Output files/results:**
+- `docs/api-reference.md`: fixed `docCreate`/`tableCreate`/`outboundReply` JSON examples (flat → nested) + field type descriptions
+- `docs/api-reference.zh-CN.md`: same fixes in Chinese
+- feishu-flow-kit git commit `7a6ea82` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #2 (src/server/ route + error format consistency) completed — found 1 critical bug: POST /webhook success response had completely wrong field shapes for `docCreate`, `tableCreate`, and `outboundReply`. Docs showed flat `{ok, docId}` but actual code returns `{attempted, response: {ok, documentId}}`. Remaining tasks this cycle: #3 (docs/recipes.md accuracy), #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 750+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 03:12 UTC
 **Current mainline:** feishu-flow-kit @ a967926 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
