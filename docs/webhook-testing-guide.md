@@ -14,7 +14,7 @@ Use the built-in test script to send sample webhook payloads to your local serve
 
 ```bash
 # Send a single test event
-bash ./scripts/test-webhook-local.sh ./examples/webhook-events/im-message-receive-hello.json
+bash ./scripts/test-webhook-local.sh ./examples/webhook-events/message-text-p2p.json
 
 # Send all sample events in sequence
 bash ./scripts/test-webhook-local.sh all

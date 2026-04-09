@@ -224,7 +224,7 @@ If empty, no plugins were found — check `FEISHU_PLUGINS` and plugin file paths
 
 ```bash
 # Send a test message event
-bash ./scripts/test-webhook-local.sh ./examples/webhook-events/im-message-receive-hello.json
+bash ./scripts/test-webhook-local.sh ./examples/webhook-events/message-text-p2p.json
 
 # Send all test events
 bash ./scripts/test-webhook-local.sh all
