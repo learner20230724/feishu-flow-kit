@@ -1,3 +1,32 @@
+## 2026-04-09 06:12 UTC
+**Current mainline:** feishu-flow-kit @ cb02fd6 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/workflows/ completeness — 1 real bug found and fixed (HEARTBEAT task #4)** —
+  (1) Verified all 3 exports from `src/workflows/run-message-workflow.ts`: `WorkflowResult` ✅, `WorkflowOptions` ✅, `runMessageWorkflow` ✅
+  (2) `WorkflowOptions` interface: fully documented in developer-guide.md (line 103) ✅ and developer-guide.zh-CN.md (line 101) ✅ (added 2026-04-08 23:42 UTC)
+  (3) `runMessageWorkflow`: documented architecturally in developer-guide.md (line 21, flow diagram) ✅ and developer-guide.zh-CN.md (line 21) ✅
+  (4) **Bug found:** `WorkflowResult` interface in code has 3 fields missing from both EN and ZH-CN developer guides:
+      - `hasDocCreateDraft?: boolean` — referenced in code but not in docs
+      - `tableRecordTitle?: string` — referenced in code but not in docs
+      - `tableRecordDraftFields?: Record<string, TableRecordFieldValue>` — referenced in code but not in docs
+  (5) Fixed both developer-guide.md and developer-guide.zh-CN.md: added all 3 missing fields to the WorkflowResult interface code block, with descriptive comments
+  (6) Updated example comments in both docs: `docTopic + docMarkdown` note now mentions `hasDocCreateDraft`; `hasTableRecordDraft` note now mentions `tableRecordTitle`
+  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.4s, fail=0)
+  (8) Committed + pushed: `cb02fd6` ("docs: add 3 missing WorkflowResult fields to developer-guide (EN+ZH-CN)")
+  (9) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 03:12 UTC), #2✅ (src/server route consistency, 03:27 UTC), #3✅ (docs/recipes.md accuracy, 04:12 UTC), #4✅ (src/workflows/ completeness, 06:12 UTC), #5-#8 pending
+
+**Output files/results:**
+- `docs/developer-guide.md`: +3 fields to WorkflowResult interface code block (hasDocCreateDraft, tableRecordTitle, tableRecordDraftFields), updated example comments
+- `docs/developer-guide.zh-CN.md`: same 3-field additions with Chinese comments
+- feishu-flow-kit git commit `cb02fd6` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #4 (src/workflows/ completeness) completed — found 1 real bug: `WorkflowResult` interface had 3 fields (`hasDocCreateDraft`, `tableRecordTitle`, `tableRecordDraftFields`) present in code but missing from both EN and ZH-CN developer guide docs. All 3 exports (WorkflowResult, WorkflowOptions, runMessageWorkflow) are now properly documented. Remaining tasks this cycle: #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 880+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 05:57 UTC
 **Current mainline:** feishu-flow-kit @ aa7e7c6 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
