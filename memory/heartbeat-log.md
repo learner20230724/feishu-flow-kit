@@ -1980,3 +1980,37 @@
 **Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
 
 **Direction adjustment:** All 8 prior HEARTBEAT tasks fully exhausted (again). HEARTBEAT.md refreshed with 8 new tasks (#2-#8 covering src/server consistency, recipes accuracy, workflows completeness, examples audit, plugin error handling, troubleshooting accuracy, package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 580+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
+## 2026-04-09 02:42 UTC
+**Current mainline:** feishu-flow-kit @ 8db8bd4 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/server/ route + error format consistency — 1 critical multi-field bug fixed (HEARTBEAT task #2)** —
+  (1) Systematic cross-check of all server routes in `src/server/start-webhook-server.ts` + `src/server/handle-webhook-payload.ts` against `docs/api-reference.md` and `docs/api-reference.zh-CN.md`
+  (2) **Bug found:** GET /status response in api-reference.md and api-reference.zh-CN.md had completely wrong field names vs actual `getServerStatus()` return value from `src/core/server-status.ts`:
+      - `serverStartTime` → actual field is `startedAt`
+      - `eventsProcessed` → actual field is `eventCount`
+      - `errorsEncountered` → field doesn't exist in actual response
+      - `mockMode` → actual field is `mode` (top-level string, not `mockMode` boolean)
+      - `enableOutboundReply`/`enableDocCreate`/`enableTableCreate` → actual fields are nested under `flags.outboundReply`/`flags.docCreate`/`flags.tableCreate`
+      - `plugins` → field doesn't exist in actual response (plugin names are tracked separately in pluginContext, not in server-status)
+      - Missing actual fields: `service: 'feishu-flow-kit'`, `lastEventAt`, `flags.sentry`
+  (3) Fixed both EN and ZH-CN api-reference docs: replaced all 4 GET /status response examples and field tables with correct fields matching actual `getServerStatus()` return value
+  (4) POST /webhook success response: already corrected by commit 106a36b (prior cycle, 02:04 UTC) — all fields present including `eventType`, `tenantKey`, `messageId`, `tags`, `replyText`, `replyDraft`, `docCreateDraft`, `tableRecordDraft`, `docCreate`, `tableCreate`, `outboundReply`, `loadedPlugins`
+  (5) POST /webhook error responses (400, 401, 403, 404, 405, 500): all correctly documented with `{ok, error, requestId}` envelope ✅
+  (6) GET /healthz: correctly documented ✅
+  (7) URL verification (200): correctly documented as `{challenge, requestId}` (no `ok` field) ✅
+  (8) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.3s)
+  (9) Committed + pushed: `8db8bd4` ("docs: fix GET /status response — match actual server-status.ts fields")
+  (10) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 01:42 UTC), #2✅ (02:42 UTC), #3-#8 pending
+
+**Output files/results:**
+- `docs/api-reference.md`: fixed GET /status response JSON examples (2x) + field table — corrected to `startedAt`, `mode`, `flags{}`, `eventCount`, `lastEventAt`, `service`; removed nonexistent `serverStartTime`, `eventsProcessed`, `errorsEncountered`, `mockMode`, flat `enable*` booleans, `plugins`
+- `docs/api-reference.zh-CN.md`: same corrections in Chinese
+- feishu-flow-kit git commit `8db8bd4` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #2 (src/server/ route + error format consistency) completed — found 1 critical bug: GET /status API docs had completely wrong field names vs actual `getServerStatus()` implementation. Remaining tasks this cycle: #3 (docs/recipes.md accuracy), #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 710+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
