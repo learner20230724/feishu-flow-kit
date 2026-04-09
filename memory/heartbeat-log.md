@@ -1,3 +1,27 @@
+## 2026-04-09 11:42 UTC
+**Current mainline:** feishu-flow-kit @ 50f93f2 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/server/ route + error format consistency — 1 real bug fixed (HEARTBEAT task #2)** —
+  (1) Systematic cross-check of all server routes in `src/server/start-webhook-server.ts` + `src/server/handle-webhook-payload.ts` against `docs/api-reference.md` and `docs/api-reference.zh-CN.md`
+  (2) GET /healthz ✅, GET /status ✅, POST /webhook (URL verification) ✅, all error codes (401/400/403/404/405/500) ✅ — all consistent with code
+  (3) **Bug found:** `flags.sentry` in `GET /status` response was always `false` — hardcoded in `getServerStatus()` at `server-status.ts:49`. The `SENTRY_DSN` env var was correctly initialized in `start-webhook-server.ts` (line 45: `if (process.env.SENTRY_DSN) initSentry(...)`) but the status endpoint never reflected whether Sentry was actually active
+  (4) Fixed: added `sentry: boolean` parameter to `getServerStatus()` config type; replaced hardcoded `sentry: false` with `sentry: config.sentry`; passed `sentry: Boolean(process.env.SENTRY_DSN)` from `startWebhookServer`
+  (5) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.2s)
+  (6) Committed + pushed: `50f93f2` ("fix(server-status): flags.sentry now reflects actual SENTRY_DSN state")
+  (7) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 10:42 UTC), #2✅ (11:42 UTC), #3-#8 pending
+
+**Output files/results:**
+- `src/core/server-status.ts`: added `sentry: boolean` to `getServerStatus()` config type; `sentry: false` → `sentry: config.sentry`
+- `src/server/start-webhook-server.ts`: passed `sentry: Boolean(process.env.SENTRY_DSN)` to `getServerStatus()`
+- feishu-flow-kit git commit `50f93f2` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #2 (src/server/ route + error format consistency) completed — found 1 real code bug: `flags.sentry` was always `false` even when Sentry was actively initialized with `SENTRY_DSN`. Docs described it correctly (boolean flag indicating whether Sentry is enabled) but the code never wired the actual env var value through. Fixed both sides (code + docs were already aligned on intent). Remaining tasks this cycle: #3 (docs/recipes.md accuracy), #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 985+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 10:42 UTC
 **Current mainline:** feishu-flow-kit @ bc85be65 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
