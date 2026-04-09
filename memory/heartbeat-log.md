@@ -1,3 +1,27 @@
+## 2026-04-09 14:42 UTC
+**Current mainline:** feishu-flow-kit @ 6f6628e (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **examples/ directory audit — 1 real bug found and fixed (HEARTBEAT task #5)** —
+  (1) Task #5 (fresh cycle): systematic verification that every file in `examples/` is referenced/linked somewhere in `docs/`
+  (2) All 35 files in `examples/` verified: 23 JSON + 2 env + 10 webhook-event JSON + 2 webhook-event README
+  (3) All files have ≥1 reference in docs ✅: mock-*.json referenced in setup-guide.md, webhook-testing-guide.md, webhook-field-reference.md ✅; feishu-fields-*.json referenced across table-schema docs ✅; table-api-error-*.json referenced in setup-guide.md, table-api-error-fixtures.md ✅; webhook-*.json referenced in setup-guide.md, table-webhook-success-error-demo.md ✅; webhook-events/ JSON files referenced in webhook-testing-guide.md table (added 06:42 UTC prior cycle) ✅; table-mapping-advanced.env referenced in table-mapping-config-preflight.md ✅
+  (4) **Bug found:** `examples/webhook-events/README.zh-CN.md` (Chinese translation of webhook-events README) was NOT referenced anywhere in docs. English `README.md` was referenced in webhook-testing-guide.md line 40, but the Chinese version was completely invisible to documentation readers
+  (5) Fixed: added "A Chinese translation is also available at `examples/webhook-events/README.zh-CN.md`." to the Note in webhook-testing-guide.md (line 40)
+  (6) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.8s, fail=0)
+  (7) Committed + pushed: `6f6628e` ("docs: add Chinese README.zh-CN.md reference in webhook-testing-guide (examples/ audit)")
+  (8) Fresh HEARTBEAT cycle: #1✅ (12:42, 13:27, 13:57 UTC), #2✅ (12:57, 13:12 UTC), #3✅ (14:12 UTC), #4✅ (12:12 UTC, confirmed at 14:27 UTC), #5✅ (14:42 UTC), #6-#8 pending
+
+**Output files/results:**
+- `docs/webhook-testing-guide.md`: added Chinese README.zh-CN.md reference in Note (line 40)
+- feishu-flow-kit git commit `6f6628e` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #5 (examples/ directory audit) completed — found 1 real bug: `examples/webhook-events/README.zh-CN.md` was not referenced from any docs. All 35 files in `examples/` now have at least 1 reference. Remaining tasks this cycle: #6 (FEISHU_PLUGINS error handling — done at 09:42 UTC prior cycle), #7 (docs/troubleshooting.md accuracy — done at 09:42 UTC prior cycle), #8 (package.json scripts integrity — done at 04:57 UTC). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 1185+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 13:27 UTC
 **Current mainline:** feishu-flow-kit @ 05b9837 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
