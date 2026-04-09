@@ -1,3 +1,30 @@
+## 2026-04-09 01:27 UTC
+**Current mainline:** feishu-flow-kit @ 181bdf5 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **docs/troubleshooting.md accuracy — 3 real bugs found and fixed (HEARTBEAT task #7)** —
+  (1) Systematic cross-check of all commands, file paths, and technical descriptions in `docs/troubleshooting.md` and `README.md` against actual implementation
+  (2) **Bug #1 (troubleshooting.md line 27 + 201):** `npm start` referenced for production — no such script exists in `package.json`. After `npm run build`, output is at `dist/index.js` and must be started with `node dist/index.js`
+  (3) **Bug #2 (README.md line 100):** Same `npm start` bug in README production run instructions
+  (4) **Bug #3 (troubleshooting.md):** "Webhook verification fails" section incorrectly stated URL verification requires "GET request with `challenge` query parameter" — server code confirms it only accepts POST with JSON body `{type: 'url_verification', challenge: '...'}`, returning `{challenge: '...'}`
+  (5) Fix #1+2: Added `"start": "node dist/index.js"` to `package.json` scripts; updated 3x `npm start` references → `node dist/index.js` in troubleshooting.md and README.md
+  (6) Fix #3: Updated troubleshooting.md "Webhook verification fails" section to correctly describe POST + JSON body flow
+  (7) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (12.8s)
+  (8) Committed + pushed: `181bdf5` ("fix: add missing npm start script + fix troubleshooting docs (npm start → node dist/index.js, GET → POST for URL verification)")
+  (9) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab, 00:27 UTC), #2✅ (src/server route consistency, 00:27 UTC), #3✅ (webhook event examples, 00:27 UTC), #4✅ (workflows completeness, 00:27 UTC), #5✅ (examples/ audit, 00:27 UTC), #6✅ (FEISHU_PLUGINS error handling, 00:27 UTC), #7✅ (troubleshooting.md accuracy, 01:27 UTC), #8🔜 (package.json scripts integrity)
+
+**Output files/results:**
+- `package.json`: added `"start": "node dist/index.js"` script
+- `docs/troubleshooting.md`: `npm start` → `node dist/index.js` (2 occurrences), URL verification description fixed (GET → POST with JSON body)
+- `README.md`: `npm start` → `node dist/index.js` (line 100)
+- feishu-flow-kit git commit `181bdf5` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #7 (docs/troubleshooting.md accuracy) completed — found 3 real bugs: (1) `npm start` referenced but no such script in package.json, (2) same bug in README.md, (3) URL verification incorrectly described as GET with query params instead of POST with JSON body. Fixed by adding `start` script and correcting docs. Remaining task this cycle: #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 630+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 00:27 UTC
 **Current mainline:** feishu-flow-kit @ 86e938e (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
