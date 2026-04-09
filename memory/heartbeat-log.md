@@ -1,3 +1,25 @@
+## 2026-04-09 12:12 UTC
+**Current mainline:** feishu-flow-kit @ bb55f78 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/workflows/ completeness — CLEAN, no bugs (HEARTBEAT task #4)** —
+  (1) Verified all 3 exports from `src/workflows/run-message-workflow.ts`: `WorkflowResult` ✅ (line 20), `WorkflowOptions` ✅ (line 33), `runMessageWorkflow` ✅ (line 332)
+  (2) `WorkflowResult` interface: documented in developer-guide.md (line 77) ✅ and developer-guide.zh-CN.md (line 75) ✅; all fields present including `hasDocCreateDraft`, `tableRecordTitle`, `tableRecordDraftFields` (added at 06:12 UTC)
+  (3) `WorkflowOptions` interface: documented with full field list in developer-guide.md (lines 106-119) ✅ and developer-guide.zh-CN.md (lines 104-117) ✅ (added at 06:12 UTC)
+  (4) `runMessageWorkflow`: documented architecturally in developer-guide.md (line 21, flow diagram) ✅ and developer-guide.zh-CN.md (line 21) ✅
+  (5) No missing docs, no undocumented exports — everything in src/workflows/ is properly documented
+  (6) `npm test` → **141/141 pass** ✅ (12.5s, fail=0)
+  (7) No code changes needed — all exports properly documented
+  (8) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 10:42 UTC), #2✅ (src/server route consistency, 11:42 UTC), #3✅ (docs/recipes.md accuracy, 11:57 UTC), #4✅ (12:12 UTC), #5-#8 pending
+
+**Output files/results:** None (docs already accurate — no changes needed)
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #4 (src/workflows/ completeness) completed — clean, no bugs found. All 3 exports (WorkflowResult, WorkflowOptions, runMessageWorkflow) properly documented in both EN and ZH-CN developer guides. Remaining tasks this cycle: #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 1000+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 11:57 UTC
 **Current mainline:** feishu-flow-kit @ 98a1a42 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-lab @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
