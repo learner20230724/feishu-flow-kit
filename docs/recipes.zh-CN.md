@@ -189,7 +189,7 @@ export async function sendDailySummary(channelId: string): Promise<void> {
 
 ```bash
 # 每个工作日 9:00 执行（北京时间 17:00）：
-# 0 9 * * 1-5 cd /opt/feishu-flow-kit && node --loader ts-node/esm src/jobs/daily-summary.ts >> /var/log/feishu-summary.log 2>&1
+# 0 9 * * 1-5 cd /opt/feishu-flow-kit && node --import tsx src/jobs/daily-summary.ts >> /var/log/feishu-summary.log 2>&1
 ```
 
 ---
