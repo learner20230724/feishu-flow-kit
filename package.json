@@ -37,7 +37,8 @@
     "verify:table-schema-handoff": "node ./scripts/verify-table-schema-handoff.mjs",
     "verify:release": "bash ./scripts/verify-release-ready.sh",
     "demo": "node scripts/demo-interactive.mjs",
-    "demo:plugins": "node scripts/demo-interactive.mjs --speed fast"
+    "demo:plugins": "node scripts/demo-interactive.mjs --speed fast",
+    "start": "node dist/index.js"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",

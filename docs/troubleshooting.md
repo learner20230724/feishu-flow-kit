@@ -24,7 +24,7 @@ curl https://your-ngrok-url.ngrok.io/status
 
 ```bash
 npm run dev        # development
-npm start          # production (after npm run build)
+node dist/index.js # production (after npm run build)
 docker compose up  # via Docker
 ```
 
@@ -186,10 +186,10 @@ Your server isn't running, or ngrok tunnel isn't active. Start the server first,
 
 ### Webhook verification fails
 
-The verification requires your server to respond to a GET request with the `challenge` query parameter. If verification fails:
+The verification requires your server to respond to a POST request with a JSON body containing `{type: 'url_verification', challenge: '...'}` — Feishu does NOT use GET with query parameters. If verification fails:
 - Confirm the URL is HTTPS (Feishu requires HTTPS)
 - Confirm the server is running and accessible from the internet
-- Check that `/webhook` endpoint responds to GET requests
+- Check that `POST /webhook` with JSON body `{type: 'url_verification', challenge: '...'}` returns `{challenge: '...'}`
 
 ---
 
@@ -198,7 +198,7 @@ The verification requires your server to respond to a GET request with the `chal
 ### Enable debug logging
 
 ```bash
-LOG_LEVEL=debug npm start
+LOG_LEVEL=debug node dist/index.js
 ```
 
 This outputs structured logs with `requestId` for tracing each event.

@@ -97,7 +97,7 @@ npm run demo:plugins # same, but also tests plugin commands (/help, /ping, /poll
 **5. Run for real**
 ```bash
 npm run dev          # local dev with mock events
-npm start            # production (set FEISHU_* vars first)
+node dist/index.js   # production (set FEISHU_* vars first)
 ```
 
 Try these commands once your server is running:
