@@ -76,12 +76,15 @@ A handler returns a `WorkflowResult`:
 ```typescript
 export interface WorkflowResult {
   ok: boolean;
-  replyText: string;          // what the bot says back
-  tags: string[];              // shown in /status
-  docTopic?: string;           // set to create a doc
-  docMarkdown?: string;        // doc content (markdown)
-  hasTableRecordDraft?: boolean;
-  tableRecordDraft?: TableRecordDraft;
+  replyText: string;              // what the bot says back
+  tags: string[];                 // shown in /status
+  docTopic?: string;              // set to create a doc
+  docMarkdown?: string;           // doc content (markdown)
+  hasDocCreateDraft?: boolean;    // set with docTopic/docMarkdown to auto-create a doc
+  hasTableRecordDraft?: boolean;  // set with tableRecordDraft to auto-create a table record
+  tableRecordTitle?: string;      // title shown in the table record
+  tableRecordDraft?: TableRecordDraft;       // the record fields to create
+  tableRecordDraftFields?: Record<string, TableRecordFieldValue>; // raw field values (alternative to tableRecordDraft)
 }
 ```
 
@@ -94,8 +97,8 @@ function handleMyCommand(argsText: string, event: FeishuMessageEvent, s: Strings
     ok: true,
     replyText: `Processing: ${query}`,
     tags: ['mycommand'],
-    // optionally: docTopic + docMarkdown to auto-create a doc
-    // optionally: hasTableRecordDraft + tableRecordDraft to auto-create a table record
+    // optionally: docTopic + docMarkdown to auto-create a doc (optionally set hasDocCreateDraft)
+    // optionally: tableRecordTitle + hasTableRecordDraft + tableRecordDraft to auto-create a table record
   };
 }
 ```

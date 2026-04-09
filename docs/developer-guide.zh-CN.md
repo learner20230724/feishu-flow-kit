@@ -75,11 +75,14 @@ if (cmd.command === 'mycommand') {
 export interface WorkflowResult {
   ok: boolean;
   replyText: string;              // 机器人回复内容
-  tags: string[];                // 显示在 /status 中
-  docTopic?: string;             // 设置后自动创建文档
-  docMarkdown?: string;          // 文档内容（markdown）
-  hasTableRecordDraft?: boolean;
-  tableRecordDraft?: TableRecordDraft;
+  tags: string[];                 // 显示在 /status 中
+  docTopic?: string;              // 设置后自动创建文档
+  docMarkdown?: string;           // 文档内容（markdown）
+  hasDocCreateDraft?: boolean;     // 与 docTopic/docMarkdown 配合自动创建文档
+  hasTableRecordDraft?: boolean;   // 与 tableRecordDraft 配合自动创建多维表格记录
+  tableRecordTitle?: string;      // 多维表格记录的标题
+  tableRecordDraft?: TableRecordDraft;            // 要创建的记录字段
+  tableRecordDraftFields?: Record<string, TableRecordFieldValue>; // 原始字段值（tableRecordDraft 的替代）
 }
 ```
 
@@ -92,8 +95,8 @@ function handleMyCommand(argsText: string, event: FeishuMessageEvent, s: Strings
     ok: true,
     replyText: `正在处理：${query}`,
     tags: ['mycommand'],
-    // 可选：设置 docTopic + docMarkdown 自动创建文档
-    // 可选：设置 hasTableRecordDraft + tableRecordDraft 自动创建多维表格记录
+    // 可选：设置 docTopic + docMarkdown 自动创建文档（可选设置 hasDocCreateDraft）
+    // 可选：设置 tableRecordTitle + hasTableRecordDraft + tableRecordDraft 自动创建多维表格记录
   };
 }
 ```
