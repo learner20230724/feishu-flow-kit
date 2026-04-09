@@ -1,3 +1,31 @@
+## 2026-04-09 09:57 UTC
+**Current mainline:** feishu-flow-kit @ a0ee540 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
+
+**What was completed:**
+- **src/server/ route + error format consistency — 1 real bug fixed (HEARTBEAT task #2, fresh cycle)** —
+  (1) Systematic cross-check of all server routes in `src/server/start-webhook-server.ts` + `src/server/handle-webhook-payload.ts` against `docs/api-reference.md` and `docs/api-reference.zh-CN.md`
+  (2) All error responses (401, 400, 403, 404, 405, 500) verified correct: `{ok, error, requestId}` envelope ✅
+  (3) GET /healthz: correctly documented ✅
+  (4) GET /status: correctly documented (fixed in prior cycle) ✅
+  (5) URL verification: correctly documented as `{challenge, requestId}` (no `ok`) ✅
+  (6) POST /webhook success response: `docCreate`/`tableCreate`/`outboundReply` field shapes correctly documented as nested `{attempted, skippedReason?, response?: {ok, ...}}` (fixed in prior cycle) ✅
+  (7) **Bug found:** Environment Variables Reference table in api-reference.md listed `PORT` (line 387) as the server port env var — but the actual env var is `FEISHU_WEBHOOK_PORT` (parsed by `load-config.ts:parsePort(env.FEISHU_WEBHOOK_PORT, 8787)`). `PORT` is never read by the server. Users following the docs would set `PORT` and the server would still listen on default 8787.
+  (8) Fixed: `PORT` → `FEISHU_WEBHOOK_PORT` in api-reference.md (line 387) and api-reference.zh-CN.md (line 387)
+  (9) `npm run check` ✅ (tsc --noEmit) + `npm test` → **141/141 pass** ✅ (11.9s)
+  (10) Committed + pushed: `a0ee540` ("docs: fix api-reference — PORT → FEISHU_WEBHOOK_PORT env var (EN+ZH-CN)")
+  (11) Fresh HEARTBEAT cycle: #1✅ (llm-chat-lab health, 09:57 UTC), #2✅ (09:57 UTC), #3-#8 pending
+
+**Output files/results:**
+- `docs/api-reference.md`: `PORT` → `FEISHU_WEBHOOK_PORT` (Environment Variables Reference table)
+- `docs/api-reference.zh-CN.md`: same fix in Chinese
+- feishu-flow-kit git commit `a0ee540` pushed to origin/main
+
+**Problems:** None.
+
+**Next deployment:** NPM_TOKEN secret only (requires human GitHub UI action — 15 seconds). https://github.com/learner20230724/feishu-flow-kit/settings/secrets/actions
+
+**Direction adjustment:** HEARTBEAT task #2 (src/server/ route + error format consistency) completed — found 1 real bug: api-reference.md listed wrong env var name `PORT` instead of actual `FEISHU_WEBHOOK_PORT`. All prior 7 tasks (#3-#8 from prior cycle) are still fresh. Remaining tasks this cycle: #3 (docs/recipes.md accuracy), #4 (src/workflows/ completeness), #5 (examples/ directory audit), #6 (FEISHU_PLUGINS error handling), #7 (docs/troubleshooting.md accuracy), #8 (package.json scripts integrity). All repos stable. 141/141+40/40+9/9 tests green. NPM_TOKEN sole blocker for 940+ hours. No code/docs/deployment work possible without human adding NPM_TOKEN.
+
 ## 2026-04-09 09:42 UTC
 **Current mainline:** feishu-flow-kit @ 33bc855 (main ✅, v1.0.3 published, 141/141 tests) + llm-chat-kit @ 30e40d1 (v1.3.1 published ✅, 40/40 tests, 0 vulnerabilities) + room-measure-kit @ ca3f9ef (v0.1.2, 9/9 tests ✅)
 
