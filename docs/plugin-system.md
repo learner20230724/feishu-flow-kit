@@ -336,8 +336,16 @@ Set `LOG_LEVEL=debug` to see plugin lifecycle logs:
 [plugin] ping.handle() called for /ping hello
 ```
 
-If a plugin throws, the error is caught and logged without crashing the webhook:
+If a plugin throws during event processing, the error is caught and logged without crashing the webhook response. The `handle()` case is special — it returns an error reply to the user:
 
+| Lifecycle hook | Log prefix | Effect on workflow |
+|---|---|---|
+| `beforeProcess()` throws | `[plugin] X.beforeProcess() threw` | Error logged; event continues to workflow |
+| `handle()` throws | `[plugin] X.handle() threw` | Error reply sent to user; workflow continues |
+| `onCommandResult()` throws | `[plugin] X.onCommandResult() threw` | Error logged; final reply/tags unchanged |
+| `afterProcess()` throws | `[plugin] X.afterProcess() threw` | Error logged; webhook response unaffected |
+
+Example `handle()` throwing:
 ```
 [plugin-system] Plugin "bad-plugin" handle() threw: Error: something went wrong
 ```
