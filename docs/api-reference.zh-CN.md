@@ -228,9 +228,9 @@ X-Lark-Signature: <signature>
   "replyDraft": { "msg_type": "interactive", "card": { ... } },
   "docCreateDraft": { "title": "...", "markdown": "..." },
   "tableRecordDraft": { "fields": { "title": "...", ... } },
-  "docCreate": { "ok": true, "docId": "MsNxXxXxXxXx", "url": "https://..." },
-  "tableCreate": { "ok": true, "recordId": "recxxxxxx" },
-  "outboundReply": { "ok": true, "messageId": "om_yyyyyyyyyyyyyyyy" },
+  "docCreate": { "attempted": true, "response": { "ok": true, "documentId": "MsNxXxXxXxXx", "url": "https://..." } },
+  "tableCreate": { "attempted": true, "response": { "ok": true, "recordId": "recxxxxxx", "fieldsMapped": 5 } },
+  "outboundReply": { "attempted": true, "response": { "ok": true, "messageId": "om_yyyyyyyyyyyyyyyy" } },
   "loadedPlugins": ["ping", "poll"],
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
 }
@@ -247,9 +247,9 @@ X-Lark-Signature: <signature>
 | `replyDraft` | `object \| null` | 飞书消息卡片草稿（`msg_type: "interactive"`）；无回复时为 `null` |
 | `docCreateDraft` | `object \| null` | 文档创建草稿（`title` + `markdown`）；无文档创建时为 `null` |
 | `tableRecordDraft` | `object \| null` | 多维表格记录创建草稿（`fields` 映射）；无表格创建时为 `null` |
-| `docCreate` | `object` | 文档创建尝试结果：`{ok, docId?, url?, skippedReason?}` |
-| `tableCreate` | `object` | 多维表格记录创建结果：`{ok, recordId?, skippedReason?}` |
-| `outboundReply` | `object` | 出站回复结果：`{ok, messageId?, skippedReason?}` |
+| `docCreate` | `object` | 文档创建结果：`{attempted, skippedReason?, response?: {ok, documentId?, url?, raw}}` |
+| `tableCreate` | `object` | 多维表格记录创建结果：`{attempted, skippedReason?, response?: {ok, recordId?, fieldsMapped?, raw}}` |
+| `outboundReply` | `object` | 出站回复结果：`{attempted, skippedReason?, response?: {ok, messageId?, raw}}` |
 | `loadedPlugins` | `string[]` | 启动时通过 `FEISHU_PLUGINS` 加载的插件名称列表 |
 | `requestId` | `string` | 用于日志关联的 UUID |
 
