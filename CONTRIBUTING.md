@@ -21,21 +21,21 @@ cp .env.example .env
 Start the webhook server in development mode:
 
 ```bash
-npm run dev        # starts with ts-node-dev (auto-reload on changes)
-npm start          # production build (requires npm run build first)
+npm run dev        # starts with tsx (auto-reload on file changes)
+npm start          # production server (requires npm run build first)
 ```
 
 Run the full test suite:
 
 ```bash
-npm test           # 130 tests, should pass in < 20s
-npm run test:watch # re-runs on file changes
+npm test           # 141 tests, should pass in < 20s
+# (no watch mode — use `npm test` for CI runs)
 ```
 
 TypeScript type checking (no emit):
 
 ```bash
-npm run typecheck
+npm run check
 ```
 
 ---
@@ -210,8 +210,7 @@ FEISHU_PLUGINS=qrcode-plugin,joke-plugin,remind-plugin
 ## Testing
 
 ```bash
-npm test              # All 130 tests
-npm run test:coverage # Coverage report
+npm test              # All 141 tests
 ```
 
 Tests are in `test/`. Key test files:
@@ -239,7 +238,7 @@ node scripts/demo-interactive.mjs
 Before opening a PR:
 
 - [ ] `npm test` passes (130/130)
-- [ ] `npm run typecheck` passes (no new TypeScript errors)
+- [ ] `npm run check` passes (no new TypeScript errors)
 - [ ] New commands have i18n strings in both `en.ts` and `zh.ts`
 - [ ] New adapters include a "maybe" variant that degrades gracefully
 - [ ] New environment variables are documented in `.env.example`
