@@ -63,17 +63,21 @@ GET /status
 ```json
 {
   "ok": true,
-  "serverStartTime": "2026-04-06T10:00:00.000Z",
-  "eventsProcessed": 142,
-  "errorsEncountered": 0,
+  "service": "feishu-flow-kit",
+  "startedAt": "2026-04-06T10:00:00.000Z",
   "uptimeSeconds": 3723,
-  "mockMode": false,
-  "enableOutboundReply": true,
-  "enableDocCreate": true,
-  "enableTableCreate": true,
+  "mode": "webhook",
+  "flags": {
+    "outboundReply": true,
+    "docCreate": true,
+    "tableCreate": true,
+    "sentry": false
+  },
+  "lastEventAt": "2026-04-06T10:05:00.000Z",
+  "eventCount": 142,
   "multiTenantMode": "single-app",
   "tenantCount": 1,
-  "plugins": ["ping", "poll"],
+  "tenantKeys": undefined,
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
@@ -81,18 +85,19 @@ GET /status
 | Field | Type | Description |
 |-------|------|-------------|
 | `ok` | `boolean` | Always `true` for 200 |
-| `serverStartTime` | `string` | ISO 8601 timestamp of when the webhook server process started |
-| `eventsProcessed` | `number` | Cumulative count of webhook events successfully processed since start |
-| `errorsEncountered` | `number` | Cumulative count of errors since start |
+| `service` | `string` | Fixed string `"feishu-flow-kit"` |
+| `startedAt` | `string` | ISO 8601 timestamp of when the webhook server process started |
 | `uptimeSeconds` | `number` | Seconds elapsed since server start |
-| `mockMode` | `boolean` | `true` if running in mock/development mode |
-| `enableOutboundReply` | `boolean` | Whether the bot is allowed to send reply messages via Feishu API |
-| `enableDocCreate` | `boolean` | Whether document creation is enabled |
-| `enableTableCreate` | `boolean` | Whether Bitable record creation is enabled |
+| `mode` | `string` | `"webhook"` in normal mode, `"mock"` in mock/development mode |
+| `flags.outboundReply` | `boolean` | Whether the bot is allowed to send reply messages via Feishu API |
+| `flags.docCreate` | `boolean` | Whether document creation is enabled |
+| `flags.tableCreate` | `boolean` | Whether Bitable record creation is enabled |
+| `flags.sentry` | `boolean` | Whether Sentry error tracking is enabled |
+| `lastEventAt` | `string \| null` | ISO 8601 timestamp of the last successfully processed webhook event; `null` if no events processed yet |
+| `eventCount` | `number` | Cumulative count of webhook events successfully processed since server start |
 | `multiTenantMode` | `string` | `"multi-tenant"` or `"single-app"` |
 | `tenantCount` | `number` | Number of registered tenants (1 in single-app mode) |
-| `tenantKeys` | `string[]` | Present only in multi-tenant mode; array of registered `tenantKey` strings |
-| `plugins` | `string[]` | Names of loaded plugins (empty array if none) |
+| `tenantKeys` | `string[] \| undefined` | Present only in multi-tenant mode; array of registered `tenantKey` strings |
 | `requestId` | `string` | UUID for log correlation |
 
 ### Multi-tenant status response
@@ -102,18 +107,21 @@ When `FEISHU_TENANTS` is configured with multiple tenants:
 ```json
 {
   "ok": true,
-  "serverStartTime": "2026-04-06T10:00:00.000Z",
-  "eventsProcessed": 89,
-  "errorsEncountered": 2,
+  "service": "feishu-flow-kit",
+  "startedAt": "2026-04-06T10:00:00.000Z",
   "uptimeSeconds": 3723,
-  "mockMode": false,
-  "enableOutboundReply": true,
-  "enableDocCreate": true,
-  "enableTableCreate": true,
+  "mode": "webhook",
+  "flags": {
+    "outboundReply": true,
+    "docCreate": true,
+    "tableCreate": true,
+    "sentry": false
+  },
+  "lastEventAt": "2026-04-06T10:05:00.000Z",
+  "eventCount": 89,
   "multiTenantMode": "multi-tenant",
   "tenantCount": 3,
   "tenantKeys": ["tenant-alpha", "tenant-beta", "tenant-gamma"],
-  "plugins": [],
   "requestId": "..."
 }
 ```

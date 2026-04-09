@@ -63,17 +63,21 @@ GET /status
 ```json
 {
   "ok": true,
-  "serverStartTime": "2026-04-06T10:00:00.000Z",
-  "eventsProcessed": 142,
-  "errorsEncountered": 0,
+  "service": "feishu-flow-kit",
+  "startedAt": "2026-04-06T10:00:00.000Z",
   "uptimeSeconds": 3723,
-  "mockMode": false,
-  "enableOutboundReply": true,
-  "enableDocCreate": true,
-  "enableTableCreate": true,
+  "mode": "webhook",
+  "flags": {
+    "outboundReply": true,
+    "docCreate": true,
+    "tableCreate": true,
+    "sentry": false
+  },
+  "lastEventAt": "2026-04-06T10:05:00.000Z",
+  "eventCount": 142,
   "multiTenantMode": "single-app",
   "tenantCount": 1,
-  "plugins": ["ping", "poll"],
+  "tenantKeys": undefined,
   "requestId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
@@ -81,18 +85,19 @@ GET /status
 | 字段 | 类型 | 描述 |
 |------|------|------|
 | `ok` | `boolean` | 始终为 `true`（200 响应时） |
-| `serverStartTime` | `string` | Webhook 服务进程启动时间的 ISO 8601 时间戳 |
-| `eventsProcessed` | `number` | 自启动以来成功处理的 Webhook 事件累计数 |
-| `errorsEncountered` | `number` | 自启动以来的错误累计数 |
+| `service` | `string` | 固定字符串 `"feishu-flow-kit"` |
+| `startedAt` | `string` | Webhook 服务进程启动时间的 ISO 8601 时间戳 |
 | `uptimeSeconds` | `number` | 距服务器启动的已过秒数 |
-| `mockMode` | `boolean` | 运行于模拟/开发模式时为 `true` |
-| `enableOutboundReply` | `boolean` | 是否允许机器人通过飞书 API 发送回复消息 |
-| `enableDocCreate` | `boolean` | 是否启用文档创建功能 |
-| `enableTableCreate` | `boolean` | 是否启用多维表格记录创建功能 |
+| `mode` | `string` | 正常模式下为 `"webhook"`，模拟/开发模式下为 `"mock"` |
+| `flags.outboundReply` | `boolean` | 是否允许机器人通过飞书 API 发送回复消息 |
+| `flags.docCreate` | `boolean` | 是否启用文档创建功能 |
+| `flags.tableCreate` | `boolean` | 是否启用多维表格记录创建功能 |
+| `flags.sentry` | `boolean` | 是否启用 Sentry 错误追踪 |
+| `lastEventAt` | `string \| null` | 最后一次成功处理的 Webhook 事件的 ISO 8601 时间戳；尚未处理任何事件时为 `null` |
+| `eventCount` | `number` | 自服务器启动以来成功处理的 Webhook 事件累计数 |
 | `multiTenantMode` | `string` | `"multi-tenant"` 或 `"single-app"` |
 | `tenantCount` | `number` | 已注册租户数量（单应用模式下为 1） |
-| `tenantKeys` | `string[]` | 仅在多租户模式下出现；已注册 `tenantKey` 字符串数组 |
-| `plugins` | `string[]` | 已加载插件名称列表（无插件时为空数组） |
+| `tenantKeys` | `string[] \| undefined` | 仅在多租户模式下出现；已注册 `tenantKey` 字符串数组 |
 | `requestId` | `string` | 用于日志关联的 UUID |
 
 ### 多租户状态响应
@@ -102,18 +107,21 @@ GET /status
 ```json
 {
   "ok": true,
-  "serverStartTime": "2026-04-06T10:00:00.000Z",
-  "eventsProcessed": 89,
-  "errorsEncountered": 2,
+  "service": "feishu-flow-kit",
+  "startedAt": "2026-04-06T10:00:00.000Z",
   "uptimeSeconds": 3723,
-  "mockMode": false,
-  "enableOutboundReply": true,
-  "enableDocCreate": true,
-  "enableTableCreate": true,
+  "mode": "webhook",
+  "flags": {
+    "outboundReply": true,
+    "docCreate": true,
+    "tableCreate": true,
+    "sentry": false
+  },
+  "lastEventAt": "2026-04-06T10:05:00.000Z",
+  "eventCount": 89,
   "multiTenantMode": "multi-tenant",
   "tenantCount": 3,
   "tenantKeys": ["tenant-alpha", "tenant-beta", "tenant-gamma"],
-  "plugins": [],
   "requestId": "..."
 }
 ```
